@@ -49,7 +49,7 @@ done
 for i in $2/Applications/*.app
 do
 	ldid2 -e $i > /tmp/_ENTS.plist 2> /dev/null
-	if [ $(cat /tmp/_ENTS.plist) == "" ]; then
+	if [[ $(cat /tmp/_ENTS.plist) == "" ]]; then
 		printf '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>platform-application</key><true/><key>com.apple.private.security.no-container</key><true/><key>com.apple.private.security.container-required</key><false/></dict></plist>' > /tmp/_ENTS.plist
 		ldid2 -S/tmp/_ENTS.plist $2 2> /dev/null
 	elif [[ ! $(cat /tmp/_ENTS.plist) == "*com.apple.private.security.container-required*" ]]; then
