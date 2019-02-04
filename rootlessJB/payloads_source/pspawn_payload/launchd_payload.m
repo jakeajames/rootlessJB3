@@ -18,6 +18,8 @@
 #include "fishhook.h"
 #include "common.h"
 
+#define PSPAWN_PAYLOAD_DEBUG 1
+
 #ifdef PSPAWN_PAYLOAD_DEBUG
 #define LAUNCHD_LOG_PATH "/var/log/pspawn_payload_launchd.log"
 // XXX multiple xpcproxies opening same file

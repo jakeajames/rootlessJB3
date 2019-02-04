@@ -1,5 +1,5 @@
-TARGET  = launchd_payload.dylib
-OUTDIR ?= ../../bootstrap/dylibs
+TARGET  = pspawn.dylib
+OUTDIR ?= .
 
 CC      = xcrun -sdk iphoneos cc -arch arm64
 # it is injected into trust cache by code

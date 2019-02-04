@@ -72,6 +72,8 @@ int system_(char *cmd) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.installiSuperSU setEnabled:false];
+    [self.installiSuperSU setOn:false];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
