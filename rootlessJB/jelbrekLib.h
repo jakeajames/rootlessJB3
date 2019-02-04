@@ -354,6 +354,7 @@ void MakePortFakeTaskPort(mach_port_t port, uint64_t task_kaddr);
  Purpose:
     For reading & writing & copying & allocating & freeing kernel memory
  */
+size_t KernelWrite(uint64_t where, void *p, size_t size);
 size_t KernelRead(uint64_t where, void *p, size_t size);
 uint32_t KernelRead_32bits(uint64_t where);
 uint64_t KernelRead_64bits(uint64_t where);

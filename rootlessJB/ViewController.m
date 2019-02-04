@@ -13,6 +13,8 @@
 #import "payload.h"
 #import "offsetsDump.h"
 #import "exploit/voucher_swap/kernel_slide.h"
+#import "insert_dylib.h"
+#import "vnode.h"
 
 #import <mach/mach.h>
 #import <sys/stat.h>
@@ -63,6 +65,10 @@
                                        LOG("[-] Error moviing item %s to path %s (%s)", copyFrom, moveTo, [[error localizedDescription] UTF8String]); \
                                        error = NULL; \
                                    }
+
+int system_(char *cmd) {
+    return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -204,6 +210,7 @@
         
         symlink("/var/containers/Bundle/tweaksupport/Library", "/var/LIB");
         symlink("/var/containers/Bundle/tweaksupport/usr/lib", "/var/ulb");
+        symlink("/var/containers/Bundle/tweaksupport/Applications", "/var/Apps");
         symlink("/var/containers/Bundle/tweaksupport/bin", "/var/bin");
         symlink("/var/containers/Bundle/tweaksupport/sbin", "/var/sbin");
         symlink("/var/containers/Bundle/tweaksupport/usr/libexec", "/var/libexec");
@@ -222,7 +229,7 @@
     removeFile("/var/containers/Bundle/tweaksupport/bin/jailbreakd");
     
     if (!fileExists(in_bundle("bins/jailbreakd"))) {
-        chdir(in_bundle(""));
+        chdir(in_bundle("bins/"));
         
         FILE *jbd = fopen(in_bundle("bins/jailbreakd.tar"), "r");
         untar(jbd, in_bundle("bins/jailbreakd"));
@@ -236,7 +243,7 @@
     //---- codesign patch ----//
     
     if (!fileExists(in_bundle("bins/tester"))) {
-        chdir(in_bundle(""));
+        chdir(in_bundle("bins/"));
         
         FILE *f1 = fopen(in_bundle("bins/tester.tar"), "r");
         untar(f1, in_bundle("bins/tester"));
@@ -316,21 +323,59 @@
     if (self.enableTweaks.isOn) {
         
         //----- magic start here -----//
+        LOG("[*] Time for magic");
         
+        char *xpcproxy = "/var/libexec/xpcproxy";
+        char *dylib = "/var/ulb/pspawn.dylib";
         
+        bool cp = copyFile("/usr/libexec/xpcproxy", xpcproxy);
+        failIf(!cp, "[-] Can't copy xpcproxy!");
+        symlink("/var/containers/Bundle/iosbinpack64/pspawn.dylib", dylib);
+    
+        LOG("[*] Patching xpcproxy");
         
+        const char *args[] = { "insert_dylib", "--all-yes", "--inplace", "--overwrite", dylib, xpcproxy, NULL};
+        int argn = 6;
+        
+        failIf(add_dylib(argn, args), "[-] Failed to patch xpcproxy :(");
+        
+        LOG("[*] Resigning xpcproxy");
+        
+        failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/xpcproxy"), "[-] Failed to resign xpcproxy!");
+        
+        chown(xpcproxy, 0, 0);
+        chmod(xpcproxy, 755);
+        failIf(trustbin(xpcproxy), "[-] Failed to trust xpcproxy!");
+        
+        uint64_t realxpc = getVnodeAtPath("/usr/libexec/xpcproxy");
+        uint64_t fakexpc = getVnodeAtPath(xpcproxy);
+        
+        struct vnode rvp, fvp;
+        KernelRead(realxpc, &rvp, sizeof(struct vnode));
+        KernelRead(fakexpc, &fvp, sizeof(struct vnode));
+        
+        fvp.v_usecount = rvp.v_usecount;
+        fvp.v_kusecount = rvp.v_kusecount;
+        fvp.v_parent = rvp.v_parent;
+        fvp.v_freelist = rvp.v_freelist;
+        fvp.v_mntvnodes = rvp.v_mntvnodes;
+        fvp.v_ncchildren = rvp.v_ncchildren;
+        fvp.v_nclinks = rvp.v_nclinks;
+  
+        KernelWrite(realxpc, &fvp, 248);
+        
+        LOG("[?] Are we still alive?!");
         
         //----- magic end here -----//
         
-        // cache and we're done
+        // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
-        failIf(!installd, "[-] Can't find installd's pid");
         
         LOG("[+] Really jailbroken!");
         term_jelbrek();
         
         // AppSync
-        kill(installd, SIGKILL);
+        if (installd) kill(installd, SIGKILL);
         
         if ([self.installiSuperSU isOn]) {
             LOG("[*] Installing iSuperSU");
@@ -339,7 +384,7 @@
         }
         
         // bye bye
-        launch("/var/containers/Bundle/tweaksupport/usr/bin/ldrestart", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+        launch("/var/containers/Bundle/iosbinpack64/bin/bash", "-c", "/var/containers/Bundle/iosbinpack64/usr/bin/nohup /var/containers/Bundle/iosbinpack64/bin/bash -c \"/var/containers/Bundle/iosbinpack64/bin/launchctl unload /System/Library/LaunchDaemons/com.apple.backboardd.plist && /var/containers/Bundle/iosbinpack64/usr/bin/ldrestart; /var/containers/Bundle/iosbinpack64/bin/launchctl load /System/Library/LaunchDaemons/com.apple.backboardd.plist\" 2>&1 >/dev/null &", NULL, NULL, NULL, NULL, NULL);
         exit(0);
     }
     

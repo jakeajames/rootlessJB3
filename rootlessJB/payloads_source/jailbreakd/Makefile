@@ -9,7 +9,7 @@ CFLAGS  = -Wall -Wno-unused-variable -Wno-unused-function
 
 all: $(OUTDIR)/$(TARGET)
 
-DEBUG ?= 0
+DEBUG ?= 1
 ifeq ($(DEBUG), 1)
     CFLAGS += -DJAILBREAKDDEBUG
 else

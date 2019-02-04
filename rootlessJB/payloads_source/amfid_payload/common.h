@@ -10,6 +10,7 @@ void closejailbreakfd(void);
 
 #endif  // PAYLOADS_COMMON_H
 
+#define AMFID_PAYLOAD_DEBUG 1
 #ifndef AMFID_PAYLOAD_DEBUG
 #define printf(str, ...)
 #define NSLog(str, ...)
