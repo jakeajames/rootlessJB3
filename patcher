@@ -1,0 +1,59 @@
+#!/bin/bash
+
+export LANG=C
+export LC_CTYPE=C
+export LC_ALL=C
+
+dpkg-deb -R $1 $2
+
+mkdir $2  2> /dev/null
+
+for i in $2/Library/MobileSubstrate/DynamicLibraries/*dylib
+do
+sed -i "" 's/\/Library\//\/var\/LIB\//g' $i 2> /dev/null
+sed -i "" 's/\/System\/var\/LIB\//\/System\/Library\//g' $i 2> /dev/null
+sed -i "" 's/%@\/var\/LIB\//%@\/Library\//g' $i 2> /dev/null
+sed -i "" 's/mobile\/var\/LIB\//mobile\/Library\//g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstrate/\/var\/ulb\/libsubstrate/g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstitute/\/var\/ulb\/libsubstitute/g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libprefs/\/var\/ulb\/libprefs/g' $i 2> /dev/null
+ldid -S $i 2> /dev/null
+done
+
+for i in $2/usr/lib/*dylib
+do
+sed -i "" 's/\/Library\//\/var\/LIB\//g' $i 2> /dev/null
+sed -i "" 's/\/System\/var\/LIB\//\/System\/Library\//g' $i 2> /dev/null
+sed -i "" 's/mobile\/var\/LIB\//mobile\/Library\//g' $i 2> /dev/null
+sed -i "" 's/%@\/var\/LIB\//%@\/Library\//g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstrate/\/var\/ulb\/libsubstrate/g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstitute/\/var\/ulb\/libsubstitute/g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libprefs/\/var\/ulb\/libprefs/g' $i 2> /dev/null
+ldid -S $i 2> /dev/null
+done
+
+
+for i in $2/Library/PreferenceBundles/*/*
+do
+sed -i "" 's/\/Library\//\/var\/LIB\//g' $i  2> /dev/null
+sed -i "" 's/\/System\/var\/LIB\//\/System\/Library\//g' $i  2> /dev/null
+sed -i "" 's/%@\/var\/LIB\//%@\/Library\//g' $i 2> /dev/null
+sed -i "" 's/mobile\/var\/LIB\//mobile\/Library\//g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstrate/\/var\/ulb\/libsubstrate/g' $i  2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstitute/\/var\/ulb\/libsubstitute/g' $i  2> /dev/null
+sed -i "" 's/\/usr\/lib\/libprefs/\/var\/ulb\/libprefs/g' $i 2> /dev/null
+ldid -S $i  2> /dev/null
+done
+
+# not tested
+for i in $2/Applications/*.app
+do
+	ldid -e $i > /tmp/_ENTS.plist 2> /dev/null
+	if [ $(cat /tmp/_ENTS.plist) == "" ]; then
+		printf '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>platform-application</key><true/><key>com.apple.private.security.no-container</key><true/><key>com.apple.private.security.container-required</key><false/></dict></plist>' > /tmp/_ENTS.plist
+		ldid -S/tmp/_ENTS.plist $2 2> /dev/null
+	elif [[ ! $(cat /tmp/_ENTS.plist) == "*com.apple.private.security.container-required*" ]]; then
+		sed -i ':a;N;$!ba;s/<\/dict>\n<\/plist>/<key>com.apple.private.security.container-required<\/key><false\/><\/dict>\n<\/plist>/g' /tmp/_ENTS.plist
+		ldid -S/tmp/_ENTS.plist $2 2> /dev/null
+	fi
+done
