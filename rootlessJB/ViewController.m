@@ -34,37 +34,37 @@
 }
 
 #define LOG(what, ...) [self log:[NSString stringWithFormat:@what"\n", ##__VA_ARGS__]];\
-                        printf("\t"what"\n", ##__VA_ARGS__)
+printf("\t"what"\n", ##__VA_ARGS__)
 
 #define in_bundle(obj) strdup([[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@obj] UTF8String])
 
 #define failIf(condition, message, ...) if (condition) {\
-                                            LOG(message);\
-                                            goto end;\
-                                        }
+LOG(message);\
+goto end;\
+}
 #define maxVersion(v)  ([[[UIDevice currentDevice] systemVersion] compare:@v options:NSNumericSearch] != NSOrderedDescending)
 
 
 #define fileExists(file) [[NSFileManager defaultManager] fileExistsAtPath:@(file)]
 #define removeFile(file) if (fileExists(file)) {\
-                            [[NSFileManager defaultManager]  removeItemAtPath:@(file) error:&error]; \
-                            if (error) { \
-                                LOG("[-] Error: removing file %s (%s)", file, [[error localizedDescription] UTF8String]); \
-                                error = NULL; \
-                            }\
-                         }
+[[NSFileManager defaultManager]  removeItemAtPath:@(file) error:&error]; \
+if (error) { \
+LOG("[-] Error: removing file %s (%s)", file, [[error localizedDescription] UTF8String]); \
+error = NULL; \
+}\
+}
 
 #define copyFile(copyFrom, copyTo) [[NSFileManager defaultManager] copyItemAtPath:@(copyFrom) toPath:@(copyTo) error:&error]; \
-                                   if (error) { \
-                                       LOG("[-] Error copying item %s to path %s (%s)", copyFrom, copyTo, [[error localizedDescription] UTF8String]); \
-                                       error = NULL; \
-                                   }
+if (error) { \
+LOG("[-] Error copying item %s to path %s (%s)", copyFrom, copyTo, [[error localizedDescription] UTF8String]); \
+error = NULL; \
+}
 
 #define moveFile(copyFrom, moveTo) [[NSFileManager defaultManager] moveItemAtPath:@(copyFrom) toPath:@(moveTo) error:&error]; \
-                                   if (error) {\
-                                       LOG("[-] Error moviing item %s to path %s (%s)", copyFrom, moveTo, [[error localizedDescription] UTF8String]); \
-                                       error = NULL; \
-                                   }
+if (error) {\
+LOG("[-] Error moviing item %s to path %s (%s)", copyFrom, moveTo, [[error localizedDescription] UTF8String]); \
+error = NULL; \
+}
 
 int system_(char *cmd) {
     return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
@@ -78,7 +78,6 @@ int system_(char *cmd) {
 }
 
 - (IBAction)jailbrek:(id)sender {
-    
     //---- tfp0 ----//
     mach_port_t taskforpidzero = MACH_PORT_NULL;
     
@@ -218,7 +217,7 @@ int system_(char *cmd) {
         symlink("/var/containers/Bundle/tweaksupport/usr/libexec", "/var/libexec");
         
         close(open("/var/containers/Bundle/.installed_rootlessJB3", O_CREAT));
-
+        
         LOG("[+] Installed bootstrap!");
     }
     
@@ -253,11 +252,12 @@ int system_(char *cmd) {
         
         removeFile(in_bundle("bins/tester.tar"));
     }
-
+    
     chmod(in_bundle("bins/tester"), 0777); // give it proper permissions
     
     if (launch(in_bundle("bins/tester"), NULL, NULL, NULL, NULL, NULL, NULL, NULL)) {
         failIf(trustbin("/var/containers/Bundle/iosbinpack64"), "[-] Failed to trust binaries!");
+        failIf(trustbin("/var/containers/Bundle/tweaksupport"), "[-] Failed to trust binaries!");
         
         // test
         int ret = launch("/var/containers/Bundle/iosbinpack64/test", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -269,7 +269,7 @@ int system_(char *cmd) {
     }
     
     //---- let's go! ----//
-
+    
     prepare_payload(); // this will chmod 777 everything
     
     //----- setup SSH -----//
@@ -330,20 +330,22 @@ int system_(char *cmd) {
         char *xpcproxy = "/var/libexec/xpcproxy";
         char *dylib = "/var/ulb/pspawn.dylib";
         
-        bool cp = copyFile("/usr/libexec/xpcproxy", xpcproxy);
-        failIf(!cp, "[-] Can't copy xpcproxy!");
-        symlink("/var/containers/Bundle/iosbinpack64/pspawn.dylib", dylib);
-    
-        LOG("[*] Patching xpcproxy");
-        
-        const char *args[] = { "insert_dylib", "--all-yes", "--inplace", "--overwrite", dylib, xpcproxy, NULL};
-        int argn = 6;
-        
-        failIf(add_dylib(argn, args), "[-] Failed to patch xpcproxy :(");
-        
-        LOG("[*] Resigning xpcproxy");
-        
-        failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/xpcproxy"), "[-] Failed to resign xpcproxy!");
+        if (!fileExists(xpcproxy)) {
+            bool cp = copyFile("/usr/libexec/xpcproxy", xpcproxy);
+            failIf(!cp, "[-] Can't copy xpcproxy!");
+            symlink("/var/containers/Bundle/iosbinpack64/pspawn.dylib", dylib);
+            
+            LOG("[*] Patching xpcproxy");
+            
+            const char *args[] = { "insert_dylib", "--all-yes", "--inplace", "--overwrite", dylib, xpcproxy, NULL};
+            int argn = 6;
+            
+            failIf(add_dylib(argn, args), "[-] Failed to patch xpcproxy :(");
+            
+            LOG("[*] Resigning xpcproxy");
+            
+            failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/xpcproxy"), "[-] Failed to resign xpcproxy!");
+        }
         
         chown(xpcproxy, 0, 0);
         chmod(xpcproxy, 755);
@@ -363,16 +365,56 @@ int system_(char *cmd) {
         fvp.v_mntvnodes = rvp.v_mntvnodes;
         fvp.v_ncchildren = rvp.v_ncchildren;
         fvp.v_nclinks = rvp.v_nclinks;
-  
-        KernelWrite(realxpc, &fvp, 248);
         
-        LOG("[?] Are we still alive?!");
+        KernelWrite(realxpc, &fvp, sizeof(struct vnode)); // :o
+        
+        // kernel is smart enough not to fall for a fake amfid :(
+        /*char *amfid = "/var/libexec/amfid";
+         dylib = "/var/ulb/amfid.dylib";
+         
+         if (!fileExists(amfid)) {
+         bool cp = copyFile("/usr/libexec/amfid", amfid);
+         failIf(!cp, "[-] Can't copy xpcproxy!");
+         symlink("/var/containers/Bundle/iosbinpack64/amfid_payload.dylib", dylib);
+         
+         LOG("[*] Patching amfid");
+         
+         const char *args[] = { "insert_dylib", "--all-yes", "--inplace", "--overwrite", dylib, amfid, NULL};
+         int argn = 6;
+         failIf(add_dylib(argn, args), "[-] Failed to patch amfid :(");
+         
+         LOG("[*] Resigning amfid");
+         
+         failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/amfid"), "[-] Failed to resign amfid!");
+         }
+         
+         chown(amfid, 0, 0);
+         chmod(amfid, 755);
+         failIf(trustbin(amfid), "[-] Failed to trust amfid!");
+         
+         realxpc = getVnodeAtPath("/usr/libexec/amfid");
+         fakexpc = getVnodeAtPath(amfid);
+         
+         KernelRead(realxpc, &rvp, sizeof(struct vnode));
+         KernelRead(fakexpc, &fvp, sizeof(struct vnode));
+         
+         fvp.v_usecount = rvp.v_usecount;
+         fvp.v_kusecount = rvp.v_kusecount;
+         fvp.v_parent = rvp.v_parent;
+         fvp.v_freelist = rvp.v_freelist;
+         fvp.v_mntvnodes = rvp.v_mntvnodes;
+         fvp.v_ncchildren = rvp.v_ncchildren;
+         fvp.v_nclinks = rvp.v_nclinks;
+         
+         KernelWrite(realxpc, &fvp, 248);
+         
+         LOG("[?] Are we still alive?!");*/
         
         //----- magic end here -----//
         
         // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
-        
+        pid_t bb = pid_of_procName("backboardd");
         LOG("[+] Really jailbroken!");
         term_jelbrek();
         
@@ -386,26 +428,27 @@ int system_(char *cmd) {
         }
         
         // bye bye
-        launch("/var/containers/Bundle/iosbinpack64/bin/bash", "-c", "/var/containers/Bundle/iosbinpack64/usr/bin/nohup /var/containers/Bundle/iosbinpack64/bin/bash -c \"/var/containers/Bundle/iosbinpack64/bin/launchctl unload /System/Library/LaunchDaemons/com.apple.backboardd.plist && /var/containers/Bundle/iosbinpack64/usr/bin/ldrestart; /var/containers/Bundle/iosbinpack64/bin/launchctl load /System/Library/LaunchDaemons/com.apple.backboardd.plist\" 2>&1 >/dev/null &", NULL, NULL, NULL, NULL, NULL);
+        kill(bb, 9);
+        //launch("/var/containers/Bundle/iosbinpack64/bin/bash", "-c", "/var/containers/Bundle/iosbinpack64/usr/bin/nohup /var/containers/Bundle/iosbinpack64/bin/bash -c \"/var/containers/Bundle/iosbinpack64/bin/launchctl unload /System/Library/LaunchDaemons/com.apple.backboardd.plist && /var/containers/Bundle/iosbinpack64/usr/bin/ldrestart; /var/containers/Bundle/iosbinpack64/bin/launchctl load /System/Library/LaunchDaemons/com.apple.backboardd.plist\" 2>&1 >/dev/null &", NULL, NULL, NULL, NULL, NULL);
         exit(0);
     }
     
     /// FIX THIS
     /*
-    pid_t installd = pid_of_procName("installd");
-    failIf(!installd, "[-] Can't find installd's pid");
-    
-    failIf(!setcsflags(installd), "[-] Failed to entitle installd");
-    failIf(!entitlePidOnAMFI(installd, "get-task-allow", true), "[-] Failed to entitle installd");
-    failIf(!entitlePidOnAMFI(installd, "com.apple.private.skip-library-validation", true), "[-] Failed to entitle installd");
-    
-    inject_dylib(installd, "/var/containers/Bundle/tweaksupport/usr/lib/TweakInject/AppSyncUnified.dylib");
-    
-    if ([self.installiSuperSU isOn]) {
-        LOG("[*] Installing iSuperSU");
-        copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
-        launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-    } */
+     pid_t installd = pid_of_procName("installd");
+     failIf(!installd, "[-] Can't find installd's pid");
+     
+     failIf(!setcsflags(installd), "[-] Failed to entitle installd");
+     failIf(!entitlePidOnAMFI(installd, "get-task-allow", true), "[-] Failed to entitle installd");
+     failIf(!entitlePidOnAMFI(installd, "com.apple.private.skip-library-validation", true), "[-] Failed to entitle installd");
+     
+     inject_dylib(installd, "/var/containers/Bundle/tweaksupport/usr/lib/TweakInject/AppSyncUnified.dylib");
+     
+     if ([self.installiSuperSU isOn]) {
+     LOG("[*] Installing iSuperSU");
+     copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
+     launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+     } */
     
     LOG("[+] Jailbreak succeeded. Enjoy");
     
@@ -523,3 +566,4 @@ end:;
 
 
 @end
+
