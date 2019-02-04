@@ -24,6 +24,7 @@
 		825D33B62136B4E9008723F8 /* payload.c in Sources */ = {isa = PBXBuildFile; fileRef = 825D33B42136B4E9008723F8 /* payload.c */; };
 		825D33B92136C284008723F8 /* offsetsDump.c in Sources */ = {isa = PBXBuildFile; fileRef = 825D33B72136C284008723F8 /* offsetsDump.c */; };
 		82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48B22065E03005E4572 /* kernel_alloc.c */; };
+		82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48F2208B4E7005E4572 /* insert_dylib.c */; };
 		CEA5D6DA220649B700075088 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CD220649B700075088 /* log.c */; };
 		CEA5D6DB220649B700075088 /* parameters.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CE220649B700075088 /* parameters.c */; };
 		CEA5D6DC220649B700075088 /* platform_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CF220649B700075088 /* platform_match.c */; };
@@ -81,6 +82,9 @@
 		825D33B82136C284008723F8 /* offsetsDump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = offsetsDump.h; sourceTree = "<group>"; };
 		82DAE48A22065E03005E4572 /* kernel_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_alloc.h; sourceTree = "<group>"; };
 		82DAE48B22065E03005E4572 /* kernel_alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kernel_alloc.c; sourceTree = "<group>"; };
+		82DAE48F2208B4E7005E4572 /* insert_dylib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = insert_dylib.c; sourceTree = "<group>"; };
+		82DAE4902208B4E7005E4572 /* insert_dylib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = insert_dylib.h; sourceTree = "<group>"; };
+		82DAE4922208BA90005E4572 /* vnode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
 		CEA5D6CC220649B700075088 /* kernel_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_memory.h; sourceTree = "<group>"; };
 		CEA5D6CD220649B700075088 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		CEA5D6CE220649B700075088 /* parameters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parameters.c; sourceTree = "<group>"; };
@@ -158,12 +162,15 @@
 				820FA9FD213589AF004E38D8 /* AppDelegate.m */,
 				820FA9FF213589AF004E38D8 /* ViewController.h */,
 				820FAA00213589AF004E38D8 /* ViewController.m */,
+				82DAE4922208BA90005E4572 /* vnode.h */,
 				825D33912135D17E008723F8 /* jelbrekLib.h */,
 				825D33AA2136A1F7008723F8 /* libjb.h */,
 				825D33B42136B4E9008723F8 /* payload.c */,
 				825D33B52136B4E9008723F8 /* payload.h */,
 				825D33B72136C284008723F8 /* offsetsDump.c */,
 				825D33B82136C284008723F8 /* offsetsDump.h */,
+				82DAE48F2208B4E7005E4572 /* insert_dylib.c */,
+				82DAE4902208B4E7005E4572 /* insert_dylib.h */,
 				820FAA02213589AF004E38D8 /* Main.storyboard */,
 				820FAA05213589AF004E38D8 /* Assets.xcassets */,
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
@@ -386,6 +393,7 @@
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
+				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
 				825D33B92136C284008723F8 /* offsetsDump.c in Sources */,
 				CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */,
 				CEA5D6DC220649B700075088 /* platform_match.c in Sources */,
