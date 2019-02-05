@@ -24,13 +24,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
 
-//@property (weak, nonatomic) IBOutlet UITextView *logs;
+@property (weak, nonatomic) IBOutlet UITextView *logs;
 @end
 
 @implementation ViewController
 
 -(void)log:(NSString*)log {
-//    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
 }
 
 #define LOG(what, ...) [self log:[NSString stringWithFormat:@what"\n", ##__VA_ARGS__]];\
@@ -77,8 +77,7 @@ int system_(char *cmd) {
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (IBAction)jailbreak:(id)sender {
-    [self.jailbreakButton setTitle:@"Jailbreaking" forState:UIControlStateNormal];
+- (IBAction)jailbrek:(id)sender {
     //---- tfp0 ----//
     mach_port_t taskforpidzero = MACH_PORT_NULL;
     
@@ -458,8 +457,6 @@ end:;
     if (sb) sandbox(getpid(), sb);
     term_jelbrek();
 }
-
-
 - (IBAction)uninstall:(id)sender {
     //---- tfp0 ----//
     mach_port_t taskforpidzero = MACH_PORT_NULL;
