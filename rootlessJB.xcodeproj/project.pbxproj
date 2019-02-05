@@ -25,6 +25,18 @@
 		825D33B92136C284008723F8 /* offsetsDump.c in Sources */ = {isa = PBXBuildFile; fileRef = 825D33B72136C284008723F8 /* offsetsDump.c */; };
 		82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48B22065E03005E4572 /* kernel_alloc.c */; };
 		82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48F2208B4E7005E4572 /* insert_dylib.c */; };
+		86DA00EF220A445C00BA66F0 /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00ED220A445C00BA66F0 /* Gradient.swift */; };
+		86DA00F0220A445C00BA66F0 /* UIView+Rounded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00EE220A445C00BA66F0 /* UIView+Rounded.swift */; };
+		86DA00FC220A464B00BA66F0 /* UIViewXRadialGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F2220A464B00BA66F0 /* UIViewXRadialGradient.swift */; };
+		86DA00FD220A464B00BA66F0 /* UITextFieldX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F3220A464B00BA66F0 /* UITextFieldX.swift */; };
+		86DA00FE220A464B00BA66F0 /* UIButtonX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F4220A464B00BA66F0 /* UIButtonX.swift */; };
+		86DA00FF220A464B00BA66F0 /* UILabelX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F5220A464B00BA66F0 /* UILabelX.swift */; };
+		86DA0100220A464C00BA66F0 /* UIViewAnchorPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F6220A464B00BA66F0 /* UIViewAnchorPoint.swift */; };
+		86DA0101220A464C00BA66F0 /* UIViewControllerX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F7220A464B00BA66F0 /* UIViewControllerX.swift */; };
+		86DA0102220A464C00BA66F0 /* UIImageViewX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F8220A464B00BA66F0 /* UIImageViewX.swift */; };
+		86DA0103220A464C00BA66F0 /* UIViewX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00F9220A464B00BA66F0 /* UIViewX.swift */; };
+		86DA0104220A464C00BA66F0 /* UIVisualEffectViewX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00FA220A464B00BA66F0 /* UIVisualEffectViewX.swift */; };
+		86DA0105220A464C00BA66F0 /* UISliderX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DA00FB220A464B00BA66F0 /* UISliderX.swift */; };
 		CEA5D6DA220649B700075088 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CD220649B700075088 /* log.c */; };
 		CEA5D6DB220649B700075088 /* parameters.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CE220649B700075088 /* parameters.c */; };
 		CEA5D6DC220649B700075088 /* platform_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CF220649B700075088 /* platform_match.c */; };
@@ -85,6 +97,19 @@
 		82DAE48F2208B4E7005E4572 /* insert_dylib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = insert_dylib.c; sourceTree = "<group>"; };
 		82DAE4902208B4E7005E4572 /* insert_dylib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = insert_dylib.h; sourceTree = "<group>"; };
 		82DAE4922208BA90005E4572 /* vnode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
+		86DA00EC220A445B00BA66F0 /* rootlessJB-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "rootlessJB-Bridging-Header.h"; sourceTree = "<group>"; };
+		86DA00ED220A445C00BA66F0 /* Gradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
+		86DA00EE220A445C00BA66F0 /* UIView+Rounded.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Rounded.swift"; sourceTree = "<group>"; };
+		86DA00F2220A464B00BA66F0 /* UIViewXRadialGradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewXRadialGradient.swift; sourceTree = "<group>"; };
+		86DA00F3220A464B00BA66F0 /* UITextFieldX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITextFieldX.swift; sourceTree = "<group>"; };
+		86DA00F4220A464B00BA66F0 /* UIButtonX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonX.swift; sourceTree = "<group>"; };
+		86DA00F5220A464B00BA66F0 /* UILabelX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILabelX.swift; sourceTree = "<group>"; };
+		86DA00F6220A464B00BA66F0 /* UIViewAnchorPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewAnchorPoint.swift; sourceTree = "<group>"; };
+		86DA00F7220A464B00BA66F0 /* UIViewControllerX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerX.swift; sourceTree = "<group>"; };
+		86DA00F8220A464B00BA66F0 /* UIImageViewX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewX.swift; sourceTree = "<group>"; };
+		86DA00F9220A464B00BA66F0 /* UIViewX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewX.swift; sourceTree = "<group>"; };
+		86DA00FA220A464B00BA66F0 /* UIVisualEffectViewX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIVisualEffectViewX.swift; sourceTree = "<group>"; };
+		86DA00FB220A464B00BA66F0 /* UISliderX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISliderX.swift; sourceTree = "<group>"; };
 		CEA5D6CC220649B700075088 /* kernel_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_memory.h; sourceTree = "<group>"; };
 		CEA5D6CD220649B700075088 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		CEA5D6CE220649B700075088 /* parameters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parameters.c; sourceTree = "<group>"; };
@@ -156,6 +181,9 @@
 		820FA9FB213589AF004E38D8 /* rootlessJB */ = {
 			isa = PBXGroup;
 			children = (
+				86DA00F1220A464B00BA66F0 /* DesignableX */,
+				86DA00ED220A445C00BA66F0 /* Gradient.swift */,
+				86DA00EE220A445C00BA66F0 /* UIView+Rounded.swift */,
 				825D33972135D2B8008723F8 /* exploit */,
 				825D33922135D189008723F8 /* libs */,
 				820FA9FC213589AF004E38D8 /* AppDelegate.h */,
@@ -176,6 +204,7 @@
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
 				820FAA0A213589AF004E38D8 /* Info.plist */,
 				820FAA0B213589AF004E38D8 /* main.m */,
+				86DA00EC220A445B00BA66F0 /* rootlessJB-Bridging-Header.h */,
 			);
 			path = rootlessJB;
 			sourceTree = "<group>";
@@ -222,6 +251,23 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		86DA00F1220A464B00BA66F0 /* DesignableX */ = {
+			isa = PBXGroup;
+			children = (
+				86DA00F2220A464B00BA66F0 /* UIViewXRadialGradient.swift */,
+				86DA00F3220A464B00BA66F0 /* UITextFieldX.swift */,
+				86DA00F4220A464B00BA66F0 /* UIButtonX.swift */,
+				86DA00F5220A464B00BA66F0 /* UILabelX.swift */,
+				86DA00F6220A464B00BA66F0 /* UIViewAnchorPoint.swift */,
+				86DA00F7220A464B00BA66F0 /* UIViewControllerX.swift */,
+				86DA00F8220A464B00BA66F0 /* UIImageViewX.swift */,
+				86DA00F9220A464B00BA66F0 /* UIViewX.swift */,
+				86DA00FA220A464B00BA66F0 /* UIVisualEffectViewX.swift */,
+				86DA00FB220A464B00BA66F0 /* UISliderX.swift */,
+			);
+			path = DesignableX;
 			sourceTree = "<group>";
 		};
 		CEA5D6CB220649B700075088 /* voucher_swap */ = {
@@ -315,6 +361,7 @@
 				TargetAttributes = {
 					820FA9F8213589AF004E38D8 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 					820FAA10213589AF004E38D8 = {
@@ -384,17 +431,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86DA00FC220A464B00BA66F0 /* UIViewXRadialGradient.swift in Sources */,
 				82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */,
+				86DA0104220A464C00BA66F0 /* UIVisualEffectViewX.swift in Sources */,
 				CEA5D6E0220649B700075088 /* kernel_slide.c in Sources */,
 				CEA5D6DA220649B700075088 /* log.c in Sources */,
 				CEA5D6DB220649B700075088 /* parameters.c in Sources */,
+				86DA00F0220A445C00BA66F0 /* UIView+Rounded.swift in Sources */,
+				86DA0105220A464C00BA66F0 /* UISliderX.swift in Sources */,
 				820FAA01213589AF004E38D8 /* ViewController.m in Sources */,
+				86DA00FF220A464B00BA66F0 /* UILabelX.swift in Sources */,
+				86DA00EF220A445C00BA66F0 /* Gradient.swift in Sources */,
+				86DA00FE220A464B00BA66F0 /* UIButtonX.swift in Sources */,
 				820FAA0C213589AF004E38D8 /* main.m in Sources */,
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
+				86DA00FD220A464B00BA66F0 /* UITextFieldX.swift in Sources */,
+				86DA0100220A464C00BA66F0 /* UIViewAnchorPoint.swift in Sources */,
 				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
+				86DA0103220A464C00BA66F0 /* UIViewX.swift in Sources */,
+				86DA0101220A464C00BA66F0 /* UIViewControllerX.swift in Sources */,
 				825D33B92136C284008723F8 /* offsetsDump.c in Sources */,
+				86DA0102220A464C00BA66F0 /* UIImageViewX.swift in Sources */,
 				CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */,
 				CEA5D6DC220649B700075088 /* platform_match.c in Sources */,
 				820FA9FE213589AF004E38D8 /* AppDelegate.m in Sources */,
@@ -560,19 +619,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/rootlessJB/libs",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/libs",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/payloads_source/pspawn_payload",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/payloads_source/pspawn_payload/bin",
 				);
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "rootlessJB/rootlessJB-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -581,19 +647,25 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/rootlessJB/libs",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/libs",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/payloads_source/pspawn_payload",
+					"$(PROJECT_DIR)/rootlessJB/rootlessJB/payloads_source/pspawn_payload/bin",
 				);
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "rootlessJB/rootlessJB-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -601,9 +673,10 @@
 		820FAA29213589AF004E38D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBTests;
@@ -616,9 +689,10 @@
 		820FAA2A213589AF004E38D8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBTests;
@@ -631,8 +705,9 @@
 		820FAA2C213589AF004E38D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBUITests;
@@ -645,8 +720,9 @@
 		820FAA2D213589AF004E38D8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBUITests;

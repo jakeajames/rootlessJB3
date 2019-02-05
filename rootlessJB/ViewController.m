@@ -28,6 +28,10 @@
 @end
 
 @implementation ViewController
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 -(void)log:(NSString*)log {
     self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
