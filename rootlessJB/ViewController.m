@@ -418,7 +418,7 @@ int system_(char *cmd) {
         
         fixMmap("/var/ulb/libsubstitute.dylib");
         fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
-        fixMmap("/var/LIB/MobileSubstrate/DynamicLbraries/AppSyncUnified.dylib");
+        fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
         
         if (installd) kill(installd, SIGKILL);
         
@@ -427,13 +427,13 @@ int system_(char *cmd) {
             
             copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
             
-            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU && inject /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU && /var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
             
             
             // just in case
             fixMmap("/var/ulb/libsubstitute.dylib");
             fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
-            fixMmap("/var/LIB/MobileSubstrate/DynamicLbraries/AppSyncUnified.dylib");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
             
             failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
         }
