@@ -72,8 +72,6 @@ int system_(char *cmd) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.installiSuperSU setEnabled:false];
-    [self.installiSuperSU setOn:false];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -418,13 +416,28 @@ int system_(char *cmd) {
         LOG("[+] Really jailbroken!");
         term_jelbrek();
         
+
         // AppSync
+        
+        fixMmap("/var/ulb/libsubstitute.dylib");
+        fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+        fixMmap("/var/LIB/MobileSubstrate/DynamicLbraries/AppSyncUnified.dylib");
+        
         if (installd) kill(installd, SIGKILL);
         
         if ([self.installiSuperSU isOn]) {
             LOG("[*] Installing iSuperSU");
+            
             copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
-            launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
+            
+            // just in case
+            fixMmap("/var/ulb/libsubstitute.dylib");
+            fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLbraries/AppSyncUnified.dylib");
+            
+            failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
         }
         
         // bye bye
