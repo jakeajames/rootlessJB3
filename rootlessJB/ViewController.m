@@ -285,6 +285,8 @@ int system_(char *cmd) {
     // kill it if running
     launch("/var/containers/Bundle/iosbinpack64/usr/bin/killall", "-SEGV", "dropbear", NULL, NULL, NULL, NULL, NULL);
     failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "--shell", "/var/containers/Bundle/iosbinpack64/bin/bash", "-E", "-p", "22", NULL), "[-] Failed to launch dropbear");
+    if ("/var/dropbear/")
+        LOG("[+] SSH is all good and running on port 22over wifi and 2222 over USB. Have fun!");
     
     //------------- launch daeamons -------------//
     //-- you can drop any daemon plist in iosbinpack64/LaunchDaemons and it will be loaded automatically --//
