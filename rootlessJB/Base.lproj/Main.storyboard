@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="FLq-hV-sxP">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -54,17 +53,11 @@ Put together by @Jakeashacks :)</string>
                                         <rect key="frame" x="85" y="74" width="145" height="54"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                         <state key="normal" title="Jailbreak!"/>
-                                        <connections>
-                                            <action selector="jailbrek:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jwq-Ec-P4q"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jTQ-DU-ItI">
-                                        <rect key="frame" x="122" y="120" width="70" height="34"/>
+                                        <rect key="frame" x="122.66666666666666" y="120" width="70" height="34"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                         <state key="normal" title="Uninstall"/>
-                                        <connections>
-                                            <action selector="uninstall:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7uA-tG-wu1"/>
-                                        </connections>
                                     </button>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="g95-o5-49y">
                                         <rect key="frame" x="57" y="1" width="51" height="31"/>
@@ -112,16 +105,164 @@ Put together by @Jakeashacks :)</string>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <connections>
-                        <outlet property="enableTweaks" destination="du2-Os-GbV" id="hFO-S0-DRb"/>
-                        <outlet property="installiSuperSU" destination="g95-o5-49y" id="6uH-wE-KSP"/>
-                        <outlet property="jailbreakButton" destination="8BR-Lg-oOm" id="NnW-YN-28w"/>
-                        <outlet property="logs" destination="atM-2i-eQj" id="LLd-9z-Ldu"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="112.8" y="114.53201970443351"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="FZB-W9-eQr">
+            <objects>
+                <viewController id="FLq-hV-sxP" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4M2-1J-q2m">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="axi-vilcinschi-1269615-unsplash" translatesAutoresizingMaskIntoConstraints="NO" id="WCD-CH-TD0">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="rootlessJB" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UnD-Ur-APx">
+                                <rect key="frame" x="106" y="44" width="163" height="37"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="31"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ST0-TB-zcc" customClass="RoundedVisualEffectView" customModule="rootlessJB">
+                                <rect key="frame" x="65" y="379.66666666666669" width="245" height="63"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aFl-DB-AFF">
+                                    <rect key="frame" x="0.0" y="0.0" width="245" height="63"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MIq-dv-EPK">
+                                            <rect key="frame" x="0.0" y="0.0" width="245" height="63"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
+                                            <state key="normal" title="Jailbreak">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="jailbreak:" destination="FLq-hV-sxP" eventType="touchUpInside" id="Ip7-IV-qYO"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="MIq-dv-EPK" secondAttribute="trailing" id="1BP-Jh-sGK"/>
+                                        <constraint firstAttribute="bottom" secondItem="MIq-dv-EPK" secondAttribute="bottom" id="7oL-I0-HG0"/>
+                                        <constraint firstItem="MIq-dv-EPK" firstAttribute="leading" secondItem="aFl-DB-AFF" secondAttribute="leading" id="Pg2-Vz-dag"/>
+                                        <constraint firstItem="MIq-dv-EPK" firstAttribute="top" secondItem="aFl-DB-AFF" secondAttribute="top" id="hq8-ql-BJa"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="245" id="T7L-16-8K7"/>
+                                    <constraint firstAttribute="height" constant="63" id="iPf-RT-mWw"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="rounded" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </visualEffectView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Created by @Jakeashacks" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOr-PC-Pco">
+                                <rect key="frame" x="70.666666666666686" y="755" width="234" height="23"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS 12.0 - 12.1.2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TKG-Pe-UWp">
+                                <rect key="frame" x="132.66666666666666" y="94" width="110" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hn3-sn-04n">
+                                <rect key="frame" x="65" y="653.66666666666663" width="245" height="93.333333333333371"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="245" id="ohX-ux-mu4"/>
+                                </constraints>
+                                <string key="text">Exploits by Ian Beer and bazad
+
+Post exploitation is mostly from Electra, and things from my own.
+
+Powered by #jelbrekLib</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b7p-sH-1WJ">
+                                <rect key="frame" x="152.66666666666666" y="452.66666666666669" width="70" height="33"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                <state key="normal" title="Uninstall">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="uninstall:" destination="FLq-hV-sxP" eventType="touchUpInside" id="AaU-p1-EPr"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O9P-ot-QTR">
+                                <rect key="frame" x="261" y="326.66666666666669" width="51" height="31"/>
+                                <color key="onTintColor" red="1" green="0.0" blue="0.15686274509803921" alpha="0.38" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tweaks" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u5z-oA-BjM">
+                                <rect key="frame" x="65" y="332.33333333333331" width="70.666666666666686" height="25.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RKf-6w-Wsp">
+                                <rect key="frame" x="261" y="288" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iSuperSU" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rOK-J9-Vh3">
+                                <rect key="frame" x="65" y="294" width="89" height="25.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="rOK-J9-Vh3" firstAttribute="leading" secondItem="Fdj-PN-ieJ" secondAttribute="leading" constant="65" id="0uA-6u-cA3"/>
+                            <constraint firstItem="u5z-oA-BjM" firstAttribute="top" secondItem="rOK-J9-Vh3" secondAttribute="bottom" constant="13.33" id="3B8-C0-BUk"/>
+                            <constraint firstItem="ST0-TB-zcc" firstAttribute="top" secondItem="u5z-oA-BjM" secondAttribute="bottom" constant="21.670000000000002" id="776-sE-fah"/>
+                            <constraint firstItem="O9P-ot-QTR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="u5z-oA-BjM" secondAttribute="trailing" symbolic="YES" id="7pl-0n-iZH"/>
+                            <constraint firstItem="WCD-CH-TD0" firstAttribute="trailing" secondItem="Fdj-PN-ieJ" secondAttribute="trailing" id="8A6-ea-uhw"/>
+                            <constraint firstItem="UOr-PC-Pco" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="8Uz-2V-YIE"/>
+                            <constraint firstAttribute="bottom" secondItem="WCD-CH-TD0" secondAttribute="bottom" id="9lX-AA-b1a"/>
+                            <constraint firstItem="UnD-Ur-APx" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="APR-3A-310"/>
+                            <constraint firstItem="UnD-Ur-APx" firstAttribute="top" secondItem="Fdj-PN-ieJ" secondAttribute="top" id="EZz-yo-oXp"/>
+                            <constraint firstItem="b7p-sH-1WJ" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="HZT-7h-N23"/>
+                            <constraint firstItem="ST0-TB-zcc" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="Q5B-bK-q7I"/>
+                            <constraint firstItem="TKG-Pe-UWp" firstAttribute="top" secondItem="UnD-Ur-APx" secondAttribute="bottom" constant="13" id="Seg-Ox-F05"/>
+                            <constraint firstItem="O9P-ot-QTR" firstAttribute="top" secondItem="RKf-6w-Wsp" secondAttribute="bottom" constant="7.6699999999999999" id="Top-Yk-ZyP"/>
+                            <constraint firstItem="ST0-TB-zcc" firstAttribute="top" secondItem="O9P-ot-QTR" secondAttribute="bottom" constant="21.670000000000002" id="VYF-PG-fSP"/>
+                            <constraint firstItem="TKG-Pe-UWp" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="X6t-7f-Puu"/>
+                            <constraint firstItem="WCD-CH-TD0" firstAttribute="leading" secondItem="Fdj-PN-ieJ" secondAttribute="leading" id="Zue-QQ-cYH"/>
+                            <constraint firstItem="WCD-CH-TD0" firstAttribute="top" secondItem="4M2-1J-q2m" secondAttribute="top" id="cbw-rZ-apX"/>
+                            <constraint firstItem="b7p-sH-1WJ" firstAttribute="top" secondItem="ST0-TB-zcc" secondAttribute="bottom" constant="10.33" id="fYe-T0-uwG"/>
+                            <constraint firstItem="Fdj-PN-ieJ" firstAttribute="trailing" secondItem="O9P-ot-QTR" secondAttribute="trailing" constant="65" id="fhH-EY-YCI"/>
+                            <constraint firstItem="Hn3-sn-04n" firstAttribute="centerX" secondItem="Fdj-PN-ieJ" secondAttribute="centerX" id="hBR-lQ-DWk"/>
+                            <constraint firstItem="Fdj-PN-ieJ" firstAttribute="trailing" secondItem="RKf-6w-Wsp" secondAttribute="trailing" constant="65" id="iCT-Ja-Po8"/>
+                            <constraint firstItem="RKf-6w-Wsp" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rOK-J9-Vh3" secondAttribute="trailing" symbolic="YES" id="kJS-mE-pse"/>
+                            <constraint firstItem="ST0-TB-zcc" firstAttribute="centerY" secondItem="Fdj-PN-ieJ" secondAttribute="centerY" id="nT5-RA-YzA"/>
+                            <constraint firstItem="u5z-oA-BjM" firstAttribute="leading" secondItem="Fdj-PN-ieJ" secondAttribute="leading" constant="65" id="vlr-Oq-S3n"/>
+                            <constraint firstItem="UOr-PC-Pco" firstAttribute="bottom" secondItem="Fdj-PN-ieJ" secondAttribute="bottom" id="wvM-GN-I6j"/>
+                            <constraint firstItem="UOr-PC-Pco" firstAttribute="top" secondItem="Hn3-sn-04n" secondAttribute="bottom" constant="8" id="yNA-Vy-fZT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Fdj-PN-ieJ"/>
+                    </view>
+                    <connections>
+                        <outlet property="enableTweaks" destination="O9P-ot-QTR" id="VpJ-tz-PCd"/>
+                        <outlet property="installiSuperSU" destination="RKf-6w-Wsp" id="XGg-D2-gkJ"/>
+                        <outlet property="jailbreakButton" destination="MIq-dv-EPK" id="PBQ-Pe-eGr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jqa-SF-E9m" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-724" y="114.53201970443351"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="axi-vilcinschi-1269615-unsplash" width="4763" height="3175"/>
+    </resources>
 </document>
