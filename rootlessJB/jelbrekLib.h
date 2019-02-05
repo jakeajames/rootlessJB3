@@ -479,3 +479,26 @@ int setAmfidExceptionHandler(mach_port_t amfid_task_port, void *(exceptionHandle
     On success: Address to the original MISValidateSignatureAndCopyInfo of amfid
  */
 uint64_t patchAMFID(void);
+
+
+/*
+ Purpose:
+    Make a path invisible
+ Parameters:
+    path
+ Return value:
+    true: Success
+    false: Failure
+ */
+BOOL hidePath(char *path);
+
+/*
+ Purpose:
+    Allow mmap of executable from every process with read access to it
+ Parameters:
+    path
+ Return value:
+    true: Success
+    false: Failure
+ */
+BOOL fixMmap(char *path);
