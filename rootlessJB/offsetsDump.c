@@ -9,6 +9,8 @@
 #include "offsetsDump.h"
 #include <sys/fcntl.h>
 #include <unistd.h>
+#include <stdbool.h>
+typedef bool BOOL;
 
 #include "jelbrekLib.h"
 
