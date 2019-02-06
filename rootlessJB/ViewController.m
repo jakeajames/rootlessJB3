@@ -5,7 +5,7 @@
 //  Created by Jake James on 8/28/18.
 //  Copyright © 2018 Jake James. All rights reserved.
 //
-
+ 
 #import "ViewController.h"
 #import "jelbrekLib.h"
 #import "exploit/voucher_swap/voucher_swap.h"
@@ -72,13 +72,10 @@ int system_(char *cmd) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.installiSuperSU setEnabled:false];
-    [self.installiSuperSU setOn:false];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (IBAction)jailbreak:(id)sender {
-    [self.jailbreakButton setTitle:@"Jailbreaking" forState:UIControlStateNormal];
     //---- tfp0 ----//
     mach_port_t taskforpidzero = MACH_PORT_NULL;
     
@@ -416,17 +413,34 @@ int system_(char *cmd) {
         // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
         pid_t bb = pid_of_procName("backboardd");
-        LOG("[+] Really jailbroken!");
-        term_jelbrek();
         
         // AppSync
+        
+        fixMmap("/var/ulb/libsubstitute.dylib");
+        fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+        fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+        
         if (installd) kill(installd, SIGKILL);
         
         if ([self.installiSuperSU isOn]) {
             LOG("[*] Installing iSuperSU");
+            
+            removeFile("/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
             copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
-            launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU && /var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
+            
+            
+            // just in case
+            fixMmap("/var/ulb/libsubstitute.dylib");
+            fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+            
+            failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
         }
+        
+        LOG("[+] Really jailbroken!");
+        term_jelbrek();
         
         // bye bye
         kill(bb, 9);
@@ -569,4 +583,3 @@ end:;
 
 
 @end
-

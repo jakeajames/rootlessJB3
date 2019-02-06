@@ -127,7 +127,7 @@ Put together by @Jakeashacks :)</string>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ST0-TB-zcc" customClass="RoundedVisualEffectView" customModule="rootlessJB">
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ST0-TB-zcc" customClass="RoundVisualEffectView" customModule="rootlessJB" customModuleProvider="target">
                                 <rect key="frame" x="65" y="379.66666666666669" width="245" height="63"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aFl-DB-AFF">
                                     <rect key="frame" x="0.0" y="0.0" width="245" height="63"/>
@@ -140,7 +140,7 @@ Put together by @Jakeashacks :)</string>
                                                 <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </state>
                                             <connections>
-                                                <action selector="jailbreak:" destination="FLq-hV-sxP" eventType="touchUpInside" id="Ip7-IV-qYO"/>
+                                                <action selector="jailbreak:" destination="FLq-hV-sxP" eventType="touchUpInside" id="VK5-w5-zRi"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -157,7 +157,6 @@ Put together by @Jakeashacks :)</string>
                                 </constraints>
                                 <blurEffect style="light"/>
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="rounded" value="YES"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                         <real key="value" value="10"/>
                                     </userDefinedRuntimeAttribute>
