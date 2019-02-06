@@ -1,0 +1,49 @@
+{
+    "controllerName": "GDFormLoginViewController", 
+    "grouped": true, 
+    "sections": [
+        {
+            "elements": [
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:server", 
+                    "key": "server", 
+                    "keyboardType": "URL", 
+                    "placeholder": "example.com/webdav", 
+                    "title": "Server", 
+                    "type": "QEntryElement"
+                },
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:username", 
+                    "key": "username", 
+                    "keyboardType": "Default", 
+                    "placeholder": "Optional", 
+                    "title": "Username",
+                    "type": "QEntryElement"
+                }, 
+                {
+                    "bind": "textValue:password", 
+                    "placeholder": "Optional", 
+                    "secureTextEntry": true, 
+                    "title": "Password", 
+                    "type": "QEntryElement"
+                }
+            ],
+             "headerImage": "WebDAV"
+        },
+        {
+            "elements": [
+                {
+                    "controllerAction": "buttonTapped:", 
+                    "key": "button", 
+                    "title": "Connect", 
+                    "type": "QButtonElement"
+                }
+            ]
+        }
+    ], 
+    "title": "WebDAV"
+}

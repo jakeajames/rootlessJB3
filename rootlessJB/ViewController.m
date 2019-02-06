@@ -23,16 +23,23 @@
 @property (weak, nonatomic) IBOutlet UISwitch *enableTweaks;
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
+@property (weak, nonatomic) IBOutlet UISwitch *installFilza;
+@property (weak, nonatomic) IBOutlet UISwitch *showLogs;
+@property (weak, nonatomic) IBOutlet UITextView *logs;
 
-//@property (weak, nonatomic) IBOutlet UITextView *logs;
 @end
 
 @implementation ViewController
+int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 -(void)log:(NSString*)log {
-//    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+    if ([_showLogs isOn]) {
+        self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+    }
 }
 
+#define CS_OPS_STATUS       0
+#define CS_PLATFORM_BINARY    0x4000000
 #define LOG(what, ...) [self log:[NSString stringWithFormat:@what"\n", ##__VA_ARGS__]];\
 printf("\t"what"\n", ##__VA_ARGS__)
 
@@ -72,6 +79,21 @@ int system_(char *cmd) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    uint32_t flags;
+    csops(getpid(), CS_OPS_STATUS, &flags, 0);
+    
+    if ((flags & CS_PLATFORM_BINARY)) {
+        [_jailbreakButton setTitle:@"Jailbroken" forState:UIControlStateNormal];
+        [_jailbreakButton setUserInteractionEnabled:NO];
+        [_installFilza setUserInteractionEnabled:NO];
+        [_installFilza setEnabled:NO];
+        [_enableTweaks setUserInteractionEnabled:NO];
+        [_enableTweaks setEnabled:NO];
+        [_installiSuperSU setUserInteractionEnabled:NO];
+        [_installiSuperSU setEnabled:NO];
+        [_showLogs setUserInteractionEnabled:NO];
+        [_showLogs setEnabled:NO];
+    }
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -437,6 +459,23 @@ int system_(char *cmd) {
             fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
             
             failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
+        }
+        
+        if ([self.installFilza isOn]) {
+            LOG("[*] Installing Filza");
+            
+            removeFile("/var/containers/Bundle/tweaksupport/Applications/Filza.app");
+            copyFile(in_bundle("apps/Filza.app"), "/var/containers/Bundle/tweaksupport/Applications/Filza.app");
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/Filza.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/Filza.app/Filza && /var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/Applications/Filza.app/Filza"), "[-] Failed to sign Filza");
+            
+            
+            // just in case
+            fixMmap("/var/ulb/libsubstitute.dylib");
+            fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+            
+            failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install Filza");
         }
         
         LOG("[+] Really jailbroken!");
