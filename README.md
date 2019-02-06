@@ -1,3 +1,7 @@
+# Fork Details
+- Different UI
+- custom bins to inject
+
 # Description
 
 Blah blah, read this: [How to make a jailbreak without a filesystem remount as r/w](https://github.com/jakeajames/rootlessJB/blob/master/writeup.pdf)
