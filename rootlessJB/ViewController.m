@@ -24,13 +24,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
 
-@property (weak, nonatomic) IBOutlet UITextView *logs;
+//@property (weak, nonatomic) IBOutlet UITextView *logs;
 @end
 
 @implementation ViewController
 
 -(void)log:(NSString*)log {
-    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+//    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
 }
 
 #define LOG(what, ...) [self log:[NSString stringWithFormat:@what"\n", ##__VA_ARGS__]];\
@@ -75,7 +75,7 @@ int system_(char *cmd) {
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (IBAction)jailbrek:(id)sender {
+- (IBAction)jailbreak:(id)sender {
     //---- tfp0 ----//
     mach_port_t taskforpidzero = MACH_PORT_NULL;
     
@@ -413,7 +413,7 @@ int system_(char *cmd) {
         // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
         pid_t bb = pid_of_procName("backboardd");
-
+        
         // AppSync
         
         fixMmap("/var/ulb/libsubstitute.dylib");
