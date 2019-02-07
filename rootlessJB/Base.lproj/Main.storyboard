@@ -239,7 +239,7 @@ Powered by #jelbrekLib</string>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sv4-6a-2q7">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sv4-6a-2q7">
                                 <rect key="frame" x="261" y="248" width="51" height="31"/>
                                 <color key="onTintColor" red="1" green="0.0" blue="0.15686274510000001" alpha="0.38" colorSpace="custom" customColorSpace="sRGB"/>
                             </switch>

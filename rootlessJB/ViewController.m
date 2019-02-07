@@ -221,6 +221,14 @@ int system_(char *cmd) {
         untar(bootstrap, "/var/containers/Bundle/");
         fclose(bootstrap);
         
+        /*
+         
+         Not required, implemented into the bootstrap.
+        FILE *dpkg = fopen((char*)in_bundle("tars/dpkg.tar"), "r");
+        untar(dpkg, "/var/containers/Bundle/iosbinpack64/usr/bin/");
+        fclose(dpkg);
+        */
+        
         FILE *tweaks = fopen((char*)in_bundle("tars/tweaksupport.tar"), "r");
         untar(tweaks, "/var/containers/Bundle/");
         fclose(tweaks);
