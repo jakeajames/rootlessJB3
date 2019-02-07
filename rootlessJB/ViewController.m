@@ -170,28 +170,25 @@ int system_(char *cmd) {
     //---- bootstrap ----//
     if (!fileExists("/var/containers/Bundle/.installed_rootlessJB3")) {
         
-        if (fileExists("/var/containers/Bundle/iosbinpack64")) {
-            
-            LOG("[*] Uninstalling previous build...");
-            
-            removeFile("/var/LIB");
-            removeFile("/var/ulb");
-            removeFile("/var/bin");
-            removeFile("/var/sbin");
-            removeFile("/var/containers/Bundle/tweaksupport/Applications");
-            removeFile("/var/Apps");
-            removeFile("/var/profile");
-            removeFile("/var/motd");
-            removeFile("/var/dropbear");
-            removeFile("/var/containers/Bundle/tweaksupport");
-            removeFile("/var/containers/Bundle/iosbinpack64");
-            removeFile("/var/containers/Bundle/dylibs");
-            removeFile("/var/log/testbin.log");
-            
-            if (fileExists("/var/log/jailbreakd-stdout.log")) removeFile("/var/log/jailbreakd-stdout.log");
-            if (fileExists("/var/log/jailbreakd-stderr.log")) removeFile("/var/log/jailbreakd-stderr.log");
-        }
-        
+        LOG("[*] Uninstalling previous build...");
+
+        if(fileExists("/var/LIB")) removeFile("/var/LIB");
+        if(fileExists("/var/ulb")) removeFile("/var/ulb");
+        if(fileExists("/var/bin")) removeFile("/var/bin");
+        if(fileExists("/var/sbin")) removeFile("/var/sbin");
+        if(fileExists("/var/containers/Bundle/tweaksupport/Applications")) removeFile("/var/containers/Bundle/tweaksupport/Applications");
+        if(fileExists("/var/Apps")) removeFile("/var/Apps");
+        if(fileExists("/var/profile")) removeFile("/var/profile");
+        if(fileExists("/var/motd")) removeFile("/var/motd");
+        if(fileExists("/var/dropbear")) removeFile("/var/dropbear");
+        if(fileExists("/var/containers/Bundle/tweaksupport")) removeFile("/var/containers/Bundle/tweaksupport");
+        if(fileExists("/var/containers/Bundle/iosbinpack64")) removeFile("/var/containers/Bundle/iosbinpack64");
+        if(fileExists("/var/containers/Bundle/dylibs")) removeFile("/var/containers/Bundle/dylibs");
+        if(fileExists("/var/log/testbin.log")) removeFile("/var/log/testbin.log");
+
+        if (fileExists("/var/log/jailbreakd-stdout.log")) removeFile("/var/log/jailbreakd-stdout.log");
+        if (fileExists("/var/log/jailbreakd-stderr.log")) removeFile("/var/log/jailbreakd-stderr.log");
+
         LOG("[*] Installing bootstrap...");
         
         chdir("/var/containers/Bundle/");
@@ -279,11 +276,14 @@ int system_(char *cmd) {
     
     copyFile("/var/containers/Bundle/iosbinpack64/etc/profile", "/var/profile");
     copyFile("/var/containers/Bundle/iosbinpack64/etc/motd", "/var/motd");
-    
+    copyFile("/var/containers/Bundle/iosbinpack64/usr/bin/scp", "/var/bin/scp");
+
     // kill it if running
     launch("/var/containers/Bundle/iosbinpack64/usr/bin/killall", "-SEGV", "dropbear", NULL, NULL, NULL, NULL, NULL);
+    LOG("[?] launching SSH...");
     failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "--shell", "/var/containers/Bundle/iosbinpack64/bin/bash", "-E", "-p", "22", NULL), "[-] Failed to launch dropbear");
-    
+    LOG("[*] SSH started successfully");
+
     //------------- launch daeamons -------------//
     //-- you can drop any daemon plist in iosbinpack64/LaunchDaemons and it will be loaded automatically --//
     
@@ -568,7 +568,8 @@ end:;
     removeFile("/var/log/jailbreakd-stdout.log");
     removeFile("/var/log/jailbreakd-stderr.log");
     removeFile("/var/containers/Bundle/.installed_rootlessJB3");
-    
+
+    LOG("[*] Uninstall complete!");
 end:;
     if (sb) sandbox(getpid(), sb);
     term_jelbrek();
