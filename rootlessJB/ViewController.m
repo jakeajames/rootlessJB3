@@ -357,6 +357,30 @@ int system_(char *cmd) {
         failIf(!fileExists("/var/log/testbin.log"), "[-] Failed to load launch daemons");
         failIf(!fileExists("/var/log/jailbreakd-stdout.log"), "[-] Failed to load jailbreakd");
         
+        if (true)
+        {
+            /* Install zip and unrar */
+            LOG("[*] Installing zip, unzip and unrar");
+            
+            chdir("/var/containers/Bundle/tweaksupport/bin/");
+            FILE *zip = fopen((char*)in_bundle("tars/zip.tar"), "r");
+            untar(zip, "/var/containers/Bundle/tweaksupport/bin/");
+            fclose(zip);
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/zip"), "[-] Failed to sign zip");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/unzip"), "[-] Failed to sign unzip");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/zipcloak"), "[-] Failed to sign zipcloak");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/zipsplit"), "[-] Failed to sign zipsplit");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/zipnote"), "[-] Failed to sign zipnote");
+            
+            FILE *unrar = fopen((char*)in_bundle("tars/unrar.tar"), "r");
+            untar(unrar, "/var/containers/Bundle/tweaksupport/bin/");
+            fclose(unrar);
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/bin/unrar"), "[-] Failed to sign unrar");
+            
+        }
+        
         if (self.enableTweaks.isOn) {
             
             //----- magic start here -----//
