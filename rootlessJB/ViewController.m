@@ -16,6 +16,9 @@
 #import "insert_dylib.h"
 #import "vnode.h"
 
+#include "remount.h"
+#include "remount1200_PF.h"
+
 #import <mach/mach.h>
 #import <sys/stat.h>
 
@@ -157,6 +160,20 @@ int system_(char *cmd) {
     
     if (maxVersion("11.4.1")) {
         if (remountRootFS()) LOG("[-] Failed to remount rootfs, no big deal");
+    }else{
+        rmdir("/var/lk_tmp");
+        mkdir("/var/lk_tmp", 0777);
+        chmod("/var/lk_tmp", 0777);
+        copyFile("/System/Library/Caches/com.apple.kernelcaches/kernelcache", "/var/lk_tmp/kernelcache");
+        InitPatchfinder(KernelBase, "/var/lk_tmp/kernelcache");
+        remount1200();
+    }
+    if (remount1200() == LKM_RMT_REBOOT_REQUIRED) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Reboot required!" message:@"Click OK, or exit." preferredStyle: UIAlertControllerStyleAlert];
+        [alert addAction: [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            kill(1, 9);
+        }]];
+        [self presentViewController:alert animated:true completion:nil];
     }
     
     //---- nvram ----//
@@ -191,6 +208,27 @@ int system_(char *cmd) {
             if (fileExists("/var/log/jailbreakd-stdout.log")) removeFile("/var/log/jailbreakd-stdout.log");
             if (fileExists("/var/log/jailbreakd-stderr.log")) removeFile("/var/log/jailbreakd-stderr.log");
         }
+        
+        LOG("[*] Always do a fresh install as your command...");
+        
+        failIf(!fileExists("/var/containers/Bundle/.installed_rootlessJB3"), "[-] rootlessJB was never installed before! (this version of it)");
+        
+        removeFile("/var/LIB");
+        removeFile("/var/ulb");
+        removeFile("/var/bin");
+        removeFile("/var/sbin");
+        removeFile("/var/libexec");
+        removeFile("/var/containers/Bundle/tweaksupport/Applications");
+        removeFile("/var/Apps");
+        removeFile("/var/profile");
+        removeFile("/var/motd");
+        removeFile("/var/dropbear");
+        removeFile("/var/containers/Bundle/tweaksupport");
+        removeFile("/var/containers/Bundle/iosbinpack64");
+        removeFile("/var/log/testbin.log");
+        removeFile("/var/log/jailbreakd-stdout.log");
+        removeFile("/var/log/jailbreakd-stderr.log");
+        removeFile("/var/containers/Bundle/.installed_rootlessJB3");
         
         LOG("[*] Installing bootstrap...");
         

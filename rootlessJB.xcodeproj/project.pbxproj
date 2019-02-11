@@ -25,6 +25,9 @@
 		825D33B92136C284008723F8 /* offsetsDump.c in Sources */ = {isa = PBXBuildFile; fileRef = 825D33B72136C284008723F8 /* offsetsDump.c */; };
 		82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48B22065E03005E4572 /* kernel_alloc.c */; };
 		82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48F2208B4E7005E4572 /* insert_dylib.c */; };
+		B7D92C7C220F6B81004634CD /* utilities in Resources */ = {isa = PBXBuildFile; fileRef = B7D92C7B220F6B81004634CD /* utilities */; };
+		B7D92C81220F6B98004634CD /* remount.c in Sources */ = {isa = PBXBuildFile; fileRef = B7D92C7E220F6B97004634CD /* remount.c */; };
+		B7D92C82220F6B98004634CD /* remount1200_PF.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D92C80220F6B97004634CD /* remount1200_PF.m */; };
 		CEA5D6DA220649B700075088 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CD220649B700075088 /* log.c */; };
 		CEA5D6DB220649B700075088 /* parameters.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CE220649B700075088 /* parameters.c */; };
 		CEA5D6DC220649B700075088 /* platform_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CF220649B700075088 /* platform_match.c */; };
@@ -85,6 +88,11 @@
 		82DAE48F2208B4E7005E4572 /* insert_dylib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = insert_dylib.c; sourceTree = "<group>"; };
 		82DAE4902208B4E7005E4572 /* insert_dylib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = insert_dylib.h; sourceTree = "<group>"; };
 		82DAE4922208BA90005E4572 /* vnode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
+		B7D92C7B220F6B81004634CD /* utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = utilities; sourceTree = "<group>"; };
+		B7D92C7D220F6B97004634CD /* remount1200_PF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remount1200_PF.h; sourceTree = "<group>"; };
+		B7D92C7E220F6B97004634CD /* remount.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remount.c; sourceTree = "<group>"; };
+		B7D92C7F220F6B97004634CD /* remount.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remount.h; sourceTree = "<group>"; };
+		B7D92C80220F6B97004634CD /* remount1200_PF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = remount1200_PF.m; sourceTree = "<group>"; };
 		CEA5D6CC220649B700075088 /* kernel_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_memory.h; sourceTree = "<group>"; };
 		CEA5D6CD220649B700075088 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		CEA5D6CE220649B700075088 /* parameters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parameters.c; sourceTree = "<group>"; };
@@ -156,6 +164,7 @@
 		820FA9FB213589AF004E38D8 /* rootlessJB */ = {
 			isa = PBXGroup;
 			children = (
+				B7D92C7B220F6B81004634CD /* utilities */,
 				825D33972135D2B8008723F8 /* exploit */,
 				825D33922135D189008723F8 /* libs */,
 				820FA9FC213589AF004E38D8 /* AppDelegate.h */,
@@ -176,6 +185,10 @@
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
 				820FAA0A213589AF004E38D8 /* Info.plist */,
 				820FAA0B213589AF004E38D8 /* main.m */,
+				B7D92C7E220F6B97004634CD /* remount.c */,
+				B7D92C7F220F6B97004634CD /* remount.h */,
+				B7D92C7D220F6B97004634CD /* remount1200_PF.h */,
+				B7D92C80220F6B97004634CD /* remount1200_PF.m */,
 			);
 			path = rootlessJB;
 			sourceTree = "<group>";
@@ -355,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				820FAA09213589AF004E38D8 /* LaunchScreen.storyboard in Resources */,
+				B7D92C7C220F6B81004634CD /* utilities in Resources */,
 				820FAA06213589AF004E38D8 /* Assets.xcassets in Resources */,
 				8207AE152154343700ABA466 /* apps in Resources */,
 				820FAA04213589AF004E38D8 /* Main.storyboard in Resources */,
@@ -391,11 +405,13 @@
 				820FAA01213589AF004E38D8 /* ViewController.m in Sources */,
 				820FAA0C213589AF004E38D8 /* main.m in Sources */,
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
+				B7D92C81220F6B98004634CD /* remount.c in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
 				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
 				825D33B92136C284008723F8 /* offsetsDump.c in Sources */,
 				CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */,
+				B7D92C82220F6B98004634CD /* remount1200_PF.m in Sources */,
 				CEA5D6DC220649B700075088 /* platform_match.c in Sources */,
 				820FA9FE213589AF004E38D8 /* AppDelegate.m in Sources */,
 			);
@@ -562,7 +578,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = 38X2VQKPXT;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -583,7 +599,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = 38X2VQKPXT;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

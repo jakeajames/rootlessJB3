@@ -490,7 +490,7 @@ uint64_t patchAMFID(void);
     true: Success
     false: Failure
  */
-BOOL hidePath(char *path);
+int hidePath(char *path);
 
 /*
  Purpose:
@@ -501,4 +501,4 @@ BOOL hidePath(char *path);
     true: Success
     false: Failure
  */
-BOOL fixMmap(char *path);
+int fixMmap(char *path);
