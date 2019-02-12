@@ -30,7 +30,7 @@ All executables must have at least these two entitlements:
 - Apps get installed in /var/Apps and later you need to run /var/containers/Bundle/iosbinpack64/usr/bin/uicache (other uicache binaries won't work)
 
 # iOS 12
-- No amfid patch, either run "inject /path/to/executable_or_dylib" after adding stuff, or reboot and rejailbreak
+- No amfid patch, either ssh in as root and run "inject /path/to/executable_or_dylib" after adding stuff, or reboot and rejailbreak
 - Sandbox exceptions are broken. You can't tweak App Store apps + some system apps yet.
 - PreferenceLoader is broken, I suspect the preference bundles are some special kind of macho which amfid can understand but not the trustcache injector.
 - This is not dangerous and cannot screw you up but not likely to be unstable/buggy
