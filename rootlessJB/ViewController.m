@@ -15,9 +15,12 @@
 #import "exploit/voucher_swap/kernel_slide.h"
 #import "insert_dylib.h"
 #import "vnode.h"
+#import "exploit/v3ntex/exploit.h"
 
 #import <mach/mach.h>
 #import <sys/stat.h>
+#import <sys/utsname.h>
+#import <dlfcn.h>
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *enableTweaks;
@@ -42,6 +45,7 @@ printf("\t"what"\n", ##__VA_ARGS__)
 LOG(message);\
 goto end;\
 }
+
 #define maxVersion(v)  ([[[UIDevice currentDevice] systemVersion] compare:@v options:NSNumericSearch] != NSOrderedDescending)
 
 
@@ -70,17 +74,22 @@ int system_(char *cmd) {
     return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
 }
 
+struct utsname u;
+vm_size_t psize;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    uname(&u);
+    if (strstr(u.machine, "iPad5,")) psize = 0x1000;
+    else _host_page_size(mach_host_self(), &psize);
 }
 
-- (IBAction)jailbrek:(id)sender {
+- (IBAction)jailbreak:(id)sender {
     //---- tfp0 ----//
-    mach_port_t taskforpidzero = MACH_PORT_NULL;
+    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = NO; // kids don't enable this
+    BOOL debug = YES; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
@@ -92,7 +101,23 @@ int system_(char *cmd) {
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
             
-            if (maxVersion("12.1.2")) {
+            if (psize == 0x1000 && maxVersion("12.1.2")) {
+                
+                // v3ntex is so bad we have to treat it specially for it not to freak out
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+                dispatch_group_t group = dispatch_group_create();
+                dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+                
+                dispatch_group_async(group, queue, ^{
+                    sleep(5);
+                    taskforpidzero = v3ntex();
+                    dispatch_semaphore_signal(sm);
+                });
+                
+                dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
             }
             else {
@@ -109,7 +134,22 @@ int system_(char *cmd) {
         }
     }
     else {
-        if (maxVersion("12.1.2")) {
+        if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
+            // v3ntex is so bad we have to treat it specially for it not to freak out
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+            
+            dispatch_group_async(group, queue, ^{
+                taskforpidzero = v3ntex();
+                dispatch_semaphore_signal(sm);
+            });
+            
+            dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+        }
+        
+        else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
         }
         else {
@@ -124,11 +164,13 @@ int system_(char *cmd) {
             return;
         }
     }
-    
     LOG("[*] Starting fun");
     
-    kernel_slide_init();
-    init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
+    if (!KernelBase) {
+        kernel_slide_init();
+        init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
+    }
+    else init_with_kbase(taskforpidzero, KernelBase);
     
     LOG("[i] Kernel base: 0x%llx", KernelBase);
     
@@ -225,8 +267,7 @@ int system_(char *cmd) {
     
     //---- update jailbreakd ----//
     
-    removeFile("/var/containers/Bundle/tweaksupport/bin/jailbreakd");
-    
+    removeFile("/var/containers/Bundle/iosbinpack64/bin/jailbreakd");
     if (!fileExists(in_bundle("bins/jailbreakd"))) {
         chdir(in_bundle("bins/"));
         
@@ -236,8 +277,33 @@ int system_(char *cmd) {
         
         removeFile(in_bundle("bins/jailbreakd.tar"));
     }
-    
     copyFile(in_bundle("bins/jailbreakd"), "/var/containers/Bundle/iosbinpack64/bin/jailbreakd");
+    
+    removeFile("/var/containers/Bundle/iosbinpack64/pspawn.dylib");
+    if (!fileExists(in_bundle("bins/pspawn.dylib"))) {
+        chdir(in_bundle("bins/"));
+        
+        FILE *jbd = fopen(in_bundle("bins/pspawn.dylib.tar"), "r");
+        untar(jbd, in_bundle("bins/pspawn.dylib"));
+        fclose(jbd);
+        
+        removeFile(in_bundle("bins/pspawn.dylib.tar"));
+    }
+    copyFile(in_bundle("bins/pspawn.dylib"), "/var/containers/Bundle/iosbinpack64/pspawn.dylib");
+    
+    removeFile("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
+    if (!fileExists(in_bundle("bins/TweakInject.dylib"))) {
+        chdir(in_bundle("bins/"));
+        
+        FILE *jbd = fopen(in_bundle("bins/TweakInject.tar"), "r");
+        untar(jbd, in_bundle("bins/TweakInject.dylib"));
+        fclose(jbd);
+        
+        removeFile(in_bundle("bins/TweakInject.tar"));
+    }
+    copyFile(in_bundle("bins/TweakInject.dylib"), "/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
+    
+    removeFile("/var/log/pspawn_payload_xpcproxy.log");
     
     //---- codesign patch ----//
     
@@ -474,7 +540,7 @@ end:;
 }
 - (IBAction)uninstall:(id)sender {
     //---- tfp0 ----//
-    mach_port_t taskforpidzero = MACH_PORT_NULL;
+    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
     BOOL debug = NO; // kids don't enable this
@@ -487,11 +553,28 @@ end:;
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
             
-            if (maxVersion("12.1.2")) {
+            if (psize == 0x1000 && maxVersion("12.1.2")) {
+                
+                // v3ntex is so bad we have to treat it specially for it not to freak out
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+                dispatch_group_t group = dispatch_group_create();
+                dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+                
+                dispatch_group_async(group, queue, ^{
+                    taskforpidzero = v3ntex();
+                    dispatch_semaphore_signal(sm);
+                });
+                
+                dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
             }
             else {
-                
+                [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
+                [sender setEnabled:false];
+                return;
             }
             
             if (!MACH_PORT_VALID(taskforpidzero)) {
@@ -503,11 +586,28 @@ end:;
         }
     }
     else {
-        if (maxVersion("12.1.2")) {
+        if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
+            // v3ntex is so bad we have to treat it specially for it not to freak out
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+            
+            dispatch_group_async(group, queue, ^{
+                taskforpidzero = v3ntex();
+                dispatch_semaphore_signal(sm);
+            });
+            
+            dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+        }
+        
+        else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
         }
         else {
-            
+            [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
+            [sender setEnabled:false];
+            return;
         }
         
         if (!MACH_PORT_VALID(taskforpidzero)) {
@@ -519,13 +619,11 @@ end:;
     }
     LOG("[*] Starting fun");
     
-    if (!maxVersion("11.4.1") && maxVersion("12.1.2")) {
+    if (!KernelBase) {
         kernel_slide_init();
         init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
     }
-    else if (maxVersion("11.3.1")) {
-        init_jelbrek(taskforpidzero);
-    }
+    else init_with_kbase(taskforpidzero, KernelBase);
     
     LOG("[i] Kernel base: 0x%llx", KernelBase);
     
@@ -567,6 +665,7 @@ end:;
     removeFile("/var/log/testbin.log");
     removeFile("/var/log/jailbreakd-stdout.log");
     removeFile("/var/log/jailbreakd-stderr.log");
+    removeFile("/var/log/pspawn_payload_xpcproxy.log");
     removeFile("/var/containers/Bundle/.installed_rootlessJB3");
     
 end:;

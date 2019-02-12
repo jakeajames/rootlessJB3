@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <sys/stat.h>
+#import <spawn.h>
 #import "kern_utils.h"
 #import "kmem.h"
 #import "patchfinder64.h"
@@ -8,40 +9,10 @@
 #import "osobject.h"
 #import "sandbox.h"
 #import "offsets.h"
+#import "cs_blob.h"
 
 #define PROC_PIDPATHINFO_MAXSIZE  (4*MAXPATHLEN)
 int proc_pidpath(pid_t pid, void *buffer, uint32_t buffersize);
-
-#define TF_PLATFORM 0x400
-
-#define	CS_VALID		0x0000001	/* dynamically valid */
-#define CS_ADHOC		0x0000002	/* ad hoc signed */
-#define CS_GET_TASK_ALLOW	0x0000004	/* has get-task-allow entitlement */
-#define CS_INSTALLER		0x0000008	/* has installer entitlement */
-
-#define	CS_HARD			0x0000100	/* don't load invalid pages */
-#define	CS_KILL			0x0000200	/* kill process if it becomes invalid */
-#define CS_CHECK_EXPIRATION	0x0000400	/* force expiration checking */
-#define CS_RESTRICT		0x0000800	/* tell dyld to treat restricted */
-#define CS_ENFORCEMENT		0x0001000	/* require enforcement */
-#define CS_REQUIRE_LV		0x0002000	/* require library validation */
-#define CS_ENTITLEMENTS_VALIDATED	0x0004000
-
-#define	CS_ALLOWED_MACHO	0x00ffffe
-
-#define CS_EXEC_SET_HARD	0x0100000	/* set CS_HARD on any exec'ed process */
-#define CS_EXEC_SET_KILL	0x0200000	/* set CS_KILL on any exec'ed process */
-#define CS_EXEC_SET_ENFORCEMENT	0x0400000	/* set CS_ENFORCEMENT on any exec'ed process */
-#define CS_EXEC_SET_INSTALLER	0x0800000	/* set CS_INSTALLER on any exec'ed process */
-
-#define CS_KILLED		0x1000000	/* was killed by kernel for invalidity */
-#define CS_DYLD_PLATFORM	0x2000000	/* dyld used to load this is a platform binary */
-#define CS_PLATFORM_BINARY	0x4000000	/* this is a platform binary */
-#define CS_PLATFORM_PATH	0x8000000	/* platform binary by the fact of path (osx only) */
-
-#define CS_DEBUGGED         0x10000000  /* process is currently or has previously been debugged and allowed to run with invalid pages */
-#define CS_SIGNED         0x20000000  /* process has a signature (may have gone invalid) */
-#define CS_DEV_CODE         0x40000000  /* code is dev signed, cannot be loaded into prod signed code (will go away with rdar://problem/28322552) */
 
 uint64_t proc_find(int pd, int tries) {
   // TODO use kcall(proc_find) + ZM_FIX_ADDR
@@ -227,55 +198,57 @@ void set_tfplatform(uint64_t proc) {
 
 }
 
+
 void set_csblob(uint64_t proc) {
     uint64_t textvp = rk64(proc + offsetof_p_textvp); //vnode of executable
     off_t textoff = rk64(proc + offsetof_p_textoff);
-
+    
+    
     NSLog(@"\t__TEXT at 0x%llx. Offset: 0x%llx", textvp, textoff);
-
+    
     if (textvp != 0){
-      uint32_t vnode_type_tag = rk32(textvp + offsetof_v_type);
-      uint16_t vnode_type = vnode_type_tag & 0xffff;
-      uint16_t vnode_tag = (vnode_type_tag >> 16);
-
-      NSLog(@"\tVNode Type: 0x%x. Tag: 0x%x.", vnode_type, vnode_tag);
-
-      
-      if (vnode_type == 1){
-          uint64_t ubcinfo = rk64(textvp + offsetof_v_ubcinfo);
-
-          NSLog(@"\t\tUBCInfo at 0x%llx.\n", ubcinfo);
-
-          
-          uint64_t csblobs = rk64(ubcinfo + offsetof_ubcinfo_csblobs);
-          while (csblobs != 0){
-
-              NSLog(@"\t\t\tCSBlobs at 0x%llx.", csblobs);
-
-              
-              cpu_type_t csblob_cputype = rk32(csblobs + offsetof_csb_cputype);
-              unsigned int csblob_flags = rk32(csblobs + offsetof_csb_flags);
-              off_t csb_base_offset = rk64(csblobs + offsetof_csb_base_offset);
-              uint64_t csb_entitlements = rk64(csblobs + offsetof_csb_entitlements_offset);
-              unsigned int csb_signer_type = rk32(csblobs + offsetof_csb_signer_type);
-              unsigned int csb_platform_binary = rk32(csblobs + offsetof_csb_platform_binary);
-              unsigned int csb_platform_path = rk32(csblobs + offsetof_csb_platform_path);
-
-
-              NSLog(@"\t\t\tCSBlob CPU Type: 0x%x. Flags: 0x%x. Offset: 0x%llx", csblob_cputype, csblob_flags, csb_base_offset);
-              NSLog(@"\t\t\tCSBlob Signer Type: 0x%x. Platform Binary: %d Path: %d", csb_signer_type, csb_platform_binary, csb_platform_path);
-
-              wk32(csblobs + offsetof_csb_platform_binary, 1);
-
-              csb_platform_binary = rk32(csblobs + offsetof_csb_platform_binary);
-
-              NSLog(@"\t\t\tCSBlob Signer Type: 0x%x. Platform Binary: %d Path: %d", csb_signer_type, csb_platform_binary, csb_platform_path);
-              
-              NSLog(@"\t\t\t\tEntitlements at 0x%llx.\n", csb_entitlements);
-
-              csblobs = rk64(csblobs);
-          }
-      }
+        uint32_t vnode_type_tag = rk32(textvp + offsetof_v_type);
+        uint16_t vnode_type = vnode_type_tag & 0xffff;
+        uint16_t vnode_tag = (vnode_type_tag >> 16);
+        
+        NSLog(@"\tVNode Type: 0x%x. Tag: 0x%x.", vnode_type, vnode_tag);
+        
+        
+        if (vnode_type == 1){
+            uint64_t ubcinfo = rk64(textvp + offsetof_v_ubcinfo);
+            
+            NSLog(@"\t\tUBCInfo at 0x%llx.\n", ubcinfo);
+            
+            
+            uint64_t csblobs = rk64(ubcinfo + offsetof_ubcinfo_csblobs);
+            while (csblobs != 0){
+                
+                NSLog(@"\t\t\tCSBlobs at 0x%llx.", csblobs);
+                
+                
+                cpu_type_t csblob_cputype = rk32(csblobs + offsetof_csb_cputype);
+                unsigned int csblob_flags = rk32(csblobs + offsetof_csb_flags);
+                off_t csb_base_offset = rk64(csblobs + offsetof_csb_base_offset);
+                uint64_t csb_entitlements = rk64(csblobs + offsetof_csb_entitlements_offset);
+                unsigned int csb_signer_type = rk32(csblobs + offsetof_csb_signer_type);
+                unsigned int csb_platform_binary = rk32(csblobs + offsetof_csb_platform_binary);
+                unsigned int csb_platform_path = rk32(csblobs + offsetof_csb_platform_path);
+                
+                
+                NSLog(@"\t\t\tCSBlob CPU Type: 0x%x. Flags: 0x%x. Offset: 0x%llx", csblob_cputype, csblob_flags, csb_base_offset);
+                NSLog(@"\t\t\tCSBlob Signer Type: 0x%x. Platform Binary: %d Path: %d", csb_signer_type, csb_platform_binary, csb_platform_path);
+                
+                wk32(csblobs + offsetof_csb_platform_binary, 1);
+                
+                csb_platform_binary = rk32(csblobs + offsetof_csb_platform_binary);
+                
+                NSLog(@"\t\t\tCSBlob Signer Type: 0x%x. Platform Binary: %d Path: %d", csb_signer_type, csb_platform_binary, csb_platform_path);
+                
+                NSLog(@"\t\t\t\tEntitlements at 0x%llx.\n", csb_entitlements);
+                
+                csblobs = rk64(csblobs);
+            }
+        }
     }
 }
 
@@ -306,69 +279,6 @@ uint64_t get_exception_osarray(void) {
 }
 
 static const char *exc_key = "com.apple.security.exception.files.absolute-path.read-only";
-
-void set_sandbox_extensions(uint64_t proc) {
-  uint64_t proc_ucred = rk64(proc+0xf8);
-  uint64_t sandbox = rk64(rk64(proc_ucred+0x78) + 0x10);
-
-  char name[40] = {0};
-  kread(proc + 0x250, name, 20);
-  
-  /*if (strstr(name, "iSuperSU")) {
-      NSLog(@"Found iSuperSU");
-      NSLog(@"sandbox before: 0x%llx", sandbox);
-      wk64(rk64(proc_ucred+0x78) + 8 + 8, 0); //hello
-      NSLog(@"sandbox now: 0x%llx", sandbox);
-  }
-  if (strstr(name, "Filza")) {
-      NSLog(@"Found Filza");
-      NSLog(@"sandbox before: 0x%llx", sandbox);
-      wk64(rk64(proc_ucred+0x78) + 8 + 8, 0); //hello
-      NSLog(@"sandbox now: 0x%llx", sandbox);
-      
-      NSLog(@"Getting root");
-      
-      wk32(proc + offsetof_p_uid, 0);
-      wk32(proc + offsetof_p_ruid, 0);
-      wk32(proc + offsetof_p_gid, 0);
-      wk32(proc + offsetof_p_rgid, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_uid, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_ruid, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_svuid, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_ngroups, 1);
-      wk32(proc_ucred + offsetof_ucred_cr_groups, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_rgid, 0);
-      wk32(proc_ucred + offsetof_ucred_cr_svgid, 0);
-  }*/
-    
-  NSLog(@"proc = 0x%llx & proc_ucred = 0x%llx & sandbox = 0x%llx", proc, proc_ucred, sandbox);
-
-  if (sandbox == 0) {
-    NSLog(@"no sandbox, skipping");
-    return;
-  }
-
-  if (has_file_extension(sandbox, abs_path_exceptions[0])) {
-    NSLog(@"already has '%s', skipping", abs_path_exceptions[0]);
-    return;
-  }
-
-  uint64_t ext = 0;
-  const char** path = abs_path_exceptions;
-  while (*path != NULL) {
-    ext = extension_create_file(*path, ext);
-    if (ext == 0) {
-      NSLog(@"extension_create_file(%s) failed, panic!", *path);
-    }
-    ++path;
-  }
-
-  NSLog(@"last extension_create_file ext: 0x%llx", ext);
-
-  if (ext != 0) {
-    extension_add(ext, sandbox, exc_key);
-  }
-}
 
 void set_amfi_entitlements(uint64_t proc) {
     // AMFI entitlements
@@ -403,7 +313,7 @@ void set_amfi_entitlements(uint64_t proc) {
             uint64_t item = rk64(itemBuffer + (i * sizeof(void *)));
             NSLog(@"Item %d: 0x%llx", i, item);
             char *entitlementString = OSString_CopyString(item);
-            if (strstr(entitlementString, "/private/var/containers/Bundle") != 0){
+            if (strstr(entitlementString, "tweaksupport") != 0) {
                 foundEntitlements = YES;
                 free(entitlementString);
                 break;
@@ -426,6 +336,188 @@ void set_amfi_entitlements(uint64_t proc) {
     }
 }
 
+const char *ents =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+                    "<plist version=\"1.0\">"
+                        "<dict>"
+                            "<key>com.apple.security.exception.files.absolute-path.read-only</key>" // bypass stat()
+                            "<array>"
+                                "<string>/private/var/containers/Bundle/iosbinpack64/</string>"
+                                "<string>/private/var/containers/Bundle/tweaksupport/</string>"
+                                "<string>/private/var/mobile/Library/</string>"
+                                "<string>/private/var/mnt/</string>"
+                            "</array>"
+                            "<key>platform-application</key>" // platform
+                            "<true/>"
+                            "<key>get-task-allow</key>" // allow task_for_pid() on that process
+                            "<true/>"
+                            "<key>com.apple.private.skip-library-validation</key>" // invalid libs
+                            "<true/>"
+                        "</dict>"
+                    "</plist>";
+
+static uint64_t entitlement_blob = 0;
+static uint64_t unserialized_blob = 0;
+
+
+int fixupexec(char *file) {
+    
+    int fd;
+    if ((fd = open(file, O_RDONLY)) < 0) {
+        NSLog(@"[-] Failed to open file '%s'\n", file);
+        return -1;
+    }
+    
+    uint32_t magic;
+    read(fd, &magic, 4);
+    if (magic != 0xFEEDFACF && magic != 0xBEBAFECA) {
+        NSLog(@"[-] File '%s' is not a mach-o\n", file);
+        close(fd);
+        return -1;
+    }
+    close(fd);
+    
+    pid_t pd;
+    const char* args[] = {file, NULL};
+    
+    posix_spawnattr_t attr;
+    posix_spawnattr_init(&attr);
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
+    
+    int rv = posix_spawn(&pd, file, NULL, &attr, (char **)&args, NULL);
+    
+    if (!rv) {
+        kill(pd, SIGKILL);
+    }
+    else {
+        NSLog(@"[-] Can't exec file '%s', err: %d (%s) \n", file, rv, strerror(rv));
+        return -1;
+    }
+    
+    uint64_t vnode = getVnodeAtPath(file);
+    if (!vnode) {
+        NSLog(@"[-] Failed to get vnode for '%s'\n", file);
+        return -1;
+    }
+    NSLog(@"[*] Found vnode: 0x%llx\n", vnode);
+    
+    uint16_t vtype;
+    kread(vnode + offsetof_v_type, &vtype, sizeof(uint16_t));
+    if (vtype != 1) {
+        NSLog(@"%s", "[-] Vnode does not have correct type\n");
+        goto fail;
+    }
+    
+    uint64_t ubc_info = rk64(vnode + offsetof_v_ubcinfo);
+    if (!ubc_info) {
+        NSLog(@"%s", "[-] No ubc_info?\n");
+        goto fail;
+    }
+    NSLog(@"[*] ubc_info: 0x%llx\n", ubc_info);
+    
+    uint64_t cs_blobs = rk64(ubc_info + offsetof_ubcinfo_csblobs);
+    if (!cs_blobs) {
+        NSLog(@"%s", "[-] No cs_blobs?\n");
+        goto fail;
+    }
+    NSLog(@"[*] cs_blobs: 0x%llx\n", cs_blobs);
+    
+    struct cs_blob csblobs;
+    kread(cs_blobs, &csblobs, sizeof(struct cs_blob));
+    
+    uint64_t entitlements_blob = (uint64_t)csblobs.csb_entitlements;
+    NSLog(@"[*] Blob: 0x%llx\n", entitlements_blob);
+    
+    if (!entitlements_blob) {
+        NSLog(@"%s", "[*] Found no entitlements.");
+        
+        if (!unserialized_blob) {
+            NSLog(@"%s", "[*] Generating...");
+            unserialized_blob = OSUnserializeXML(ents);
+            if (!unserialized_blob) {
+                NSLog(@"%s", "[-] Failed to create dictionary...\n");
+                goto fail;
+            }
+        }
+        csblobs.csb_entitlements = (void*)unserialized_blob;
+        
+        if (!entitlement_blob) {
+            NSLog(@"%s", "[*] Creating a raw blob\n");
+            
+            uint32_t size = strlen(ents) + sizeof(CS_GenericBlob);
+            
+            CS_GenericBlob *blob = malloc(size);
+            blob->magic = CSMAGIC_EMBEDDED_ENTITLEMENTS;
+            blob->length = ntohl(size);
+            memcpy(blob->data, ents, strlen(ents) + 1);
+            
+            entitlement_blob = kalloc(size);
+            NSLog(@"[*] New blob: 0x%llx\n", entitlement_blob);
+            kwrite(entitlement_blob, blob, size);
+            
+            free(blob);
+        }
+        csblobs.csb_entitlements_blob = (CS_GenericBlob*)entitlement_blob;
+    }
+    else {
+        NSLog(@"%s", "[*] Found some entitlements!");
+        
+        if (!OSDictionary_GetItem(entitlements_blob, "platform-application")) OSDictionary_SetItem(entitlements_blob, "platform-application", find_OSBoolean_True());
+        if (!OSDictionary_GetItem(entitlements_blob, "com.apple.private.skip-library-validation")) OSDictionary_SetItem(entitlements_blob, "com.apple.private.skip-library-validation", find_OSBoolean_True());
+        if (!OSDictionary_GetItem(entitlements_blob, "get-task-allow")) OSDictionary_SetItem(entitlements_blob, "get-task-allow", find_OSBoolean_True());
+        
+        uint64_t present = OSDictionary_GetItem(entitlements_blob, "com.apple.security.exception.files.absolute-path.read-only");
+
+        if (!present) OSDictionary_SetItem(entitlements_blob, "com.apple.security.exception.files.absolute-path.read-only", get_exception_osarray());
+        else if (present != get_exception_osarray()) {
+            unsigned int itemCount = OSArray_ItemCount(present);
+            
+            NSLog(@"present != 0 (0x%llx)! item count: %d", present, itemCount);
+            
+            BOOL foundEntitlements = NO;
+            
+            uint64_t itemBuffer = OSArray_ItemBuffer(present);
+            
+            for (int i = 0; i < itemCount; i++){
+                uint64_t item = rk64(itemBuffer + (i * sizeof(void *)));
+                NSLog(@"Item %d: 0x%llx", i, item);
+                char *entitlementString = OSString_CopyString(item);
+                if (strstr(entitlementString, "tweaksupport") != 0) {
+                    foundEntitlements = YES;
+                    free(entitlementString);
+                    break;
+                }
+                free(entitlementString);
+            }
+            
+            if (!foundEntitlements){
+                rv = OSArray_Merge(present, get_exception_osarray());
+            } else {
+                rv = 1;
+            }
+        } else {
+            NSLog(@"Not going to merge array with itself :P");
+            rv = 1;
+        }
+    }
+    
+    csblobs.csb_flags |= ((CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW | CS_DEBUGGED) & ~(CS_RESTRICT | CS_HARD | CS_KILL));
+    csblobs.csb_platform_binary = 1;
+    csblobs.csb_platform_path = 0;
+    
+    printf("[*] Success? Writing the blob!\n");
+    
+    kwrite(cs_blobs, &csblobs, sizeof(struct cs_blob));
+    goto exit;
+    
+exit:;
+    vnode_put(vnode);
+    return 0;
+fail:;
+    vnode_put(vnode);
+    return 1;
+}
+
 int setcsflagsandplatformize(int pid){
   fixupdylib("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
   uint64_t proc = proc_find(pid, 3);
@@ -433,8 +525,8 @@ int setcsflagsandplatformize(int pid){
     set_csflags(proc);
     set_tfplatform(proc);
     set_amfi_entitlements(proc);
-    set_sandbox_extensions(proc);
-    set_csblob(proc);
+    //set_sandbox_extensions(proc);
+    //set_csblob(proc);
     NSLog(@"setcsflagsandplatformize on PID %d", pid);
     return 0;
   }

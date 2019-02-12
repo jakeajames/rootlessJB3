@@ -1,9 +1,7 @@
 TARGET  = pspawn.dylib
-OUTDIR ?= .
+OUTDIR ?= ../../bootstrap/bins
 
 CC      = xcrun -sdk iphoneos cc -arch arm64
-# it is injected into trust cache by code
-# which only supports sha-256 signatures
 LDID    = ldid2
 CFLAGS  = -Wall
 
@@ -24,6 +22,9 @@ $(OUTDIR):
 $(OUTDIR)/$(TARGET): launchd_payload.m fishhook.c common.c | $(OUTDIR)
 	$(CC) -dynamiclib -o $@ $^ -framework Foundation $(CFLAGS)
 	$(LDID) -S $@
+	tar --disable-copyfile -cvf $(OUTDIR)/$(TARGET).tar -C $(OUTDIR)/ $(TARGET)
+	rm $@
 
 clean:
 	rm -f $(OUTDIR)/$(TARGET)
+	rm -f $(OUTDIR)/$(TARGET).tar

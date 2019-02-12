@@ -29,7 +29,7 @@ FILE *log_file;
 #define DEBUGLOG(fmt, args...)\
 do {\
 if (log_file == NULL) {\
-log_file = fopen((current_process == PROCESS_LAUNCHD) ? LAUNCHD_LOG_PATH : XPCPROXY_LOG_PATH, "a"); \
+log_file = fopen(XPCPROXY_LOG_PATH, "a"); \
 if (log_file == NULL) break; \
 } \
 fprintf(log_file, fmt "\n", ##args); \
@@ -39,43 +39,18 @@ fflush(log_file); \
 #define DEBUGLOG(fmt, args...)
 #endif
 
-#define PSPAWN_PAYLOAD_DYLIB "/var/containers/Bundle/iosbinpack64/pspawn.dylib"
 #define AMFID_PAYLOAD_DYLIB "/var/containers/Bundle/iosbinpack64/amfid_payload.dylib"
 #define SBINJECT_PAYLOAD_DYLIB "/var/ulb/TweakInject.dylib"
-
-// since this dylib should only be loaded into launchd and xpcproxy
-// it's safe to assume that we're in xpcproxy if getpid() != 1
-enum currentprocess {
-    PROCESS_LAUNCHD,
-    PROCESS_XPCPROXY,
-};
-
-int current_process = PROCESS_XPCPROXY;
 
 const char* xpcproxy_blacklist[] = {
  "debugserver",            // Xcode debugging
  "com.apple.diagnosticd",  // syslog
- "com.apple.ReportCrash",  // crash reporting
  "MTLCompilerService",     // ?_?
  "OTAPKIAssetTool",        // h_h
  "cfprefsd",               // o_o
  "jailbreakd",             // don't inject into jbd since we'd have to call to it
  NULL
  };
-
-/*const char* xpcproxy_whitelist[] = {
-    "MobileSMS",// iMessage
-    "mobilesms", //idk what which how so do both
-    "springboard",  // SB
-    "SpringBoard",
-    "mobiletimer",     // Clock
-    "MobileTimer",
-    "Home",        // Home
-    "Preferences", //Settings
-    "iSuperSU",
-    "Filza",
-    NULL
-};*/
 
 typedef int (*pspawn_t)(pid_t * pid, const char* path, const posix_spawn_file_actions_t *file_actions, posix_spawnattr_t *attrp, char const* argv[], const char* envp[]);
 
@@ -86,33 +61,24 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
     
     const char *inject_me = NULL;
     
-    if (current_process == PROCESS_LAUNCHD) {
-        if (strcmp(path, "/usr/libexec/xpcproxy") == 0) {
-            inject_me = PSPAWN_PAYLOAD_DYLIB;
-            
-            const char* startd = argv[1];
-            if (startd != NULL) {
-                const char **blacklist = xpcproxy_blacklist;
-                
-                while (*blacklist) {
-                    if (strstr(startd, *blacklist)) {
-                        DEBUGLOG("xpcproxy for '%s' which is in blacklist, not injecting", startd);
-                        inject_me = NULL;
-                        break;
-                    }
-                    ++blacklist;
-                }
+    if (path != NULL) {
+        const char **blacklist = xpcproxy_blacklist;
+        
+        while (*blacklist) {
+            if (strstr(path, *blacklist)) {
+                DEBUGLOG("xpcproxy for '%s' which is in blacklist, not injecting", path);
+                inject_me = NULL;
+                break;
             }
+            ++blacklist;
         }
-    } else if (current_process == PROCESS_XPCPROXY) {
-        // XXX inject both SBInject & amfid payload into amfid?
-        // note: DYLD_INSERT_LIBRARIES=libfoo1.dylib:libfoo2.dylib
-        if (strcmp(path, "/usr/libexec/amfid") == 0) {
-            DEBUGLOG("Starting amfid -- special handling");
-            inject_me = AMFID_PAYLOAD_DYLIB;
-        } else {
-            inject_me = SBINJECT_PAYLOAD_DYLIB;
-        }
+    }
+    
+    if (strcmp(path, "/usr/libexec/amfid") == 0) {
+        DEBUGLOG("Starting amfid -- special handling");
+        inject_me = AMFID_PAYLOAD_DYLIB;
+    } else {
+        inject_me = SBINJECT_PAYLOAD_DYLIB;
     }
     
     // XXX log different err on inject_me == NULL and nonexistent inject_me
@@ -120,6 +86,8 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
         DEBUGLOG("Nothing to inject");
         return old(pid, path, file_actions, attrp, argv, envp);
     }
+
+    //if (strstr(path, "/var/containers/Bundle/Application") || strstr(path, "/usr/libexec")) calljailbreakdforexec((char *)path);
     
     DEBUGLOG("Injecting %s into %s", inject_me, path);
     
@@ -177,7 +145,6 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
 #endif
     
     posix_spawnattr_t attr;
-    
     posix_spawnattr_t *newattrp = &attr;
     
     if (attrp) {
@@ -193,30 +160,20 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
     
     int origret;
     
-    if (current_process == PROCESS_XPCPROXY) {
-        // dont leak logging fd into execd process
+    // dont leak logging fd into execd process
 #ifdef PSPAWN_PAYLOAD_DEBUG
-        if (log_file != NULL) {
-            fclose(log_file);
-            log_file = NULL;
-        }
-#endif
-        calljailbreakd(getpid(), JAILBREAKD_COMMAND_ENTITLE_AND_SIGCONT_FROM_XPCPROXY);
-        
-        // dont leak jbd fd into execd process
-        closejailbreakfd();
-        
-        origret = old(pid, path, file_actions, newattrp, argv, newenvp);
-        
-    } else {
-        int gotpid;
-        origret = old(&gotpid, path, file_actions, newattrp, argv, newenvp);
-        
-        if (origret == 0) {
-            if (pid != NULL) *pid = gotpid;
-            calljailbreakd(gotpid, JAILBREAKD_COMMAND_ENTITLE_AND_SIGCONT);
-        }
+    if (log_file != NULL) {
+        fclose(log_file);
+        log_file = NULL;
     }
+#endif
+    
+    calljailbreakd(getpid(), JAILBREAKD_COMMAND_ENTITLE_AND_SIGCONT_FROM_XPCPROXY);
+    
+    // dont leak jbd fd into execd process
+    closejailbreakfd();
+
+    origret = old(pid, path, file_actions, newattrp, argv, newenvp);
     
     return origret;
 }
@@ -230,7 +187,6 @@ int fake_posix_spawnp(pid_t * pid, const char* file, const posix_spawn_file_acti
     return fake_posix_spawn_common(pid, file, file_actions, attrp, argv, envp, old_pspawnp);
 }
 
-
 void rebind_pspawns(void) {
     struct rebinding rebindings[] = {
         {"posix_spawn", (void *)fake_posix_spawn, (void **)&old_pspawn},
@@ -240,20 +196,7 @@ void rebind_pspawns(void) {
     rebind_symbols(rebindings, 2);
 }
 
-void* thd_func(void* arg){
-    NSLog(@"In a new thread!");
-    rebind_pspawns();
-    return NULL;
-}
-
 __attribute__ ((constructor))
 static void ctor(void) {
-    if (getpid() == 1) {
-        current_process = PROCESS_LAUNCHD;
-        pthread_t thd;
-        pthread_create(&thd, NULL, thd_func, NULL);
-    } else {
-        current_process = PROCESS_XPCPROXY;
-        rebind_pspawns();
-    }
+    rebind_pspawns();
 }
