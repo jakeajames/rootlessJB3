@@ -32,6 +32,7 @@
 		CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6D5220649B700075088 /* kernel_memory.c */; };
 		CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6D7220649B700075088 /* voucher_swap.c */; };
 		CEA5D6E0220649B700075088 /* kernel_slide.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6D8220649B700075088 /* kernel_slide.c */; };
+		FE5EF0E2220A611C001C080A /* RoundedViews.m in Sources */ = {isa = PBXBuildFile; fileRef = FE5EF0E1220A611C001C080A /* RoundedViews.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +100,8 @@
 		CEA5D6D7220649B700075088 /* voucher_swap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = voucher_swap.c; sourceTree = "<group>"; };
 		CEA5D6D8220649B700075088 /* kernel_slide.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kernel_slide.c; sourceTree = "<group>"; };
 		CEA5D6D9220649B700075088 /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
+		FE5EF0E0220A611C001C080A /* RoundedViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedViews.h; sourceTree = "<group>"; };
+		FE5EF0E1220A611C001C080A /* RoundedViews.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoundedViews.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +179,8 @@
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
 				820FAA0A213589AF004E38D8 /* Info.plist */,
 				820FAA0B213589AF004E38D8 /* main.m */,
+				FE5EF0E0220A611C001C080A /* RoundedViews.h */,
+				FE5EF0E1220A611C001C080A /* RoundedViews.m */,
 			);
 			path = rootlessJB;
 			sourceTree = "<group>";
@@ -391,6 +396,7 @@
 				820FAA01213589AF004E38D8 /* ViewController.m in Sources */,
 				820FAA0C213589AF004E38D8 /* main.m in Sources */,
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
+				FE5EF0E2220A611C001C080A /* RoundedViews.m in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
 				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
@@ -562,7 +568,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Y7M563JDR4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -571,7 +577,7 @@
 					"$(PROJECT_DIR)/rootlessJB/libs",
 				);
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
+				PRODUCT_BUNDLE_IDENTIFIER = fun.ignition.rootlessJB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -583,7 +589,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Y7M563JDR4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -592,7 +598,7 @@
 					"$(PROJECT_DIR)/rootlessJB/libs",
 				);
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
+				PRODUCT_BUNDLE_IDENTIFIER = fun.ignition.rootlessJB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
