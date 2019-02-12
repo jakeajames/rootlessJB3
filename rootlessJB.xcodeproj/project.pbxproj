@@ -16,6 +16,9 @@
 		820FAA0C213589AF004E38D8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA0B213589AF004E38D8 /* main.m */; };
 		820FAA16213589AF004E38D8 /* rootlessJBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA15213589AF004E38D8 /* rootlessJBTests.m */; };
 		820FAA21213589AF004E38D8 /* rootlessJBUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA20213589AF004E38D8 /* rootlessJBUITests.m */; };
+		821B7F222213012D00C8A7A4 /* RoundedViews.m in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F212213012D00C8A7A4 /* RoundedViews.m */; };
+		821B7F262213035400C8A7A4 /* exploit.m in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F252213035400C8A7A4 /* exploit.m */; };
+		821B7F29221333B100C8A7A4 /* offsets.c in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F27221333B000C8A7A4 /* offsets.c */; };
 		825D33952135D189008723F8 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 825D33932135D189008723F8 /* IOKit.tbd */; };
 		825D33962135D189008723F8 /* jelbrekLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 825D33942135D189008723F8 /* jelbrekLib.a */; };
 		825D33A92135D5DB008723F8 /* bins in Resources */ = {isa = PBXBuildFile; fileRef = 825D33A72135D5DB008723F8 /* bins */; };
@@ -69,6 +72,12 @@
 		820FAA1C213589AF004E38D8 /* rootlessJBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rootlessJBUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		820FAA20213589AF004E38D8 /* rootlessJBUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = rootlessJBUITests.m; sourceTree = "<group>"; };
 		820FAA22213589AF004E38D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		821B7F202213012C00C8A7A4 /* RoundedViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedViews.h; sourceTree = "<group>"; };
+		821B7F212213012D00C8A7A4 /* RoundedViews.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoundedViews.m; sourceTree = "<group>"; };
+		821B7F242213035400C8A7A4 /* exploit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exploit.h; sourceTree = "<group>"; };
+		821B7F252213035400C8A7A4 /* exploit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exploit.m; sourceTree = "<group>"; };
+		821B7F27221333B000C8A7A4 /* offsets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = offsets.c; sourceTree = "<group>"; };
+		821B7F28221333B000C8A7A4 /* offsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
 		825D33912135D17E008723F8 /* jelbrekLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jelbrekLib.h; sourceTree = "<group>"; };
 		825D33932135D189008723F8 /* IOKit.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = IOKit.tbd; sourceTree = "<group>"; };
 		825D33942135D189008723F8 /* jelbrekLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = jelbrekLib.a; sourceTree = "<group>"; };
@@ -171,6 +180,8 @@
 				825D33B82136C284008723F8 /* offsetsDump.h */,
 				82DAE48F2208B4E7005E4572 /* insert_dylib.c */,
 				82DAE4902208B4E7005E4572 /* insert_dylib.h */,
+				821B7F202213012C00C8A7A4 /* RoundedViews.h */,
+				821B7F212213012D00C8A7A4 /* RoundedViews.m */,
 				820FAA02213589AF004E38D8 /* Main.storyboard */,
 				820FAA05213589AF004E38D8 /* Assets.xcassets */,
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
@@ -198,6 +209,17 @@
 			path = rootlessJBUITests;
 			sourceTree = "<group>";
 		};
+		821B7F232213035400C8A7A4 /* v3ntex */ = {
+			isa = PBXGroup;
+			children = (
+				821B7F242213035400C8A7A4 /* exploit.h */,
+				821B7F252213035400C8A7A4 /* exploit.m */,
+				821B7F27221333B000C8A7A4 /* offsets.c */,
+				821B7F28221333B000C8A7A4 /* offsets.h */,
+			);
+			path = v3ntex;
+			sourceTree = "<group>";
+		};
 		825D33922135D189008723F8 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,6 +233,7 @@
 		825D33972135D2B8008723F8 /* exploit */ = {
 			isa = PBXGroup;
 			children = (
+				821B7F232213035400C8A7A4 /* v3ntex */,
 				CEA5D6CB220649B700075088 /* voucher_swap */,
 			);
 			name = exploit;
@@ -391,8 +414,11 @@
 				820FAA01213589AF004E38D8 /* ViewController.m in Sources */,
 				820FAA0C213589AF004E38D8 /* main.m in Sources */,
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
+				821B7F222213012D00C8A7A4 /* RoundedViews.m in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
+				821B7F262213035400C8A7A4 /* exploit.m in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
+				821B7F29221333B100C8A7A4 /* offsets.c in Sources */,
 				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
 				825D33B92136C284008723F8 /* offsetsDump.c in Sources */,
 				CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */,
