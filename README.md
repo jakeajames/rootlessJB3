@@ -4,9 +4,23 @@ Blah blah, read this: [How to make a jailbreak without a filesystem remount as r
 
 - Powered by jelbrekLib
 
+
+## Support
+
+- All A9-A11 devices
+- iPad Air 2
+
+## To be supported (sorted by priority)
+
+- 4K devices whose kernels got symbols
+- Rest of 4K devices
+- A12 devices
+
+**DO NOT ASK FOR ETA**
+
 ## Usage notes
 
-- voucher_swap is used.
+- voucher_swap is used for 16K devices, and v3ntex for 4K ones.
 - Binaries are located in: /var/containers/Bundle/iosbinpack64
 - Launch daemons are located in /var/containers/Bundle/iosbinpack64/LaunchDaemons
 - /var/containers/Bundle/tweaksupport contains a filesystem simulation where tweaks and stuff get installed
@@ -31,10 +45,9 @@ All executables must have at least these two entitlements:
 
 # iOS 12
 - No amfid patch, either run "inject /path/to/executable_or_dylib" after adding stuff, or reboot and rejailbreak
-- Sandbox exceptions are broken. You can't tweak App Store apps + some system apps yet.
+- Sandbox exceptions are broken. You can't tweak App Store apps + some system apps yet. However, on the app's second run the backup sandbox patches will have triggered and you'll be able to read from the tweak directories. Tweaking will still not work on the second run unless you run jailbreakd's fixupdylib() on the target dylibs manually.
 - PreferenceLoader is broken, I suspect the preference bundles are some special kind of macho which amfid can understand but not the trustcache injector.
 - This is not dangerous and cannot screw you up but not likely to be unstable/buggy
-- Since sandbox exceptions are broken, I can't inject into installd, thus no AppSync, thus no app installation for now, including iSuperSU
 - Tweaks pre-patched for rootlessJB 1.0 and 2.0 will not work. Use new patcher script. (ldid was replaced with ldid2!)
 
 patcher usage:
