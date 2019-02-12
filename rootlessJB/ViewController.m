@@ -89,7 +89,7 @@ vm_size_t psize;
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = YES; // kids don't enable this
+    BOOL debug = NO; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
