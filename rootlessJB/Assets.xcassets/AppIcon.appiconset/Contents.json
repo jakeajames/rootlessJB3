@@ -153,7 +153,6 @@
     {
       "size" : "24x24",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
       "role" : "notificationCenter",
       "subtype" : "38mm"
@@ -161,7 +160,6 @@
     {
       "size" : "27.5x27.5",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
       "role" : "notificationCenter",
       "subtype" : "42mm"
@@ -169,21 +167,18 @@
     {
       "size" : "29x29",
       "idiom" : "watch",
-      "filename" : "58.png",
       "role" : "companionSettings",
       "scale" : "2x"
     },
     {
       "size" : "29x29",
       "idiom" : "watch",
-      "filename" : "87.png",
       "role" : "companionSettings",
       "scale" : "3x"
     },
     {
       "size" : "40x40",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
       "role" : "appLauncher",
       "subtype" : "38mm"
@@ -191,15 +186,20 @@
     {
       "size" : "44x44",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
-      "role" : "longLook",
-      "subtype" : "42mm"
+      "role" : "appLauncher",
+      "subtype" : "40mm"
+    },
+    {
+      "size" : "50x50",
+      "idiom" : "watch",
+      "scale" : "2x",
+      "role" : "appLauncher",
+      "subtype" : "44mm"
     },
     {
       "size" : "86x86",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
       "role" : "quickLook",
       "subtype" : "38mm"
@@ -207,10 +207,16 @@
     {
       "size" : "98x98",
       "idiom" : "watch",
-      "filename" : "watch.png",
       "scale" : "2x",
       "role" : "quickLook",
       "subtype" : "42mm"
+    },
+    {
+      "size" : "108x108",
+      "idiom" : "watch",
+      "scale" : "2x",
+      "role" : "quickLook",
+      "subtype" : "44mm"
     },
     {
       "size" : "1024x1024",
@@ -277,20 +283,6 @@
       "idiom" : "mac",
       "filename" : "1024.png",
       "scale" : "2x"
-    },
-    {
-      "size" : "1024x1024",
-      "idiom" : "ios-marketing",
-      "filename" : "1024.png",
-      "unassigned" : true,
-      "scale" : "1x"
-    },
-    {
-      "size" : "1024x1024",
-      "idiom" : "ios-marketing",
-      "filename" : "1024.png",
-      "unassigned" : true,
-      "scale" : "1x"
     }
   ],
   "info" : {
