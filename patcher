@@ -45,6 +45,20 @@ sed -i "" 's/\/usr\/lib\/libprefs/\/var\/ulb\/libprefs/g' $i 2> /dev/null
 ldid2 -S $i  2> /dev/null
 done
 
+for i in $2/Library/ControlCenter/Bundles/*/*
+do
+if [[ ! $i == $2/Library/ControlCenter/Bundles/*/*.* ]]; then #skip everything that has an extension (so we only patch the binary and not corrupt any plists)
+sed -i "" 's/\/Library\//\/var\/LIB\//g' $i  2> /dev/null
+sed -i "" 's/\/System\/var\/LIB\//\/System\/Library\//g' $i  2> /dev/null
+sed -i "" 's/%@\/var\/LIB\//%@\/Library\//g' $i 2> /dev/null
+sed -i "" 's/mobile\/var\/LIB\//mobile\/Library\//g' $i 2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstrate/\/var\/ulb\/libsubstrate/g' $i  2> /dev/null
+sed -i "" 's/\/usr\/lib\/libsubstitute/\/var\/ulb\/libsubstitute/g' $i  2> /dev/null
+sed -i "" 's/\/usr\/lib\/libprefs/\/var\/ulb\/libprefs/g' $i 2> /dev/null
+ldid2 -S $i  2> /dev/null
+fi
+done
+
 # not tested
 for i in $2/Applications/*.app
 do
