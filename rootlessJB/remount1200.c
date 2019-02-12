@@ -1,13 +1,13 @@
 //
-//  remount.c
+//  remount1200.c
 //  rootlessJB
 //
-//  Created by Misty on 2019/2/6.
+//  Created by Lakr Sakura on 2019/2/13.
 //  Copyright © 2019 Jake James. All rights reserved.
-//  Copyright © 2019 Misty. All rights reserved.
 //
 
-#include "remount.h"
+#include "remount1200.h"
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,14 +18,13 @@
 #include "payload.h"
 #include "offsetsDump.h"
 #include "utilities/apfs_util.h"
+#include "remount1200_PF.h"
 
 #include <mach/mach.h>
 #include <sys/stat.h>
 #include <sys/mount.h>
 
 #include <sys/snapshot.h>
-
-// Adapted from Electra & RootlessJB's version
 
 uint64_t kernproc;
 uint64_t ourproc;
@@ -40,9 +39,6 @@ int remount1200() {
     our_ucred = KernelRead_64bits(ourproc + 248);
     
     int test_mp_sp = open("/", O_RDONLY);
-    if (test_mp_sp < 0) {
-        return LKM_RMT_UNEXCEPT_ERROR;
-    }
     
     bool rename_happened = false;
     char *rename_name = "orig-fs";
@@ -84,6 +80,9 @@ int remount1200() {
     unlink("/RWTEST");
     return LKM_RMT_SUCCESS;
 }
+
+
+// Adapted from Electra & RootlessJB's version
 
 int renameSP1200() {
     
@@ -161,7 +160,7 @@ int renameSP1200() {
         v_data_flag &= ~0x40;
         KernelWrite_32bits(snap_vdata + 49, v_data_flag);
         
-        int ret = fs_snapshot_rename(dirfd, snap, "orig-fs", 0);
+        int ret = do_rename("/var/rootfsmnt", find_system_snapshot(), "orig-fs");
         if (ret != 0){
             rv = LKM_RMT_UNEXCEPT_ERROR;
             perror("fs_snapshot_rename");
@@ -169,5 +168,64 @@ int renameSP1200() {
             return LKM_RMT_REBOOT_REQUIRED;
         }
     }
+    return LKM_RMT_UNEXCEPT_ERROR;
+}
+
+int relockFileSystem() {
+    
+    kernproc = proc_of_pid(0);
+    ourproc = proc_of_pid(getpid());
+    kern_ucred = KernelRead_64bits(kernproc + 248);
+    our_ucred = KernelRead_64bits(ourproc + 248);
+    
+    int test_mp_sp = open("/", O_RDONLY);
+    if (test_mp_sp < 0) {
+        return LKM_RMT_UNEXCEPT_ERROR;
+    }
+    
+    bool rename_happened = false;
+    char *rename_name = "orig-fs";
+    
+    struct attrlist alist = { 0 };
+    char buf[2048];
+    alist.commonattr = ATTR_BULK_REQUIRED;
+    int count = fs_snapshot_list(test_mp_sp, &alist, &buf[0], sizeof(buf), 0);
+    if (count < 0) {
+        return LKM_RMT_UNEXCEPT_ERROR;
+    }
+    char *p = &buf[0];
+    for (int i = 0; i < count; i++) {
+        char *field = p;
+        field += sizeof(uint32_t);
+        attribute_set_t attrs = *(attribute_set_t *)field;
+        field += sizeof(attribute_set_t);
+        
+        if (attrs.commonattr & ATTR_CMN_NAME) {
+            attrreference_t ar = *(attrreference_t *)field;
+            char *name = field + ar.attr_dataoffset;
+            field += sizeof(attrreference_t);
+            (void) printf("[D] there is a snapshot named: %s\n", name);
+            if (*name == *rename_name) {
+                rename_happened = true;
+            }
+        }
+    }
+    close(test_mp_sp);
+    
+    if (rename_happened) {
+        
+        int dir = open("/", O_RDONLY);
+        
+        printf("Temporarily setting kern ucred\n");
+        KernelWrite_64bits(ourproc + 248, kern_ucred);
+        
+        if (fs_snapshot_rename(dir, rename_name, find_system_snapshot(), 0) != 0) {
+            return LKM_RMT_UNEXCEPT_ERROR;
+        }
+        
+        KernelWrite_64bits(ourproc + 248, our_ucred);
+        return LKM_RMT_REBOOT_REQUIRED;
+    }
+    
     return LKM_RMT_UNEXCEPT_ERROR;
 }

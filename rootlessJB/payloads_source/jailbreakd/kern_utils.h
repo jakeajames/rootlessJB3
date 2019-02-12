@@ -72,11 +72,9 @@ kern_return_t mach_vm_deallocate(vm_map_t target, mach_vm_address_t address, mac
 uint64_t find_port(mach_port_name_t port);
 
 void fixupsetuid(int pid);
-
 int fixupdylib(char *dylib);
-
+int fixupexec(char *exec);
 int setcsflagsandplatformize(int pd);
-
 int unsandbox(int pd);
 
 extern mach_port_t tfpzero;

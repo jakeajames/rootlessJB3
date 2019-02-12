@@ -7,7 +7,10 @@
 #import <sys/stat.h>
 #import <sys/types.h>
 #import <sys/mman.h>
-#import "fishhook/fishhook.h"
+
+#import "fishhook.h"
+
+#define TWEAKINJECTDEBUG 1
 
 #ifndef TWEAKINJECTDEBUG
 #define printf(str, ...)
@@ -125,7 +128,7 @@ int file_exist(char *filename) {
     [alert release];
 }
 %new
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+- (void)alertView:(UIAlertView *)alertView cickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         exit(0);
     }
@@ -142,7 +145,7 @@ int file_exist(char *filename) {
     [alert release];
 }
 %new
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         exit(0);
     }

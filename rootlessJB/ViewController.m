@@ -15,17 +15,20 @@
 #import "exploit/voucher_swap/kernel_slide.h"
 #import "insert_dylib.h"
 #import "vnode.h"
+#import "exploit/v3ntex/exploit.h"
 
-#include "remount.h"
-#include "remount1200_PF.h"
+#import "remount1200.h"
 
 #import <mach/mach.h>
 #import <sys/stat.h>
+#import <sys/utsname.h>
+#import <dlfcn.h>
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *enableTweaks;
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
+@property (weak, nonatomic) IBOutlet UISwitch *shouldUnlockFileSystem;
 
 @property (weak, nonatomic) IBOutlet UITextView *logs;
 @end
@@ -45,6 +48,7 @@ printf("\t"what"\n", ##__VA_ARGS__)
 LOG(message);\
 goto end;\
 }
+
 #define maxVersion(v)  ([[[UIDevice currentDevice] systemVersion] compare:@v options:NSNumericSearch] != NSOrderedDescending)
 
 
@@ -73,17 +77,22 @@ int system_(char *cmd) {
     return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
 }
 
+struct utsname u;
+vm_size_t psize;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    uname(&u);
+    if (strstr(u.machine, "iPad5,")) psize = 0x1000;
+    else _host_page_size(mach_host_self(), &psize);
 }
 
-- (IBAction)jailbrek:(id)sender {
+- (IBAction)jailbreak:(id)sender {
     //---- tfp0 ----//
-    mach_port_t taskforpidzero = MACH_PORT_NULL;
+    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = NO; // kids don't enable this
+    BOOL debug = YES; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
@@ -95,7 +104,23 @@ int system_(char *cmd) {
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
             
-            if (maxVersion("12.1.2")) {
+            if (psize == 0x1000 && maxVersion("12.1.2")) {
+                
+                // v3ntex is so bad we have to treat it specially for it not to freak out
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+                dispatch_group_t group = dispatch_group_create();
+                dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+                
+                dispatch_group_async(group, queue, ^{
+                    sleep(5);
+                    taskforpidzero = v3ntex();
+                    dispatch_semaphore_signal(sm);
+                });
+                
+                dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
             }
             else {
@@ -112,7 +137,22 @@ int system_(char *cmd) {
         }
     }
     else {
-        if (maxVersion("12.1.2")) {
+        if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
+            // v3ntex is so bad we have to treat it specially for it not to freak out
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+            
+            dispatch_group_async(group, queue, ^{
+                taskforpidzero = v3ntex();
+                dispatch_semaphore_signal(sm);
+            });
+            
+            dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+        }
+        
+        else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
         }
         else {
@@ -127,11 +167,13 @@ int system_(char *cmd) {
             return;
         }
     }
-    
     LOG("[*] Starting fun");
     
-    kernel_slide_init();
-    init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
+    if (!KernelBase) {
+        kernel_slide_init();
+        init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
+    }
+    else init_with_kbase(taskforpidzero, KernelBase);
     
     LOG("[i] Kernel base: 0x%llx", KernelBase);
     
@@ -154,27 +196,28 @@ int system_(char *cmd) {
     //---- host special port 4 ----//
     failIf(setHSP4(), "[-] Failed to set tfp0 as hsp4!");
     if (debug) PatchHostPriv(mach_host_self());
+    PatchHostPriv(mach_host_self());
     
     //---- remount -----//
     // this is against the point of this jb but if you can why not do it
-    
-    if (maxVersion("11.4.1")) {
-        if (remountRootFS()) LOG("[-] Failed to remount rootfs, no big deal");
+    if (_shouldUnlockFileSystem.isOn) {
+        if (maxVersion("11.4.1")) {
+            if (remountRootFS()) LOG("[-] Failed to remount rootfs, no big deal");
+        }else{
+            if (remount1200() == LKM_RMT_REBOOT_REQUIRED) {
+                LOG("Reboot pls!");
+                reboot(9);
+            }
+        }
     }else{
-        rmdir("/var/lk_tmp");
-        mkdir("/var/lk_tmp", 0777);
-        chmod("/var/lk_tmp", 0777);
-        copyFile("/System/Library/Caches/com.apple.kernelcaches/kernelcache", "/var/lk_tmp/kernelcache");
-        InitPatchfinder(KernelBase, "/var/lk_tmp/kernelcache");
-        remount1200();
+        // relock file system
+        if (relockFileSystem() == LKM_RMT_REBOOT_REQUIRED) {
+            LOG("Reboot pls!");
+            reboot(9);
+        }
     }
-    if (remount1200() == LKM_RMT_REBOOT_REQUIRED) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Reboot required!" message:@"Click OK, or exit." preferredStyle: UIAlertControllerStyleAlert];
-        [alert addAction: [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            kill(1, 9);
-        }]];
-        [self presentViewController:alert animated:true completion:nil];
-    }
+    
+    
     
     //---- nvram ----//
     // people say that this ain't stable
@@ -209,27 +252,6 @@ int system_(char *cmd) {
             if (fileExists("/var/log/jailbreakd-stderr.log")) removeFile("/var/log/jailbreakd-stderr.log");
         }
         
-        LOG("[*] Always do a fresh install as your command...");
-        
-        failIf(!fileExists("/var/containers/Bundle/.installed_rootlessJB3"), "[-] rootlessJB was never installed before! (this version of it)");
-        
-        removeFile("/var/LIB");
-        removeFile("/var/ulb");
-        removeFile("/var/bin");
-        removeFile("/var/sbin");
-        removeFile("/var/libexec");
-        removeFile("/var/containers/Bundle/tweaksupport/Applications");
-        removeFile("/var/Apps");
-        removeFile("/var/profile");
-        removeFile("/var/motd");
-        removeFile("/var/dropbear");
-        removeFile("/var/containers/Bundle/tweaksupport");
-        removeFile("/var/containers/Bundle/iosbinpack64");
-        removeFile("/var/log/testbin.log");
-        removeFile("/var/log/jailbreakd-stdout.log");
-        removeFile("/var/log/jailbreakd-stderr.log");
-        removeFile("/var/containers/Bundle/.installed_rootlessJB3");
-        
         LOG("[*] Installing bootstrap...");
         
         chdir("/var/containers/Bundle/");
@@ -263,8 +285,7 @@ int system_(char *cmd) {
     
     //---- update jailbreakd ----//
     
-    removeFile("/var/containers/Bundle/tweaksupport/bin/jailbreakd");
-    
+    removeFile("/var/containers/Bundle/iosbinpack64/bin/jailbreakd");
     if (!fileExists(in_bundle("bins/jailbreakd"))) {
         chdir(in_bundle("bins/"));
         
@@ -274,8 +295,33 @@ int system_(char *cmd) {
         
         removeFile(in_bundle("bins/jailbreakd.tar"));
     }
-    
     copyFile(in_bundle("bins/jailbreakd"), "/var/containers/Bundle/iosbinpack64/bin/jailbreakd");
+    
+    removeFile("/var/containers/Bundle/iosbinpack64/pspawn.dylib");
+    if (!fileExists(in_bundle("bins/pspawn.dylib"))) {
+        chdir(in_bundle("bins/"));
+        
+        FILE *jbd = fopen(in_bundle("bins/pspawn.dylib.tar"), "r");
+        untar(jbd, in_bundle("bins/pspawn.dylib"));
+        fclose(jbd);
+        
+        removeFile(in_bundle("bins/pspawn.dylib.tar"));
+    }
+    copyFile(in_bundle("bins/pspawn.dylib"), "/var/containers/Bundle/iosbinpack64/pspawn.dylib");
+    
+    removeFile("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
+    if (!fileExists(in_bundle("bins/TweakInject.dylib"))) {
+        chdir(in_bundle("bins/"));
+        
+        FILE *jbd = fopen(in_bundle("bins/TweakInject.tar"), "r");
+        untar(jbd, in_bundle("bins/TweakInject.dylib"));
+        fclose(jbd);
+        
+        removeFile(in_bundle("bins/TweakInject.tar"));
+    }
+    copyFile(in_bundle("bins/TweakInject.dylib"), "/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
+    
+    removeFile("/var/log/pspawn_payload_xpcproxy.log");
     
     //---- codesign patch ----//
     
@@ -512,7 +558,7 @@ end:;
 }
 - (IBAction)uninstall:(id)sender {
     //---- tfp0 ----//
-    mach_port_t taskforpidzero = MACH_PORT_NULL;
+    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
     BOOL debug = NO; // kids don't enable this
@@ -525,11 +571,28 @@ end:;
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
             
-            if (maxVersion("12.1.2")) {
+            if (psize == 0x1000 && maxVersion("12.1.2")) {
+                
+                // v3ntex is so bad we have to treat it specially for it not to freak out
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+                dispatch_group_t group = dispatch_group_create();
+                dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+                
+                dispatch_group_async(group, queue, ^{
+                    taskforpidzero = v3ntex();
+                    dispatch_semaphore_signal(sm);
+                });
+                
+                dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
             }
             else {
-                
+                [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
+                [sender setEnabled:false];
+                return;
             }
             
             if (!MACH_PORT_VALID(taskforpidzero)) {
@@ -541,11 +604,28 @@ end:;
         }
     }
     else {
-        if (maxVersion("12.1.2")) {
+        if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
+            // v3ntex is so bad we have to treat it specially for it not to freak out
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+            
+            dispatch_group_async(group, queue, ^{
+                taskforpidzero = v3ntex();
+                dispatch_semaphore_signal(sm);
+            });
+            
+            dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+        }
+        
+        else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
         }
         else {
-            
+            [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
+            [sender setEnabled:false];
+            return;
         }
         
         if (!MACH_PORT_VALID(taskforpidzero)) {
@@ -557,13 +637,11 @@ end:;
     }
     LOG("[*] Starting fun");
     
-    if (!maxVersion("11.4.1") && maxVersion("12.1.2")) {
+    if (!KernelBase) {
         kernel_slide_init();
         init_with_kbase(taskforpidzero, 0xfffffff007004000 + kernel_slide);
     }
-    else if (maxVersion("11.3.1")) {
-        init_jelbrek(taskforpidzero);
-    }
+    else init_with_kbase(taskforpidzero, KernelBase);
     
     LOG("[i] Kernel base: 0x%llx", KernelBase);
     
@@ -605,7 +683,13 @@ end:;
     removeFile("/var/log/testbin.log");
     removeFile("/var/log/jailbreakd-stdout.log");
     removeFile("/var/log/jailbreakd-stderr.log");
+    removeFile("/var/log/pspawn_payload_xpcproxy.log");
     removeFile("/var/containers/Bundle/.installed_rootlessJB3");
+    
+    if (relockFileSystem() == LKM_RMT_REBOOT_REQUIRED) {
+        reboot(9);
+    }
+    
     
 end:;
     if (sb) sandbox(getpid(), sb);

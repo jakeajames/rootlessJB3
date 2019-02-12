@@ -56,6 +56,30 @@ void openjailbreakdsocket(){
     jailbreakd_serverlen = sizeof(jailbreakd_serveraddr);
 }
 
+void calljailbreakdforexec(char *exec) {
+    if (jailbreakd_sockfd == -1) {
+        openjailbreakdsocket();
+    }
+    
+#define BUFSIZE 2000
+    
+    int n;
+    char buf[BUFSIZE];
+    
+    /* get a message from the user */
+    bzero(buf, BUFSIZE);
+    
+    struct JAILBREAKD_FIXUP_EXECUTABLE execPacket;
+    execPacket.Command = JAILBREAKD_COMMAND_FIXUP_EXECUTABLE;
+    strcpy(execPacket.exec, exec);
+    
+    memcpy(buf, &execPacket, sizeof(execPacket));
+    
+    n = sendto(jailbreakd_sockfd, buf, sizeof(struct JAILBREAKD_FIXUP_EXECUTABLE), 0, (const struct sockaddr *)&jailbreakd_serveraddr, jailbreakd_serverlen);
+    if (n < 0)
+        printf("Error in sendto\n");
+}
+
 void calljailbreakd(pid_t PID, uint8_t command) {
     if (jailbreakd_sockfd == -1) {
         openjailbreakdsocket();

@@ -16,6 +16,9 @@
 		820FAA0C213589AF004E38D8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA0B213589AF004E38D8 /* main.m */; };
 		820FAA16213589AF004E38D8 /* rootlessJBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA15213589AF004E38D8 /* rootlessJBTests.m */; };
 		820FAA21213589AF004E38D8 /* rootlessJBUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 820FAA20213589AF004E38D8 /* rootlessJBUITests.m */; };
+		821B7F222213012D00C8A7A4 /* RoundedViews.m in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F212213012D00C8A7A4 /* RoundedViews.m */; };
+		821B7F262213035400C8A7A4 /* exploit.m in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F252213035400C8A7A4 /* exploit.m */; };
+		821B7F29221333B100C8A7A4 /* offsets.c in Sources */ = {isa = PBXBuildFile; fileRef = 821B7F27221333B000C8A7A4 /* offsets.c */; };
 		825D33952135D189008723F8 /* IOKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 825D33932135D189008723F8 /* IOKit.tbd */; };
 		825D33962135D189008723F8 /* jelbrekLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 825D33942135D189008723F8 /* jelbrekLib.a */; };
 		825D33A92135D5DB008723F8 /* bins in Resources */ = {isa = PBXBuildFile; fileRef = 825D33A72135D5DB008723F8 /* bins */; };
@@ -25,9 +28,9 @@
 		825D33B92136C284008723F8 /* offsetsDump.c in Sources */ = {isa = PBXBuildFile; fileRef = 825D33B72136C284008723F8 /* offsetsDump.c */; };
 		82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48B22065E03005E4572 /* kernel_alloc.c */; };
 		82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 82DAE48F2208B4E7005E4572 /* insert_dylib.c */; };
-		B7D92C7C220F6B81004634CD /* utilities in Resources */ = {isa = PBXBuildFile; fileRef = B7D92C7B220F6B81004634CD /* utilities */; };
-		B7D92C81220F6B98004634CD /* remount.c in Sources */ = {isa = PBXBuildFile; fileRef = B7D92C7E220F6B97004634CD /* remount.c */; };
-		B7D92C82220F6B98004634CD /* remount1200_PF.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D92C80220F6B97004634CD /* remount1200_PF.m */; };
+		AB7E106A22136F6000593905 /* remount1200.c in Sources */ = {isa = PBXBuildFile; fileRef = AB7E106922136F6000593905 /* remount1200.c */; };
+		AB7E106C221370D700593905 /* utilities in Resources */ = {isa = PBXBuildFile; fileRef = AB7E106B221370D600593905 /* utilities */; };
+		AB7E106F2213711500593905 /* remount1200_PF.m in Sources */ = {isa = PBXBuildFile; fileRef = AB7E106D2213711400593905 /* remount1200_PF.m */; };
 		CEA5D6DA220649B700075088 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CD220649B700075088 /* log.c */; };
 		CEA5D6DB220649B700075088 /* parameters.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CE220649B700075088 /* parameters.c */; };
 		CEA5D6DC220649B700075088 /* platform_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CEA5D6CF220649B700075088 /* platform_match.c */; };
@@ -72,6 +75,12 @@
 		820FAA1C213589AF004E38D8 /* rootlessJBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rootlessJBUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		820FAA20213589AF004E38D8 /* rootlessJBUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = rootlessJBUITests.m; sourceTree = "<group>"; };
 		820FAA22213589AF004E38D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		821B7F202213012C00C8A7A4 /* RoundedViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedViews.h; sourceTree = "<group>"; };
+		821B7F212213012D00C8A7A4 /* RoundedViews.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoundedViews.m; sourceTree = "<group>"; };
+		821B7F242213035400C8A7A4 /* exploit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exploit.h; sourceTree = "<group>"; };
+		821B7F252213035400C8A7A4 /* exploit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exploit.m; sourceTree = "<group>"; };
+		821B7F27221333B000C8A7A4 /* offsets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = offsets.c; sourceTree = "<group>"; };
+		821B7F28221333B000C8A7A4 /* offsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
 		825D33912135D17E008723F8 /* jelbrekLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jelbrekLib.h; sourceTree = "<group>"; };
 		825D33932135D189008723F8 /* IOKit.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = IOKit.tbd; sourceTree = "<group>"; };
 		825D33942135D189008723F8 /* jelbrekLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = jelbrekLib.a; sourceTree = "<group>"; };
@@ -88,11 +97,11 @@
 		82DAE48F2208B4E7005E4572 /* insert_dylib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = insert_dylib.c; sourceTree = "<group>"; };
 		82DAE4902208B4E7005E4572 /* insert_dylib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = insert_dylib.h; sourceTree = "<group>"; };
 		82DAE4922208BA90005E4572 /* vnode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
-		B7D92C7B220F6B81004634CD /* utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = utilities; sourceTree = "<group>"; };
-		B7D92C7D220F6B97004634CD /* remount1200_PF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remount1200_PF.h; sourceTree = "<group>"; };
-		B7D92C7E220F6B97004634CD /* remount.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remount.c; sourceTree = "<group>"; };
-		B7D92C7F220F6B97004634CD /* remount.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remount.h; sourceTree = "<group>"; };
-		B7D92C80220F6B97004634CD /* remount1200_PF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = remount1200_PF.m; sourceTree = "<group>"; };
+		AB7E106822136F6000593905 /* remount1200.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remount1200.h; sourceTree = "<group>"; };
+		AB7E106922136F6000593905 /* remount1200.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remount1200.c; sourceTree = "<group>"; };
+		AB7E106B221370D600593905 /* utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = utilities; sourceTree = "<group>"; };
+		AB7E106D2213711400593905 /* remount1200_PF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = remount1200_PF.m; sourceTree = "<group>"; };
+		AB7E106E2213711500593905 /* remount1200_PF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = remount1200_PF.h; sourceTree = "<group>"; };
 		CEA5D6CC220649B700075088 /* kernel_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_memory.h; sourceTree = "<group>"; };
 		CEA5D6CD220649B700075088 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		CEA5D6CE220649B700075088 /* parameters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parameters.c; sourceTree = "<group>"; };
@@ -164,13 +173,17 @@
 		820FA9FB213589AF004E38D8 /* rootlessJB */ = {
 			isa = PBXGroup;
 			children = (
-				B7D92C7B220F6B81004634CD /* utilities */,
+				AB7E106B221370D600593905 /* utilities */,
 				825D33972135D2B8008723F8 /* exploit */,
 				825D33922135D189008723F8 /* libs */,
 				820FA9FC213589AF004E38D8 /* AppDelegate.h */,
 				820FA9FD213589AF004E38D8 /* AppDelegate.m */,
 				820FA9FF213589AF004E38D8 /* ViewController.h */,
 				820FAA00213589AF004E38D8 /* ViewController.m */,
+				AB7E106822136F6000593905 /* remount1200.h */,
+				AB7E106922136F6000593905 /* remount1200.c */,
+				AB7E106E2213711500593905 /* remount1200_PF.h */,
+				AB7E106D2213711400593905 /* remount1200_PF.m */,
 				82DAE4922208BA90005E4572 /* vnode.h */,
 				825D33912135D17E008723F8 /* jelbrekLib.h */,
 				825D33AA2136A1F7008723F8 /* libjb.h */,
@@ -180,15 +193,13 @@
 				825D33B82136C284008723F8 /* offsetsDump.h */,
 				82DAE48F2208B4E7005E4572 /* insert_dylib.c */,
 				82DAE4902208B4E7005E4572 /* insert_dylib.h */,
+				821B7F202213012C00C8A7A4 /* RoundedViews.h */,
+				821B7F212213012D00C8A7A4 /* RoundedViews.m */,
 				820FAA02213589AF004E38D8 /* Main.storyboard */,
 				820FAA05213589AF004E38D8 /* Assets.xcassets */,
 				820FAA07213589AF004E38D8 /* LaunchScreen.storyboard */,
 				820FAA0A213589AF004E38D8 /* Info.plist */,
 				820FAA0B213589AF004E38D8 /* main.m */,
-				B7D92C7E220F6B97004634CD /* remount.c */,
-				B7D92C7F220F6B97004634CD /* remount.h */,
-				B7D92C7D220F6B97004634CD /* remount1200_PF.h */,
-				B7D92C80220F6B97004634CD /* remount1200_PF.m */,
 			);
 			path = rootlessJB;
 			sourceTree = "<group>";
@@ -211,6 +222,17 @@
 			path = rootlessJBUITests;
 			sourceTree = "<group>";
 		};
+		821B7F232213035400C8A7A4 /* v3ntex */ = {
+			isa = PBXGroup;
+			children = (
+				821B7F242213035400C8A7A4 /* exploit.h */,
+				821B7F252213035400C8A7A4 /* exploit.m */,
+				821B7F27221333B000C8A7A4 /* offsets.c */,
+				821B7F28221333B000C8A7A4 /* offsets.h */,
+			);
+			path = v3ntex;
+			sourceTree = "<group>";
+		};
 		825D33922135D189008723F8 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,6 +246,7 @@
 		825D33972135D2B8008723F8 /* exploit */ = {
 			isa = PBXGroup;
 			children = (
+				821B7F232213035400C8A7A4 /* v3ntex */,
 				CEA5D6CB220649B700075088 /* voucher_swap */,
 			);
 			name = exploit;
@@ -368,7 +391,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				820FAA09213589AF004E38D8 /* LaunchScreen.storyboard in Resources */,
-				B7D92C7C220F6B81004634CD /* utilities in Resources */,
+				AB7E106C221370D700593905 /* utilities in Resources */,
 				820FAA06213589AF004E38D8 /* Assets.xcassets in Resources */,
 				8207AE152154343700ABA466 /* apps in Resources */,
 				820FAA04213589AF004E38D8 /* Main.storyboard in Resources */,
@@ -400,18 +423,21 @@
 			files = (
 				82DAE48C22065E03005E4572 /* kernel_alloc.c in Sources */,
 				CEA5D6E0220649B700075088 /* kernel_slide.c in Sources */,
+				AB7E106F2213711500593905 /* remount1200_PF.m in Sources */,
 				CEA5D6DA220649B700075088 /* log.c in Sources */,
 				CEA5D6DB220649B700075088 /* parameters.c in Sources */,
 				820FAA01213589AF004E38D8 /* ViewController.m in Sources */,
 				820FAA0C213589AF004E38D8 /* main.m in Sources */,
 				825D33B62136B4E9008723F8 /* payload.c in Sources */,
-				B7D92C81220F6B98004634CD /* remount.c in Sources */,
+				821B7F222213012D00C8A7A4 /* RoundedViews.m in Sources */,
 				CEA5D6DE220649B700075088 /* kernel_memory.c in Sources */,
+				821B7F262213035400C8A7A4 /* exploit.m in Sources */,
 				CEA5D6DD220649B700075088 /* platform.c in Sources */,
+				821B7F29221333B100C8A7A4 /* offsets.c in Sources */,
 				82DAE4912208B4E7005E4572 /* insert_dylib.c in Sources */,
 				825D33B92136C284008723F8 /* offsetsDump.c in Sources */,
 				CEA5D6DF220649B700075088 /* voucher_swap.c in Sources */,
-				B7D92C82220F6B98004634CD /* remount1200_PF.m in Sources */,
+				AB7E106A22136F6000593905 /* remount1200.c in Sources */,
 				CEA5D6DC220649B700075088 /* platform_match.c in Sources */,
 				820FA9FE213589AF004E38D8 /* AppDelegate.m in Sources */,
 			);
@@ -587,7 +613,7 @@
 					"$(PROJECT_DIR)/rootlessJB/libs",
 				);
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lakr.research.rootlessJB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -608,7 +634,7 @@
 					"$(PROJECT_DIR)/rootlessJB/libs",
 				);
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJB3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lakr.research.rootlessJB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
