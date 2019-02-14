@@ -329,6 +329,7 @@ vm_size_t psize;
         symlink("/var/containers/Bundle/iosbinpack64/etc", "/var/etc");
         mkdir("/var/usr", 0777);
         symlink("/var/containers/Bundle/iosbinpack64/usr/bin", "/var/usr/bin");
+        symlink("/var/containers/Bundle/iosbinpack64/usr/sbin", "/var/usr/sbin");
         symlink("/var/containers/Bundle/iosbinpack64/usr/local", "/var/usr/local");
         symlink("/var/containers/Bundle/iosbinpack64/usr/lib", "/var/usr/lib");
         symlink("/var/containers/Bundle/iosbinpack64/usr/libexec", "/var/usr/libexec");
