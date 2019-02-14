@@ -76,9 +76,21 @@ int system_(char *cmd) {
 
 struct utsname u;
 vm_size_t psize;
+int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    uint32_t flags;
+    csops(getpid(), 0, &flags, 0);
+    
+    if ((flags & 0x4000000)) { // platform
+        [self.jailbreakButton setTitle:@"Jailbroken" forState:UIControlStateNormal];
+        [self.jailbreakButton setEnabled:NO];
+        [self.enableTweaks setEnabled:NO];
+        [self.installiSuperSU setEnabled:NO];
+    }
+    
     uname(&u);
     if (strstr(u.machine, "iPad5,")) psize = 0x1000;
     else _host_page_size(mach_host_self(), &psize);
@@ -89,7 +101,7 @@ vm_size_t psize;
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = NO; // kids don't enable this
+    BOOL debug = YES; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
