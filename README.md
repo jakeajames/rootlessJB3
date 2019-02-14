@@ -9,11 +9,11 @@ Blah blah, read this: [How to make a jailbreak without a filesystem remount as r
 
 - All A9-A11 devices
 - iPad Air 2
+- The rest of 4K devices whose kernels got symbols
 
 ## To be supported (sorted by priority)
 
-- 4K devices whose kernels got symbols
-- Rest of 4K devices
+- Rest of 4K devices with no symbols
 - A12 devices
 
 **DO NOT ASK FOR ETA**
