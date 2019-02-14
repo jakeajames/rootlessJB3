@@ -101,7 +101,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = YES; // kids don't enable this
+    BOOL debug = NO; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
@@ -121,7 +121,6 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                 dispatch_semaphore_t sm = dispatch_semaphore_create(0);
                 
                 dispatch_group_async(group, queue, ^{
-                    sleep(5);
                     taskforpidzero = v3ntex();
                     dispatch_semaphore_signal(sm);
                 });
