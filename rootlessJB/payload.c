@@ -26,12 +26,12 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 
-char* prepare_directory(char* dir_path) {
+char* prepare_directory(char* base_path, char* dir_path) {
     DIR *dp;
     struct dirent *ep;
     
     char* in_path = NULL;
-    asprintf(&in_path, "/var/containers/Bundle/iosbinpack64/%s", dir_path);
+    asprintf(&in_path, "%s/%s", base_path, dir_path);
     
     dp = opendir(in_path);
     if (dp == NULL) {
@@ -42,7 +42,7 @@ char* prepare_directory(char* dir_path) {
     while ((ep = readdir(dp))) {
         char* entry = ep->d_name;
         char* full_entry_path = NULL;
-        asprintf(&full_entry_path, "/var/containers/Bundle/iosbinpack64/%s/%s", dir_path, entry);
+        asprintf(&full_entry_path, "%s/%s/%s", base_path, dir_path, entry);
         
         printf("[*] preparing: %s\n", full_entry_path);
         
@@ -60,37 +60,37 @@ char* prepare_directory(char* dir_path) {
     return in_path;
 }
 
-// prepare all the payload binaries under the iosbinpack64 directory
+// prepare all the payload binaries under the iosbinpack64,openssh directory
 // and build up the PATH
 char* prepare_payload() {
     char* path = calloc(4096, 1);
     strcpy(path, "PATH=");
     char* dir;
-    dir = prepare_directory("bin");
+    dir = prepare_directory("/var/containers/Bundle/iosbinpack64", "bin");
     strcat(path, dir);
     strcat(path, ":");
     free(dir);
     
-    dir = prepare_directory("sbin");
+    dir = prepare_directory("/var/containers/Bundle/iosbinpack64", "sbin");
     strcat(path, dir);
     strcat(path, ":");
     free(dir);
     
-    dir = prepare_directory("usr/bin");
+    dir = prepare_directory("/var/containers/Bundle/iosbinpack64", "usr/bin");
     strcat(path, dir);
     strcat(path, ":");
     free(dir);
     
-    dir = prepare_directory("usr/local/bin");
+    dir = prepare_directory("/var/containers/Bundle/iosbinpack64", "usr/local/bin");
     strcat(path, dir);
     strcat(path, ":");
     free(dir);
     
-    dir = prepare_directory("usr/sbin");
+    dir = prepare_directory("/var/containers/Bundle/iosbinpack64", "usr/sbin");
     strcat(path, dir);
     strcat(path, ":");
     free(dir);
-    
+
     strcat(path, "/bin:/sbin:/usr/bin:/usr/sbin:/usr/libexec");
     
     return path;
