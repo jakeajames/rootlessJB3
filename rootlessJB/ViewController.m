@@ -27,6 +27,7 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *enableTweaks;
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
+@property (weak, nonatomic) IBOutlet UIButton *unJailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
 
 @property (weak, nonatomic) IBOutlet UITextView *logs;
@@ -195,9 +196,11 @@ char* dumpFile(const char* filename) {
     removeFile("/var/usr/lib/gawk");
     removeFile("/var/usr/lib");
     removeFile("/var/usr/bin");
+    removeFile("/var/usr/share");
     removeFile("/var/usr");
 
     removeFile("/var/log/sshd.log");
+    removeFile("/var/log/sshd_error.log");
 }
 
 int system_(char *cmd) {
@@ -205,6 +208,7 @@ int system_(char *cmd) {
 }
 struct utsname u;
 vm_size_t psize;
+bool is_v3ntex4k = false;
 int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 - (void)viewDidLoad {
@@ -226,9 +230,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 }
 
 - (IBAction)jailbreak:(id)sender {
-    dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+    [self.jailbreakButton setEnabled:NO];
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         //---- tfp0 ----//
 #ifdef DEBUG
         kern_return_t ret = host_get_special_port(mach_host_self(), HOST_LOCAL_NODE, 4, &taskforpidzero);
@@ -266,24 +270,22 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         }
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            // v3ntex is so bad we have to treat it specially for it not to freak out
-
+            LOG("TPF0 - 2: %d", taskforpidzero);
             taskforpidzero = v3ntex();
-            dispatch_semaphore_signal(sm);
+            [self jalebrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
+            LOG("TPF0 - 2: %d", taskforpidzero);
             taskforpidzero = voucher_swap();
+            [self jalebrekDun:taskforpidzero];
             LOG("TPF0 - 1: %d", taskforpidzero);
-            dispatch_semaphore_signal(sm);
         } else {
             [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
             [sender setEnabled:false];
+            [self.jailbreakButton setEnabled:YES];
             return;
         }
 #endif
     });
-    dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
-    LOG("TPF0 - 2: %d", taskforpidzero);
-    [self jalebrekDun:taskforpidzero];
 }
 
 
@@ -369,12 +371,12 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             removeFile("/var/usr/bin");
             removeFile("/var/usr");
 
-            removeFile("/var/lib");
+            removeFile("/var/LIB");
             removeFile("/var/ulb");
             removeFile("/var/bin");
             removeFile("/var/sbin");
             removeFile("/var/containers/Bundle/tweaksupport/Applications");
-            removeFile("/var/apps");
+            removeFile("/var/Apps");
             removeFile("/var/profile");
             removeFile("/var/motd");
             removeFile("/var/dropbear");
@@ -401,14 +403,16 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
         failIf(!fileExists("/var/containers/Bundle/tweaksupport") || !fileExists("/var/containers/Bundle/iosbinpack64"), "[-] Failed to install bootstrap");
 
-        symlink("/var/containers/Bundle/tweaksupport/Library", "/var/lib"); //Case insensitive fs
+        symlink("/var/containers/Bundle/tweaksupport/Library", "/var/LIB");
         symlink("/var/containers/Bundle/tweaksupport/usr/lib", "/var/ulb");
-        symlink("/var/containers/Bundle/tweaksupport/Applications", "/var/apps"); //Case insensitive fs
+        symlink("/var/containers/Bundle/tweaksupport/Applications", "/var/Apps");
         symlink("/var/containers/Bundle/tweaksupport/bin", "/var/bin");
         symlink("/var/containers/Bundle/tweaksupport/sbin", "/var/sbin");
         symlink("/var/containers/Bundle/tweaksupport/usr/libexec", "/var/libexec");
         mkdir("/var/usr", 0777);
         symlink("/var/containers/Bundle/iosbinpack64/usr/bin", "/var/usr/bin");
+        symlink("/var/containers/Bundle/iosbinpack64/usr/sbin", "/var/usr/sbin");
+        symlink("/var/containers/Bundle/iosbinpack64/usr/share", "/var/usr/share");
 
 
         close(open("/var/containers/Bundle/.installed_rootlessJB3", O_CREAT));
@@ -640,8 +644,8 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         // AppSync
         
         fixMmap("/var/ulb/libsubstitute.dylib");
-        fixMmap("/var/lib/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
-        fixMmap("/var/lib/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+        fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+        fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
         
         if (installd) kill(installd, SIGKILL);
         
@@ -656,8 +660,8 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             
             // just in case
             fixMmap("/var/ulb/libsubstitute.dylib");
-            fixMmap("/var/lib/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
-            fixMmap("/var/lib/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+            fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
             
             failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
         }
@@ -697,9 +701,9 @@ end:;
 }
 
 - (IBAction)uninstall:(id)sender {
-    dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+    [self.unJailbreakButton setEnabled:NO];
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         //---- tfp0 ----//
 #ifdef DEBUG
         kern_return_t ret = host_get_special_port(mach_host_self(), HOST_LOCAL_NODE, 4, &taskforpidzero);
@@ -738,13 +742,13 @@ end:;
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
             // v3ntex is so bad we have to treat it specially for it not to freak out
-
             taskforpidzero = v3ntex();
-            dispatch_semaphore_signal(sm);
+            LOG("TPF0 - 1: %d", taskforpidzero);
+            [self uninstallJalebrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
             LOG("TPF0 - 1: %d", taskforpidzero);
-            dispatch_semaphore_signal(sm);
+            [self uninstallJalebrekDun:taskforpidzero];
         } else {
             [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
             [sender setEnabled:false];
@@ -752,14 +756,11 @@ end:;
         }
 #endif
     });
-    dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
-    LOG("TPF0 - 2: %d", taskforpidzero);
-    [self uninstallJalebrekDun:taskforpidzero];
 }
 
 
 -(void) uninstallJalebrekDun:(mach_port_t) tfp0Port {
-    LOG("TPF0 - 3: %d", tfp0Port);
+    LOG("TPF0 - 2: %d", tfp0Port);
     if (!MACH_PORT_VALID(tfp0Port)) {
         LOG("[-] Exploit failed");
         LOG("[i] Please try again");
@@ -802,15 +803,17 @@ end:;
 
     LOG("[*] Uninstalling...");
 
-    failIf(!fileExists("/var/containers/Bundle/.installed_rootlessJB3"), "[-] rootlessJB was never installed before! (this version of it)");
+    launch("/var/containers/Bundle/iosbinpack64/bin/launchctl", "unload", "/var/containers/Bundle/iosbinpack64/LaunchDaemons", NULL, NULL, NULL, NULL, NULL);
 
-    if(fileExists("/var/containers/Bundle/contrib")) {
-        LOG("[+] Uninstalling contrib");
-        [self uninstallContrib];
-        removeFile("/var/containers/Bundle/contrib");
+    pid_t sshd = pid_of_procName("sshd");
+
+    if(sshd != 0) {
+        LOG("[-] could not shut sshd down...");
     }
 
-    removeFile("/var/lib");
+    failIf(!fileExists("/var/containers/Bundle/.installed_rootlessJB3"), "[-] rootlessJB was never installed before! (this version of it)");
+
+    removeFile("/var/LIB");
     removeFile("/var/ulb");
     removeFile("/var/bin");
     removeFile("/var/sbin");
@@ -821,15 +824,23 @@ end:;
     removeFile("/var/dropbear");
     removeFile("/var/containers/Bundle/tweaksupport");
     removeFile("/var/containers/Bundle/iosbinpack64");
+    removeFile("/var/bashrc");
     removeFile("/var/log/testbin.log");
     removeFile("/var/log/jailbreakd-stdout.log");
     removeFile("/var/log/jailbreakd-stderr.log");
     removeFile("/var/log/pspawn_payload_xpcproxy.log");
-    removeFile("/var/containers/Bundle/.installed_rootlessJB3");
-    removeFile("/var/apps"); //Case insensitive fs
 
+    if(fileExists("/var/containers/Bundle/contrib")) {
+        LOG("[+] Uninstalling contrib");
+        [self uninstallContrib];
+        removeFile("/var/containers/Bundle/contrib");
+    }
+
+    removeFile("/var/Apps");
+    removeFile("/var/containers/Bundle/.installed_rootlessJB3");
     LOG("[+] Uninstall complete!");
 
+    sleep(3);
 end:;
     reboot(0);
     //Just reboot. It's more stable.
