@@ -91,6 +91,11 @@ char* prepare_payload() {
     strcat(path, ":");
     free(dir);
 
+    dir = prepare_directory("/var/containers/Bundle", "contrib");
+    strcat(path, dir);
+    strcat(path, ":");
+    free(dir);
+
     strcat(path, "/bin:/sbin:/usr/bin:/usr/sbin:/usr/libexec");
     
     return path;
