@@ -208,7 +208,6 @@ int system_(char *cmd) {
 }
 struct utsname u;
 vm_size_t psize;
-bool is_v3ntex4k = false;
 int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 - (void)viewDidLoad {
@@ -270,14 +269,11 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         }
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            LOG("TPF0 - 2: %d", taskforpidzero);
             taskforpidzero = v3ntex();
             [self jalebrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
-            LOG("TPF0 - 2: %d", taskforpidzero);
             taskforpidzero = voucher_swap();
             [self jalebrekDun:taskforpidzero];
-            LOG("TPF0 - 1: %d", taskforpidzero);
         } else {
             [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
             [sender setEnabled:false];
@@ -290,7 +286,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 
 -(void) jalebrekDun:(mach_port_t) tfp0port  {
-    LOG("TPF0 - 3: %d", tfp0port);
+    LOG("TPF0: %d", tfp0port);
     if (!MACH_PORT_VALID(tfp0port)) {
         LOG("[-] Exploit failed");
         LOG("[i] Please try again");
