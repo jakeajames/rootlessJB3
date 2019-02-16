@@ -110,7 +110,15 @@ int vnode_lookup(const char *path, int flags, uint64_t *vnode, uint64_t vfs_cont
 }
 
 int vnode_put(uint64_t vnode) {
-    return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
+    uint32_t usecount = rk32(vnode + 0x60);
+    uint32_t iocount = rk32(vnode + 0x64);
+    
+    if (usecount > 0 || iocount > 1) {
+        iocount--;
+        wk32(vnode + 0x64, iocount);
+    }
+    return 0;
+    //return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
 }
 
 uint64_t get_vfs_context() {
@@ -159,7 +167,7 @@ int fixupdylib(char *dylib) {
     
     uint32_t v_flags = rk32(vnode + offsetof_v_flags);
     if (v_flags & VSHARED_DYLD) {
-        //vnode_put(vnode);
+        vnode_put(vnode);
         return 0;
     }
     
@@ -170,7 +178,7 @@ int fixupdylib(char *dylib) {
     v_flags = rk32(vnode + offsetof_v_flags);
     NSLog(@"new v_flags: 0x%x", v_flags);
 
-    //vnode_put(vnode);
+    vnode_put(vnode);
     
     return !(v_flags & VSHARED_DYLD);
 }
