@@ -101,7 +101,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     
     uint64_t sb = 0;
-    BOOL debug = YES; // kids don't enable this
+    BOOL debug = NO; // kids don't enable this
     
     // for messing with files
     NSError *error = NULL;
@@ -606,7 +606,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                     // check for keys added by native/appstore apps and exclude (theos and friends don't add BuildMachineOSBuild and DT_ on apps :-D )
                     // Xcode-added apps set CFBundleExecutable=Executable, exclude them too
                     
-                    if ([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/.jb",fullAppBundlePath]] || ![[NSFileManager defaultManager] fileExistsAtPath:_CodeSignature] || (executable && ![executable isEqual:@"Executable"] && !BuildMachineOSBuild & !hasDTCompilerRelatedKeys)) {
+                    if (([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/.jb",fullAppBundlePath]] || ![[NSFileManager defaultManager] fileExistsAtPath:_CodeSignature] || (executable && ![executable isEqual:@"Executable"] && !BuildMachineOSBuild & !hasDTCompilerRelatedKeys)) && fileExists([executable UTF8String])) {
                         
                         executable = [NSString stringWithFormat:@"%@/%@", fullAppBundlePath, executable];
                         LOG("Injecting executable %s",[executable UTF8String]);
