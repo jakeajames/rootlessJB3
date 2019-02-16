@@ -113,12 +113,12 @@ int vnode_put(uint64_t vnode) {
     uint32_t usecount = rk32(vnode + 0x60);
     uint32_t iocount = rk32(vnode + 0x64);
     
-    if (iocount > 0) {
+    if (iocount > 1) {
         iocount--;
         wk32(vnode + 0x64, iocount);
     }
     
-    if (usecount > 0) {
+    if (usecount > 1) {
         usecount--;
         wk32(vnode + 0x60, usecount);
     }
