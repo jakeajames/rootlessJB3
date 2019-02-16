@@ -113,10 +113,16 @@ int vnode_put(uint64_t vnode) {
     uint32_t usecount = rk32(vnode + 0x60);
     uint32_t iocount = rk32(vnode + 0x64);
     
-    if (usecount > 0 || iocount > 1) {
+    if (iocount > 0) {
         iocount--;
         wk32(vnode + 0x64, iocount);
     }
+    
+    if (usecount > 0) {
+        usecount--;
+        wk32(vnode + 0x60, usecount);
+    }
+    
     return 0;
     //return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
 }
