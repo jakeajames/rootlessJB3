@@ -74,6 +74,12 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
         }
     }
     
+    // XXX log different err on inject_me == NULL and nonexistent inject_me
+    if (inject_me == NULL || !file_exist(inject_me)) {
+        DEBUGLOG("Nothing to inject");
+        return old(pid, path, file_actions, attrp, argv, envp);
+    }
+    
     if (strcmp(path, "/usr/libexec/amfid") == 0) {
         DEBUGLOG("Starting amfid -- special handling");
         inject_me = AMFID_PAYLOAD_DYLIB;
@@ -81,12 +87,6 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
         inject_me = SBINJECT_PAYLOAD_DYLIB;
     }
     
-    // XXX log different err on inject_me == NULL and nonexistent inject_me
-    if (inject_me == NULL || !file_exist(inject_me)) {
-        DEBUGLOG("Nothing to inject");
-        return old(pid, path, file_actions, attrp, argv, envp);
-    }
-
     //if (strstr(path, "/var/containers/Bundle/Application") || strstr(path, "/usr/libexec")) calljailbreakdforexec((char *)path);
     
     DEBUGLOG("Injecting %s into %s", inject_me, path);
