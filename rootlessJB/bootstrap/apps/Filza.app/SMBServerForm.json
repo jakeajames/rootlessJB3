@@ -1,0 +1,58 @@
+{
+    "controllerName": "GDFormLoginViewController", 
+    "grouped": true, 
+    "sections": [
+        {
+            "elements": [
+                 {
+                    "autocapitalizationType": "None",
+                    "autocorrectionType": "No",
+                    "bind": "textValue:workgroup",
+                    "key": "workgroup",
+                    "placeholder": "WORKGROUP",
+                    "title": "Workgroup",
+                    "type": "QEntryElement"
+                 },
+                 {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:server", 
+                    "key": "server", 
+                    "keyboardType": "URL", 
+                    "placeholder": "Name or IP",
+                    "title": "Server", 
+                    "type": "QEntryElement"
+                 },
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:username", 
+                    "key": "username", 
+                    "keyboardType": "Default", 
+                    "placeholder": "Optional",
+                    "title": "Username",
+                    "type": "QEntryElement"
+                }, 
+                {
+                    "bind": "textValue:password", 
+                    "placeholder": "Optional",
+                    "secureTextEntry": true, 
+                    "title": "Password",
+                    "type": "QEntryElement"
+                }
+            ],
+             "headerImage": ""
+        },
+        {
+            "elements": [
+                {
+                    "controllerAction": "buttonTapped:", 
+                    "key": "button", 
+                    "title": "Connect", 
+                    "type": "QButtonElement"
+                }
+            ]
+        }
+    ], 
+    "title": "SMB (Windows File Sharing) Login"
+}

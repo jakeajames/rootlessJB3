@@ -1,0 +1,83 @@
+{
+    "controllerName": "GDFormLoginViewController", 
+    "grouped": true, 
+    "sections": [
+        {
+            "elements": [
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:server", 
+                    "key": "server", 
+                    "keyboardType": "URL", 
+                    "placeholder": "example.com",
+                    "title": "Server", 
+                    "type": "QEntryElement"
+                },
+                {
+                     "autocapitalizationType": "None",
+                     "autocorrectionType": "No",
+                     "bind": "textValue:port",
+                     "key": "port",
+                     "keyboardType": "NumberPad",
+                     "placeholder": "Default",
+                     "title": "Port",
+                     "type": "QEntryElement"
+                },
+                 {
+                     "items":[
+                              "Plain FTP",
+                              "FTP Implicit SSL",
+                              "FTP Explicit SSL"
+                              ],
+                     "selected":0,
+                     "bind": "selectedValue:encryption",
+                     "key": "encryption",
+                     "title": "Encryption",
+                     "type": "QRadioElement"
+                 },
+                 {
+                     "items":[
+                              "Default",
+                              "Active",
+                              "Passive"
+                              ],
+                     "selected":0,
+                     "bind": "selectedValue:mode",
+                     "key": "mode",
+                     "title": "Transfer mode",
+                     "type": "QRadioElement"
+                 },
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:username", 
+                    "key": "username", 
+                    "keyboardType": "Default", 
+                    "placeholder": "Required",
+                    "title": "Username",
+                    "type": "QEntryElement"
+                }, 
+                {
+                    "bind": "textValue:password", 
+                    "placeholder": "Required",
+                    "secureTextEntry": true, 
+                    "title": "Password", 
+                    "type": "QEntryElement"
+                }
+            ],
+             "headerImage": ""
+        },
+        {
+            "elements": [
+                {
+                    "controllerAction": "buttonTapped:", 
+                    "key": "button", 
+                    "title": "Connect", 
+                    "type": "QButtonElement"
+                }
+            ]
+        }
+    ], 
+    "title": "FTP Login"
+}

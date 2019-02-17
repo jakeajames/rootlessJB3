@@ -1,0 +1,39 @@
+{
+    "controllerName": "GDFormLoginViewController", 
+    "grouped": true, 
+    "sections": [
+        {
+            "elements": [
+                {
+                    "autocapitalizationType": "None", 
+                    "autocorrectionType": "No", 
+                    "bind": "textValue:email", 
+                    "key": "email", 
+                    "keyboardType": "EmailAddress", 
+                    "placeholder": "email@example.com", 
+                    "title": "Email", 
+                    "type": "QEntryElement"
+                }, 
+                {
+                    "bind": "textValue:password", 
+                    "placeholder": "Required", 
+                    "secureTextEntry": true, 
+                    "title": "Password", 
+                    "type": "QEntryElement"
+                }
+            ], 
+            "headerImage": "SugarSync"
+        }, 
+        {
+            "elements": [
+                {
+                    "controllerAction": "buttonTapped:", 
+                    "key": "button", 
+                    "title": "Login", 
+                    "type": "QButtonElement"
+                }
+            ]
+        }
+    ], 
+    "title": "Login to SugarSync"
+}

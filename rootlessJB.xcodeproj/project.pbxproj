@@ -588,7 +588,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
@@ -610,7 +610,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				INFOPLIST_FILE = rootlessJB/Info.plist;
@@ -631,7 +631,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBTests;
@@ -646,7 +646,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBTests;
@@ -660,7 +660,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBUITests;
@@ -674,7 +674,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22G2QV87A2;
+				DEVELOPMENT_TEAM = Q758D2PLHU;
 				INFOPLIST_FILE = rootlessJBUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakeashacks.rootlessJBUITests;

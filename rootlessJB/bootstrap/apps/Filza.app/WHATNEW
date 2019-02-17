@@ -1,0 +1,325 @@
+- Filza 3.6.1 (3.6 build 2)
+Fixed issue: Music player (mode RepeatOne)
+Fixed minor issues
+Supported Drag and Drop (for multitasking devices)
+Fixed pasteboard issue
+Fixed permission issue for decompressed files
+
+- Filza 3.6 (3.6)
+Fixed issue: Didn't import image metadata
+Updated SMB (Windows File Sharing): Supports SMB1, SMB2, SMB3 (Windows 10 ...)
+Updated AppIcon
+Fixed issue: Crashed when copying/moving files for box.com
+Updated feature: files move/copy/download/upload/...
+Minor UI changes
+Updated: 'Save To Folder' feature, now it is 'Save To Filza'
+Fixed issue: Music Library
+Fixed issue: Crashing when enable FaceID authentication
+Fixed issue: OneDrive. Updated to Microsoft Graph. You may need to re-add your OneDrive account to get it work
+Fixed File upload issue when connect to Windows XP
+Supported VoiceOver
+Supported Reduce Motion (in iPhone Settings > General > Accessibility > Reduce Motion)
+
+- Filza 3.5.2 (3.5 build 3)
+Updated Plist Editor:
+    + Supported OpenStep Plist format
+    + Display data in Hex
+Minor UI changes: New File, New Folder, Rename
+Localization: Done button, Cancel button
+
+- Filza 3.5.1 (3.5 build 2)
+Fixed Back button issue
+Fixed Dropbox Login issue
+
+- Filza 3.5 (3.5 build 1) [Supported iOS 7.x - iOS 11.x]
+Supported iOS 11 Electra JB
+Fixed deb installer issue
+Fixed UI issues for iPhone X
+Fixed issue: Crashing when saving images
+Updated App Icon
+Fixed an issue on iOS 7
+Fixed Image Viewer issue
+
+- Filza 3.4 (3.4 build 1)
+Fixed issue: 'Move to Trash' in Music Library doesn't work on iOS 10
+Fixed issue: Status bar and Picture In Picture for Video Player
+Fixed issue: Track number, Year, Lyrics for imported music files
+Fixed issue: Dropbox upload/download for non-ASCII filename
+Fixed issue: iOS 7 viewer again
+Fixed issue: Crashes when importing settings on iOS 9/8/7
+Fixed issue: Crashes when renaming
+
+- Filza 3.3.2 (3.3 build 3)
+Fixed issue: Can't save images from Safari with 'Save to Folder' extension
+Fixed issue: Can't view images after unzip (file permission issue);
+Fixed issue: Error while opening viewer in landscape mode on iOS 7
+
+- Filza 3.3.1 (3.3 build 2)
+Fixed issue: Can't open viewer on iOS 7
+
+- Filza 3.3 (3.3 build 1)
+Fixed wrong free space display
+Updated IPA Installer for iOS 10
+Fixed issue: white screen and keep crashing on some devices
+Fixed issue: can't gain elevated access after a reboot/rejailbreak on iOS 10
+Updated Google Drive sign in
+Peek and Pop for supported devices
+Updated QuickLook viewer
+Fixed bug while copying multiple files on iOS 10
+Added Trash > Empty to Settings
+Fixed bug for Terminal & Settings Restore
+Added Action Extension: Save to ... (to save your file quickly from other apps)
+Fixed bug for Web Viewer
+Remember your sort selection (with 3 state: Asc, Desc, None)
+Updated Music Library for iOS 10 (can import music now)
+Fixed some UI bugs
+Fixed issue: crashing while saving images/videos on iOS 10
+Updated Dropbox: Upgraded to API v2
+
+
+- Filza 3.2 (3.2 build 1)
+Fixed UI bug when replace file (file info wasn't updated)
+Fixed issue: Crashing when open Music Library
+Added App groups to Application's properties
+
+- Filza 3.1.1 (3.1 build 2)
+Fixed 'edit button disappear' issue
+
+- Filza 3.1.0 (3.1 build 1)
+Fixed DRM bug (supports stashing on iOS 9.2 - 9.3.3 @coolstarorg)
+Fixed some bugs
+Added SHA256 file hash
+Updated 'Show application name'
+Added 'Folders on top' option
+Added new play mode for Music player
+Fixed status bar issue for Video player
+Fixed WebDAV server file download/upload issue
+Added option to disable Recents
+Added more options to 'Open in' menu (Save Videos/Images ...)
+
+- Filza 3.0.4 (3.0 build 5)
+Remove delay when open File Properties
+Bug fixes for web viewer
+Bug fixes for Search (memory leak)
+
+- Filza 3.0.3 (3.0 build 4)
+Supports Right to Left content (Arabic)
+Updated Image viewer
+Bug fixes for SQLite Editor
+Bug fixes for Plist Editor
+Bug fixes for Music Library
+Bug fixes for File tag color
+Remove filza_dpkg, filza_uicache and add Filza command line tool (with enhanced security)
+Update thumbnail feature: stable & faster
+Adjust font size
+Added option to change font size (in Preferences > Theme)
+Updated sort feature
+strings files available at https://github.com/tigisoftware/Filza-localization
+Bug fixes for Media player (didn't play some files)
+
+
+- Filza 3.0.2 (3.0 build 3)
+Updated UI for iPhone 5s and less
+Bug fixes for iOS 7
+
+- Filza 3.0.1 (3.0 build 2)
+Bug fixes
+Supports 64-bit mode (arm64)
+Fixed swipe back bug
+
+- Filza 3.0.0 (3.0 build 1)
+Filza now runs as mobile instead of root. Fixes 3rd keyboard, language, airdrop, black status bar issue ...
+Fixed FTP bug
+Added Support for protected zip, rar files
+Upgrade Video Player, supports PiP (new Picture in Picture feature on iOS 9)
+Added 2 Homescreen menu shortcuts: Apps manager & Music library (for device supports 3D Touch)
+Optimized List view mode. Much faster
+Fixed Text Editor bug
+Fixed FTP/SFTP/Dropbox/Box/OneDrive/WebDAV download file permission issue
+Optimized FTP connection
+Fixed oneDrive bug
+Fixed Pasteboard bug
+Fixed Put back bug
+Supported iPad Slide Over & Split View (iPad mini 2,3,4; iPad Air 1,2; iPad Pro)
+New features: Restorable windows, Editable path (tap on folder title)
+Supported external viewer (open in other apps)
+Updated Text Editor
+Updated Search: Search with filesize, file type
+Updated Favorites
+Updated default theme
+
+- Filza 2.2.0 (2.2 build 1)
+Fixed small issue in Apps Manager Properties
+Fixed Text Editor bug
+Fixed WebDAV issue
+Fixed Plist Editor display issue
+Updated Favorites on iPad
+Fixed some UI bugs on iPad
+Fixed left panel scrolling issue on iPad
+
+- Filza 2.1.1 (2.2 build 1)
+Fixed Music Library import issue
+
+- Filza 2.1.0 (2.1 build 1)
+Updated for iOS 9
+Updated Music library for iOS 9
+Updated Text Editor for iOS 9
+Fixed bug when creating new file/folder on iPad
+Fixed unzip feature on iOS 9
+Updated Change File user/group owner, added 'apply to subitems'
+Updated Unzip feature: restore file owner, setuid/setgid/tacky permissions
+Updated SugarSync cloud storage service
+Updated FTP, SFTP, SMB (Fixed issue: Can't login with username contains character '@')
+
+- Filza 2.0.2 (2.0 build 3)
+Fixed imported "Track 6" issue
+New feature: Edit track number, title, artist, series name, album artist, album name, album year in Music library
+Fixed bugs in Plist editor
+Fixed crashing in Search
+
+- Filza 2.0.1 (2.0 build 2)
+Fixed crashing when opening file in Search window
+Fixed text editor background color with black theme
+Fixed .Trash.metadata file remove issue
+Updated: Music Library is compatible with iOS8.4
+
+**** NOTE ****
+* Filza will disable WebDAV server when reinstall/update (if it was enabled)
+
+
+- Filza 2.0
+Replace AIR-BROWSER with WebDAV server. You can use Web browser or WebDAV client to connect (like Finder on Mac OS X)
+Now WebDAV server will run as daemon, enable it in Filza > Settings > Enable WebDAV server. WebDAV server will be started automatically when you use Web browser or WebDAV client to connect to its port (default is 11111)
+Add WebDAV server authentication
+Add Recents (Opened, Downloaded, Trashed) and Remove Air File Browser icon on main window
+Fixed a few UI bugs
+Fixed Open In: Open in Filza for all file types (some files .rar, .zip ... doesn't work with previous version)
+Update UI: Added detail information for current opened folder (files count, folder count, hidden files count, disk usage ...)
+Updated better UI
+Fixed permission bug (display file type)
+Added 'Mount points' (See it in Favorites)
+Added: SHA1 File checksum
+Added: Folder contents size (total size of all normal files, in same file system)
+Fixed: Touch ID issue on iOS 8.3
+Added: Settings backup/restore
+
+
+- Filza 1.5.1 (1.5 build 2)
+Bug fixes for 1.5
+Fixed Plist Keyboard issue
+Fixed WebDAV issue (copy/download/...)
+Update Open in: will open AirDrop if device supports AirDrop and has no appropriate app
+Supports MobileSubstrate
+Added: Put back (in Trash)
+Added: more infos for video and audio file
+Fixed: DEB Installer issue
+
+- Filza 1.5
+Fixed some UI bugs on iOS8
+Fixed 'Save to Photo Library' on iOS8
+Optimized for iPhone 6 plus
+Fixed bug PList editor
+Fixed bug Text editor
+Added cloud service: OneDrive
+Updated: Hex Editor: search bytes array, search text, new look
+New feature: Create DEB package
+New feature: Use Touch ID with access password (available on iOS8+ on devices have TouchID)
+Updated: Application name on iOS8
+New feature: Apps manager
+Fixed bugs: play music on background
+Updated: opened files will go to home directory
+Added: Yosemite folder icon
+Fixed a few bugs
+
+- Filza 1.4.5 (1.4 build 6)
+Fixed some UI bugs on iOS8
+Fixed IPA Installer on iOS8
+
+- Filza 1.4.4 (1.4 build 5)
+Fixed Languages issue on iOS8
+Fixed application name on iOS8
+Fixed Open in crashes on iOS8
+
+- Filza 1.4.3 (1.4 build 4)
+Fixed BIG bug in Music library
+
+- Filza 1.4.2 (1.4 build 3)
+Fixed bugs: Music library, time format, WebDAV, Text Editor (search)
+
+- Filza 1.4.1 (1.4 build 2)
+Fix bug: imported music track display duration 0:00, crashes when opening Music library
+Optimized Music library: much faster
+
+- Filza 1.4.0
+Bug Fixes for 1.3.1
+Supports: 7zip, gzip
+Fixed FTP connection issue: (failed if require_ssl_reuse=true) and FTP UTF8 file name issue
+Added cloud service: Box
+Added shared link to Dropbox, Box, Google Drive, Sugar Sync
+Update Zip Viewer: extract deb file with control files
+Update Installer: view information, extract package
+Added SMB (Window File Sharing)
+Changed Filza icon
+Sortable Favorites links (drag to sort)
+Update text editor: Edit strings file as text
+Update text editor: Read ASCII encoding file
+Fixed a few UI bugs on black theme
+Add simple way to download http/https url: copy it to pasteboard, and paste in destination folder
+Fixed memory leaks
+Added new Media Player: nice & simple
+Added Music Library: import/export/delete/rename music files ...
+
+- Filza 1.3.1 (1.3 build 2)
+Bug Fixes for 1.3
+
+- Filza 1.3
+Bug Fixes for 1.2.1
+Add 'Trash'
+Fixed bugs: when copy/move and file existed, Filza doesn't show progress bar
+Fixed bugs: Favorites Link for Cloud on iPhone, iPod
+Fixed a few bugs
+Enable 'Landscape mode' for iPhone, iPod. iPad was enabled it
+Add cloud service: SFTP, FTP(Include FTPS, FTPES)
+Display current Path / URL for current directory
+Add 'Advanced options', allow display file permissions, size, folder attributes...
+Update File Permission, add stick bits, allow change permission recursively with Local files, SFTP, FTP(s/es)
+Add: 'Apply to all' to Copy/move dialog
+Upgrade Plist Editor
+Add 'Access Password'
+Add 'Open with' for specified file, you can set it in File's properties dialog
+Add new viewer: Web viewer
+Fixed bug: crashes/stuck when upload/download empty file
+Add: Allow delete files from search window
+Add: Slide to delete (for list view)
+Add theme for file icon: Colorful, Light and folder style
+Update: Viewer for cloud services
+Update: allow add multiple symbolic links
+Update: Add File MD5 (see it in File Properties)
+Added: File MD5
+
+- Filza 1.2.1 (1.2 build 2)
+Bug Fixes for 1.2
+
+- Filza 1.2
+Update Property List Editor
+Add Cloud Storage Service: Dropbox, Google Drive, SugarSync, WebDAV
+Improve copy/move
+Add 'Pull to Refresh'
+Support GIF images
+Add 'Black' theme
+Add 'Long Press to Edit'
+Fixed bug 'crash' on Terminal
+Upgrade Text Editor: add 'Find Text' and fixed some bugs
+Update Hex Editor with new Look, much better
+Add 'Image dimension'
+
+- Filza 1.1
+Supports RAR and DEB decompress
+Add "Show application name"
+Add "Create symbolic link"
+Change upload file size limit (AirBrower) from 16MB to 4000MB
+Add "Edit Plist as XML text file"
+Change IPA icon and DEB icon
+
+- Filza 1.0
+First release

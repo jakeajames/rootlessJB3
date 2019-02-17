@@ -26,7 +26,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *enableTweaks;
 @property (weak, nonatomic) IBOutlet UIButton *jailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
-
+@property (weak, nonatomic) IBOutlet UISwitch *installFilza;
 @property (weak, nonatomic) IBOutlet UITextView *logs;
 @end
 
@@ -89,6 +89,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         [self.jailbreakButton setEnabled:NO];
         [self.enableTweaks setEnabled:NO];
         [self.installiSuperSU setEnabled:NO];
+        [self.installFilza setEnabled:NO];
     }
     
     uname(&u);
@@ -546,7 +547,23 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
 
         }
-        
+        if ([self.installFilza isOn]) {
+            LOG("[*] Installing Filza");
+            
+            removeFile("/var/containers/Bundle/tweaksupport/Applications/Filza.app");
+            copyFile(in_bundle("apps/Filza.app"), "/var/containers/Bundle/tweaksupport/Applications/Filza.app");
+            
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/Filza.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/Filza.app/Filza && /var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/Applications/Filza.app/Filza"), "[-] Failed to sign Filza");
+            
+            
+            // just in case
+            fixMmap("/var/ulb/libsubstitute.dylib");
+            fixMmap("/var/LIB/Frameworks/CydiaSubstrate.framework/CydiaSubstrate");
+            fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
+            
+            failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install Filza");
+            
+        }
         // kill any daemon/executable being hooked by tweaks (except for the obvious, assertiond, backboardd and SpringBoard)
 
         NSArray *tweaks = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/ulb/TweakInject" error:NULL];
