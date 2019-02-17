@@ -1,4 +1,6 @@
 .DS_Store
+.idea/
 xcuserdata/
 Build/
 Index/
+DerivedData/
