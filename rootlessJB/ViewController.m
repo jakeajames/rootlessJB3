@@ -110,7 +110,7 @@ char* dumpFile(const char* filename) {
 - (void)checkSSHKeys:(bool)isRoot {
     char *authkey = NULL;
     NSString *user = [NSString stringWithFormat:@"/var/%@/.ssh/authorized_keys", isRoot ? @"root":@"mobile"];
-    NSString *dir = [NSString stringWithFormat:@"/var/containers/Bundle/contrib/%@/.ssh/authorized_keys", isRoot ? @"root":@"mobile"];
+    NSString *dir = [NSString stringWithFormat:@"/var/containers/Bundle/contrib/%@/openssh/.ssh/authorized_keys", isRoot ? @"root":@"mobile"];
     if([[NSFileManager defaultManager] fileExistsAtPath:user] && (authkey = dumpFile([user UTF8String]))) {
         LOG("[+] %s authorized_keys already exists... NOT overwriting it:\n%s", isRoot ? "root":"mobile", authkey);
     } else {
@@ -264,6 +264,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                 LOG("[-] Exploit failed");
                 LOG("[i] Please try again");
                 sleep(1);
+                [self.unJailbreakButton setEnabled:YES];
                 return;
             }
         }
@@ -731,6 +732,7 @@ end:;
             if (!MACH_PORT_VALID(taskforpidzero)) {
                 LOG("[-] Exploit failed");
                 LOG("[i] Please try again");
+                [self.unJailbreakButton setEnabled:YES];
                 sleep(1);
                 return;
             }
