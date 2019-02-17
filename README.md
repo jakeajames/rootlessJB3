@@ -7,7 +7,7 @@ Blah blah, read this: [How to make a jailbreak without a filesystem remount as r
 
 ## Support
 
-- All A9-A11 devices (temporarily broken)
+- All A9-A11 devices
 - All A7-A8 devices
 
 ## To be supported (sorted by priority)
