@@ -455,6 +455,10 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
     if(noDropbear) {
         LOG("[*] Setting up ssh");
+        removeFile("/var/profile");
+        removeFile("/var/bashrc");
+        symlink("/var/etc/profile", "/var/profile");
+
         if(!fileExists("/var/root/.ssh")) {
             mkdir("/var/root/.ssh", 0700);
             chown("/var/root/.ssh", 0, 0);
