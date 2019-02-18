@@ -624,51 +624,15 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         fvp.v_nclinks = rvp.v_nclinks;
         
         KernelWrite(realxpc, &fvp, sizeof(struct vnode)); // :o
-        
-        // kernel is smart enough not to fall for a fake amfid :(
-        /*char *amfid = "/var/libexec/amfid";
-         dylib = "/var/ulb/amfid.dylib";
-         
-         if (!fileExists(amfid)) {
-         bool cp = copyFile("/usr/libexec/amfid", amfid);
-         failIf(!cp, "[-] Can't copy xpcproxy!");
-         symlink("/var/containers/Bundle/iosbinpack64/amfid_payload.dylib", dylib);
-         
-         LOG("[*] Patching amfid");
-         
-         const char *args[] = { "insert_dylib", "--all-yes", "--inplace", "--overwrite", dylib, amfid, NULL};
-         int argn = 6;
-         failIf(add_dylib(argn, args), "[-] Failed to patch amfid :(");
-         
-         LOG("[*] Resigning amfid");
-         
-         failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/amfid"), "[-] Failed to resign amfid!");
-         }
-         
-         chown(amfid, 0, 0);
-         chmod(amfid, 755);
-         failIf(trustbin(amfid), "[-] Failed to trust amfid!");
-         
-         realxpc = getVnodeAtPath("/usr/libexec/amfid");
-         fakexpc = getVnodeAtPath(amfid);
-         
-         KernelRead(realxpc, &rvp, sizeof(struct vnode));
-         KernelRead(fakexpc, &fvp, sizeof(struct vnode));
-         
-         fvp.v_usecount = rvp.v_usecount;
-         fvp.v_kusecount = rvp.v_kusecount;
-         fvp.v_parent = rvp.v_parent;
-         fvp.v_freelist = rvp.v_freelist;
-         fvp.v_mntvnodes = rvp.v_mntvnodes;
-         fvp.v_ncchildren = rvp.v_ncchildren;
-         fvp.v_nclinks = rvp.v_nclinks;
-         
-         KernelWrite(realxpc, &fvp, 248);
-         
-         LOG("[?] Are we still alive?!");*/
-        
+
         //----- magic end here -----//
-        
+        pid_t amfi = pid_of_procName("amfid");
+        if(amfi) {
+            LOG("[*] Restarting amfi with payload...");
+            kill(amfi, 9);
+        }
+
+
         // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
         pid_t bb = pid_of_procName("backboardd");
