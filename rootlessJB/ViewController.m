@@ -124,7 +124,6 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 - (IBAction)jailbreak:(id)sender {
     [self.jailbreakButton setEnabled:NO];
-    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     dispatch_async(dispatch_get_main_queue(), ^{
         //---- tfp0 ----//
 #ifdef DEBUG
@@ -165,6 +164,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             }
         }
 #else
+        mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
             taskforpidzero = v3ntex();
             [self jelbrekDun:taskforpidzero];
@@ -794,7 +794,6 @@ end:;
 }
 - (IBAction)uninstall:(id)sender {
     [self.unJailbreakButton setEnabled:NO];
-    __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     dispatch_async(dispatch_get_main_queue(), ^{
     //---- tfp0 ----//
 #ifdef DEBUG
@@ -836,10 +835,9 @@ end:;
             }
         }
 #else
+        mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            
-            // v3ntex is so bad we have to treat it specially for it not to freak out
-                taskforpidzero = v3ntex();
+            taskforpidzero = v3ntex();
             [self uninstallJelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
