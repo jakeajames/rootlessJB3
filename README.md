@@ -42,9 +42,9 @@ All executables must have at least these two entitlements:
 - Apps get installed in /var/Apps and later you need to run /var/containers/Bundle/iosbinpack64/usr/bin/uicache (other uicache binaries won't work)
 
 # iOS 12
-- No amfid patch, either run "inject /path/to/executable_or_dylib" after adding stuff, or reboot and rejailbreak
-- Sandbox exceptions are broken. You can't tweak App Store apps + some system apps yet. However, on the app's second run the backup sandbox patches will have triggered and you'll be able to read from the tweak directories. Tweaking will still not work on the second run unless you run jailbreakd's fixupdylib() on the target dylibs manually.
-- This is not dangerous and cannot screw you up but not likely to be unstable/buggy
+- amfid is patched, however it'll require you to resign everything with a cert. Use `codesign -s 'IDENTITY' --entitlements /path/to/entitlements.xml --force /path/to/binary` **or** inject everything as usual. However note that soon I won't be injecting stuff automatically on jailbreak anymore!
+- You **can** tweak App Store apps, but you'll either have to call jailbreakd's fixMmap() yourself **or** resign things with a real cert and amfid will handle that for you. Second option is preferred. See previous point on how to.
+- This is not dangerous and cannot screw you up.
 - Tweaks pre-patched for rootlessJB 1.0 and 2.0 will not work. Use new patcher script. (ldid was replaced with ldid2!)
 
 patcher usage:
