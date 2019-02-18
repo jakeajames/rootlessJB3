@@ -39,11 +39,20 @@
 @implementation ViewController
 
 -(void)log:(NSString*)log {
-    self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
+        NSRange lastLine = NSMakeRange(self.logs.text.length - 1, 1);
+        [self.logs scrollRangeToVisible:lastLine];
+    });
 }
 
-#define LOG(what, ...) [self log:[NSString stringWithFormat:@what"\n", ##__VA_ARGS__]];\
-printf("\t"what"\n", ##__VA_ARGS__)
+#define LOG(what, ...) do { \
+char* str = malloc(2048); \
+sprintf(str, what"\n", ##__VA_ARGS__); \
+[self log:@(str)]; \
+printf("%s%s", "\t", str); \
+free(str); \
+} while (0)
 
 #define in_bundle(obj) strdup([[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@obj] UTF8String])
 
@@ -123,8 +132,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 }
 
 - (IBAction)jailbreak:(id)sender {
+    LOG("Starting jelbrek...");
     [self.jailbreakButton setEnabled:NO];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         //---- tfp0 ----//
 #ifdef DEBUG
         kern_return_t ret = host_get_special_port(mach_host_self(), HOST_LOCAL_NODE, 4, &taskforpidzero);
@@ -166,7 +176,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 #else
         mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            taskforpidzero = v3ntex();
+            taskforpidzero = v3ntex(self->_logs);
             [self jelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
@@ -560,7 +570,8 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         if(!sshdPid) {
             char* log = dumpFile("/var/log/sshd.log");
             if(log) {
-                LOG("[-] sshd did not start. printling log: \n******************\n\n%s\n\n******************", log);
+                LOG("[-] sshd did not start. Check log output");
+                printf("[-] sshd did not start. printing log: \n******************\n\n%s\n\n******************", log);
                 free(log);
             } else {
                 LOG("[-] sshd did not start. but not log exists... wtf?");
@@ -793,8 +804,9 @@ end:;
     term_jelbrek();
 }
 - (IBAction)uninstall:(id)sender {
+    LOG("[*] Starting uninstall jelbrek...");
     [self.unJailbreakButton setEnabled:NO];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     //---- tfp0 ----//
 #ifdef DEBUG
         kern_return_t ret = host_get_special_port(mach_host_self(), HOST_LOCAL_NODE, 4, &taskforpidzero);
@@ -837,7 +849,7 @@ end:;
 #else
         mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            taskforpidzero = v3ntex();
+            taskforpidzero = v3ntex(self->_logs);
             [self uninstallJelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
