@@ -166,7 +166,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         }
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-                taskforpidzero = v3ntex();
+            taskforpidzero = v3ntex();
             [self jelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
@@ -188,6 +188,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             LOG("[-] Exploit failed");
             LOG("[i] Please try again");
             sleep(1);
+            [self.jailbreakButton setEnabled:YES];
             return;
         }
     // for messing with files
@@ -858,7 +859,8 @@ end:;
             LOG("[-] Exploit failed");
             LOG("[i] Please try again");
             sleep(1);
-            return;
+        [self.unJailbreakButton setEnabled:NO];
+        return;
         }
     uint64_t sb = 0;
     NSError *error = NULL;
