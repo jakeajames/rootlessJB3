@@ -52,4 +52,11 @@ patcher usage:
 
 Thanks to: Ian Beer, Brandon Azad, Jonathan Levin, Electra Team, IBSparkes, Sam Bingner, Sammy Guichelaar.
 
+# And What's the difference with the original version?
 
+Add Makefile file
+Close install iSuperSU by default
+Remount rootfs by default after renamed your system snapshot (you can use unc0ver to do that first, and only need use it once)
+Add port 2222 by default, so you can use localssh apps without unsandbox (use port 2222)
+Closed unlock nvram by default you can use UnlockNVRAM() to re-unlock it
+Make sure iSuperSU works fine without re-install
