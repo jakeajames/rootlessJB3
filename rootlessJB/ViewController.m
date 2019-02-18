@@ -417,6 +417,18 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     }
     copyFile(in_bundle("bins/pspawn.dylib"), "/var/containers/Bundle/iosbinpack64/pspawn.dylib");
     
+    removeFile("/var/containers/Bundle/iosbinpack64/amfid_payload.dylib");
+    if (!fileExists(in_bundle("bins/amfid_payload.dylib"))) {
+        chdir(in_bundle("bins/"));
+        
+        FILE *jbd = fopen(in_bundle("bins/amfid_payload.dylib.tar"), "r");
+        untar(jbd, in_bundle("bins/amfid_payload.dylib"));
+        fclose(jbd);
+        
+        removeFile(in_bundle("bins/amfid_payload.dylib.tar"));
+    }
+    copyFile(in_bundle("bins/amfid_payload.dylib"), "/var/containers/Bundle/iosbinpack64/amfid_payload.dylib");
+    
     removeFile("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
     if (!fileExists(in_bundle("bins/TweakInject.dylib"))) {
         chdir(in_bundle("bins/"));
@@ -601,7 +613,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             
             LOG("[*] Resigning xpcproxy");
             
-            failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace /var/libexec/xpcproxy"), "[-] Failed to resign xpcproxy!");
+            failIf(system_("/var/containers/Bundle/iosbinpack64/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/iosbinpack64/default.ent /var/libexec/xpcproxy"), "[-] Failed to resign xpcproxy!");
         }
         
         chown(xpcproxy, 0, 0);
@@ -624,18 +636,16 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         fvp.v_nclinks = rvp.v_nclinks;
         
         KernelWrite(realxpc, &fvp, sizeof(struct vnode)); // :o
+  
+        LOG("[?] Are we still alive?!");
 
         //----- magic end here -----//
-        pid_t amfi = pid_of_procName("amfid");
-        if(amfi) {
-            LOG("[*] Restarting amfi with payload...");
-            kill(amfi, 9);
-        }
-
 
         // cache pid and we're done
         pid_t installd = pid_of_procName("installd");
         pid_t bb = pid_of_procName("backboardd");
+        pid_t amfid = pid_of_procName("amfid");
+        if (amfid) kill(amfid, SIGKILL);
 
         // AppSync
         
@@ -725,6 +735,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                     executable = [NSString stringWithFormat:@"%@/%@", fullAppBundlePath, executable];
                     
                     if (([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/.jb",fullAppBundlePath]] || ![[NSFileManager defaultManager] fileExistsAtPath:_CodeSignature] || (executable && ![executable isEqual:@"Executable"] && !BuildMachineOSBuild & !hasDTCompilerRelatedKeys)) && fileExists([executable UTF8String])) {
+                        
                         LOG("Injecting executable %s",[executable UTF8String]);
                         system_((char *)[[NSString stringWithFormat:@"/var/containers/Bundle/iosbinpack64/usr/bin/inject %s", [executable UTF8String]] UTF8String]);
                     }

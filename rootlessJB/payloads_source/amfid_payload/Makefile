@@ -1,5 +1,5 @@
 TARGET  = amfid_payload.dylib
-OUTDIR ?= .
+OUTDIR ?= ../../bootstrap/bins
 
 CC      = xcrun -sdk iphoneos cc -arch arm64
 # it is injected into trust cache by code
@@ -24,6 +24,9 @@ $(OUTDIR):
 $(OUTDIR)/$(TARGET): *.m *.c | $(OUTDIR)
 	$(CC) -dynamiclib -o $@ $^ -framework Foundation $(CFLAGS)
 	$(LDID) -S $@
+	tar --disable-copyfile -cvf $(OUTDIR)/$(TARGET).tar -C $(OUTDIR)/ $(TARGET)
+	rm $@
 
 clean:
 	rm -f $(OUTDIR)/$(TARGET)
+	rm -f $(OUTDIR)/$(TARGET).tar

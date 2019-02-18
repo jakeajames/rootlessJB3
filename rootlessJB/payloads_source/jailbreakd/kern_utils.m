@@ -110,21 +110,21 @@ int vnode_lookup(const char *path, int flags, uint64_t *vnode, uint64_t vfs_cont
 }
 
 int vnode_put(uint64_t vnode) {
-    uint32_t usecount = rk32(vnode + 0x60);
+    if (off.vnode_put) {
+        return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
+    }
+    
+    //uint32_t usecount = rk32(vnode + 0x60);
     uint32_t iocount = rk32(vnode + 0x64);
     
-    if (iocount > 1) {
+    if (iocount <= 1) return 0;
+    
+    //if (iocount > 1) {
         iocount--;
         wk32(vnode + 0x64, iocount);
-    }
-    
-    if (usecount > 1) {
-        usecount--;
-        wk32(vnode + 0x60, usecount);
-    }
+    //}
     
     return 0;
-    //return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
 }
 
 uint64_t get_vfs_context() {
@@ -373,7 +373,6 @@ const char *ents =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 static uint64_t entitlement_blob = 0;
 static uint64_t unserialized_blob = 0;
 
-
 int fixupexec(char *file) {
     
     int fd;
@@ -532,6 +531,42 @@ fail:;
     return 1;
 }
 
+void set_sandbox_extensions(uint64_t proc) {
+    uint64_t proc_ucred = rk64(proc + offsetof_p_ucred);
+    uint64_t sandbox = rk64(rk64(proc_ucred + 0x78) + 0x10);
+    
+    char name[40] = {0};
+    kread(proc + 0x250, name, 20);
+    
+    NSLog(@"proc = 0x%llx & proc_ucred = 0x%llx & sandbox = 0x%llx", proc, proc_ucred, sandbox);
+    
+    if (sandbox == 0) {
+        NSLog(@"no sandbox, skipping");
+        return;
+    }
+    
+    if (has_file_extension(sandbox, abs_path_exceptions[0])) {
+        NSLog(@"already has '%s', skipping", abs_path_exceptions[0]);
+        return;
+    }
+    
+    uint64_t ext = 0;
+    const char** path = abs_path_exceptions;
+    while (*path != NULL) {
+        ext = extension_create_file(*path, ext);
+        if (ext == 0) {
+            NSLog(@"extension_create_file(%s) failed, panic!", *path);
+        }
+        ++path;
+    }
+    
+    NSLog(@"last extension_create_file ext: 0x%llx", ext);
+    
+    if (ext != 0) {
+        extension_add(ext, sandbox, exc_key);
+    }
+}
+
 int setcsflagsandplatformize(int pid){
     fixupdylib("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
     uint64_t proc = proc_find(pid, 3);
@@ -539,7 +574,7 @@ int setcsflagsandplatformize(int pid){
         set_csflags(proc);
         set_tfplatform(proc);
         set_amfi_entitlements(proc);
-        //set_sandbox_extensions(proc);
+        set_sandbox_extensions(proc);
         //set_csblob(proc);
         NSLog(@"setcsflagsandplatformize on PID %d", pid);
         return 0;
