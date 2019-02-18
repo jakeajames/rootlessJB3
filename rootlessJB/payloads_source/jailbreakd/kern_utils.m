@@ -110,23 +110,19 @@ int vnode_lookup(const char *path, int flags, uint64_t *vnode, uint64_t vfs_cont
 }
 
 int vnode_put(uint64_t vnode) {
-    
     if (off.vnode_put) {
         return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
     }
     
-    uint32_t usecount = rk32(vnode + 0x60);
+    //uint32_t usecount = rk32(vnode + 0x60);
     uint32_t iocount = rk32(vnode + 0x64);
     
-    if (iocount > 1) {
+    if (iocount <= 1) return 0;
+    
+    //if (iocount > 1) {
         iocount--;
         wk32(vnode + 0x64, iocount);
-    }
-    
-    if (usecount > 1) {
-        usecount--;
-        wk32(vnode + 0x60, usecount);
-    }
+    //}
     
     return 0;
 }
