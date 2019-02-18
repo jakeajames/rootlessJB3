@@ -1,5 +1,3 @@
-#import <stdbool.h>
-#import <mach/mach.h>
 
 extern uint32_t KASLR_Slide;
 extern uint64_t KernelBase;
@@ -61,7 +59,7 @@ uint64_t unsandbox(pid_t pid);
     true: successfully sandboxed
     false: something went wrong
  */
-bool sandbox(pid_t pid, uint64_t sb);
+BOOL sandbox(pid_t pid, uint64_t sb);
 
 /*
  Purpose:
@@ -72,7 +70,7 @@ bool sandbox(pid_t pid, uint64_t sb);
     true: successfully patched or already has flags
     false: something went wrong
  */
-bool setcsflags(pid_t pid);
+BOOL setcsflags(pid_t pid);
 
 /*
  Purpose:
@@ -83,7 +81,7 @@ bool setcsflags(pid_t pid);
     true: successfully patched or already has root
     false: something went wrong
  */
-bool rootify(pid_t pid);
+BOOL rootify(pid_t pid);
 
 /*
  Purpose:
@@ -107,7 +105,7 @@ void platformize(pid_t pid);
     true: successfully patched or already has entitlement
     false: something went wrong
  */
-bool entitlePidOnAMFI(pid_t pid, const char *ent, bool val);
+BOOL entitlePidOnAMFI(pid_t pid, const char *ent, BOOL val);
 
 /*
  Purpose:
@@ -119,7 +117,7 @@ bool entitlePidOnAMFI(pid_t pid, const char *ent, bool val);
     true: successfully patched
     false: something went wrong
  */
-bool patchEntitlements(pid_t pid, const char *entitlementString);
+BOOL patchEntitlements(pid_t pid, const char *entitlementString);
 
 /*
  Purpose:
@@ -154,7 +152,8 @@ uint64_t borrowCredsFromPid(pid_t target, pid_t donor);
     The target's process ID
     The donor binary path & up to 6 arguments (Leave NULL if not using)
  Return values:
-    Original credentials (use to revert later)
+    Success: Original credentials (use to revert later)
+    Error: posix_spawn return value
  */
 uint64_t borrowCredsFromDonor(pid_t target, char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char**env);
 
@@ -175,7 +174,8 @@ void undoCredDonation(pid_t target, uint64_t origcred);
     Up to 6 arguments (Leave NULL if not using)
     environment variables (Leave NULL if not using)
  Return values:
-    posix_spawn's return value
+    Success: child exit status
+    Error: posix_spawn return value
  */
 int launchAsPlatform(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char**env);
 
@@ -187,9 +187,23 @@ int launchAsPlatform(char *binary, char *arg1, char *arg2, char *arg3, char *arg
     Up to 6 arguments (Leave NULL if not using)
     environment variables (Leave NULL if not using)
  Return values:
-    posix_spawn's'return value
+    Success: child exit status
+    Error: posix_spawn return value
  */
 int launch(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char**env);
+
+/*
+ Purpose:
+    Spawn a process suspended
+ Parameters:
+    Binary path
+    Up to 6 arguments (Leave NULL if not using)
+    environment variables (Leave NULL if not using)
+ Return values:
+    Success: child pid
+    Error: posix_spawn return value
+ */
+int launchSuspended(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char**env);
 
 /*
  Purpose:
@@ -279,7 +293,7 @@ int setHSP4(void);
     On a developer device, you can do that and will probably be very helpful for debugging :)
     The original idea was implemented by Ian Beer. Another example of this patch can be found inside FakeHostPriv() which creates a dummy port which acts like mach_host_self() of a root process
  */
-bool PatchHostPriv(mach_port_t host);
+BOOL PatchHostPriv(mach_port_t host);
 
 /*
  Purpose:
@@ -320,6 +334,8 @@ int list_snapshots(const char *vol);
 char *find_system_snapshot(void);
 int do_rename(const char *vol, const char *snap, const char *nw);
 char *copyBootHash(void);
+int mountSnapshot(const char *vol, const char *name, const char *dir);
+int snapshot_check(const char *vol, const char *name);
 
 /*
  Purpose:
@@ -338,6 +354,11 @@ uint64_t Find_OSBoolean_False(void);
 uint64_t Find_zone_map_ref(void);
 uint64_t Find_osunserializexml(void);
 uint64_t Find_smalloc(void);
+uint64_t Find_sbops(void);
+uint64_t Find_bootargs(void);
+uint64_t Find_vfs_context_current(void);
+uint64_t Find_vnode_lookup(void);
+uint64_t Find_vnode_put(void);
 
 /*
  Purpose:
@@ -354,8 +375,8 @@ void MakePortFakeTaskPort(mach_port_t port, uint64_t task_kaddr);
  Purpose:
     For reading & writing & copying & allocating & freeing kernel memory
  */
-size_t KernelWrite(uint64_t where, void *p, size_t size);
 size_t KernelRead(uint64_t where, void *p, size_t size);
+size_t KernelWrite(uint64_t where, void *p, size_t size);
 uint32_t KernelRead_32bits(uint64_t where);
 uint64_t KernelRead_64bits(uint64_t where);
 
@@ -479,7 +500,6 @@ int setAmfidExceptionHandler(mach_port_t amfid_task_port, void *(exceptionHandle
     On success: Address to the original MISValidateSignatureAndCopyInfo of amfid
  */
 uint64_t patchAMFID(void);
-
 
 /*
  Purpose:

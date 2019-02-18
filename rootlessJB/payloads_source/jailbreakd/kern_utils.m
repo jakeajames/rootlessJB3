@@ -15,45 +15,45 @@
 int proc_pidpath(pid_t pid, void *buffer, uint32_t buffersize);
 
 uint64_t proc_find(int pd, int tries) {
-  // TODO use kcall(proc_find) + ZM_FIX_ADDR
-  while (tries-- > 0) {
-    uint64_t proc = rk64(find_allproc());
-    while (proc) {
-      uint32_t pid = rk32(proc + offsetof_p_pid);
-      if (pid == pd) {
-        return proc;
-      }
-      proc = rk64(proc);
+    // TODO use kcall(proc_find) + ZM_FIX_ADDR
+    while (tries-- > 0) {
+        uint64_t proc = rk64(find_allproc());
+        while (proc) {
+            uint32_t pid = rk32(proc + offsetof_p_pid);
+            if (pid == pd) {
+                return proc;
+            }
+            proc = rk64(proc);
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 CACHED_FIND(uint64_t, our_task_addr) {
-  uint64_t our_proc = proc_find(getpid(), 1);
-
-  if (our_proc == 0) {
-    printf("failed to find our_task_addr!\n");
-    exit(EXIT_FAILURE);
-  }
-
-  uint64_t addr = rk64(our_proc + offsetof_task);
-  printf("our_task_addr: 0x%llx\n", addr);
-  return addr;
+    uint64_t our_proc = proc_find(getpid(), 1);
+    
+    if (our_proc == 0) {
+        printf("failed to find our_task_addr!\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    uint64_t addr = rk64(our_proc + offsetof_task);
+    printf("our_task_addr: 0x%llx\n", addr);
+    return addr;
 }
 
 uint64_t find_port(mach_port_name_t port){
-  uint64_t task_addr = our_task_addr();
-  
-  uint64_t itk_space = rk64(task_addr + offsetof_itk_space);
-  
-  uint64_t is_table = rk64(itk_space + offsetof_ipc_space_is_table);
-  
-  uint32_t port_index = port >> 8;
-  const int sizeof_ipc_entry_t = 0x18;
-  
-  uint64_t port_addr = rk64(is_table + (port_index * sizeof_ipc_entry_t));
-  return port_addr;
+    uint64_t task_addr = our_task_addr();
+    
+    uint64_t itk_space = rk64(task_addr + offsetof_itk_space);
+    
+    uint64_t is_table = rk64(itk_space + offsetof_ipc_space_is_table);
+    
+    uint32_t port_index = port >> 8;
+    const int sizeof_ipc_entry_t = 0x18;
+    
+    uint64_t port_addr = rk64(is_table + (port_index * sizeof_ipc_entry_t));
+    return port_addr;
 }
 
 void fixupsetuid(int pid){
@@ -98,7 +98,7 @@ int vnode_lookup(const char *path, int flags, uint64_t *vnode, uint64_t vfs_cont
     uint64_t ptr = kalloc(8);
     uint64_t ptr2 = kalloc(len);
     kwrite(ptr2, path, len);
-
+    
     if (kexecute(off.vnode_lookup + kernel_slide, ptr2, flags, ptr, vfs_context, 0, 0, 0)) {
         return -1;
     }
@@ -110,7 +110,21 @@ int vnode_lookup(const char *path, int flags, uint64_t *vnode, uint64_t vfs_cont
 }
 
 int vnode_put(uint64_t vnode) {
-    return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
+    uint32_t usecount = rk32(vnode + 0x60);
+    uint32_t iocount = rk32(vnode + 0x64);
+    
+    if (iocount > 1) {
+        iocount--;
+        wk32(vnode + 0x64, iocount);
+    }
+    
+    if (usecount > 1) {
+        usecount--;
+        wk32(vnode + 0x60, usecount);
+    }
+    
+    return 0;
+    //return kexecute(off.vnode_put + kernel_slide, vnode, 0, 0, 0, 0, 0, 0);
 }
 
 uint64_t get_vfs_context() {
@@ -145,7 +159,7 @@ uint64_t getVnodeAtPath(const char *path) {
 int fixupdylib(char *dylib) {
     NSLog(@"Fixing up dylib %s", dylib);
     
-    #define VSHARED_DYLD 0x000200
+#define VSHARED_DYLD 0x000200
     
     NSLog(@"Getting vnode");
     uint64_t vnode = getVnodeAtPath(dylib);
@@ -169,7 +183,7 @@ int fixupdylib(char *dylib) {
     
     v_flags = rk32(vnode + offsetof_v_flags);
     NSLog(@"new v_flags: 0x%x", v_flags);
-    
+
     vnode_put(vnode);
     
     return !(v_flags & VSHARED_DYLD);
@@ -188,14 +202,14 @@ void set_tfplatform(uint64_t proc) {
     // task.t_flags & TF_PLATFORM
     uint64_t task = rk64(proc + offsetof_task);
     uint32_t t_flags = rk32(task + offsetof_t_flags);
-
+    
     NSLog(@"Old t_flags: 0x%x", t_flags);
-
+    
     t_flags |= TF_PLATFORM;
     wk32(task+offsetof_t_flags, t_flags);
-
+    
     NSLog(@"New t_flags: 0x%x", t_flags);
-
+    
 }
 
 
@@ -253,53 +267,53 @@ void set_csblob(uint64_t proc) {
 }
 
 const char* abs_path_exceptions[] = {
-  "/private/var/containers/Bundle/iosbinpack64",
-  "/private/var/containers/Bundle/tweaksupport",
-  // XXX there's some weird stuff about linking and special
-  // handling for /private/var/mobile/* in sandbox
-  "/private/var/mobile/Library",
-  "/private/var/mnt",
-  NULL
+    "/private/var/containers/Bundle/iosbinpack64",
+    "/private/var/containers/Bundle/tweaksupport",
+    // XXX there's some weird stuff about linking and special
+    // handling for /private/var/mobile/* in sandbox
+    "/private/var/mobile/Library",
+    "/private/var/mnt",
+    NULL
 };
 
 uint64_t get_exception_osarray(void) {
-  static uint64_t cached = 0;
-
-  if (cached == 0) {
-    // XXX use abs_path_exceptions
-    cached = OSUnserializeXML("<array>"
-    "<string>/private/var/containers/Bundle/iosbinpack64/</string>"
-    "<string>/private/var/containers/Bundle/tweaksupport/</string>"
-    "<string>/private/var/mobile/Library/</string>"
-    "<string>/private/var/mnt/</string>"
-    "</array>");
-  }
-
-  return cached;
+    static uint64_t cached = 0;
+    
+    if (cached == 0) {
+        // XXX use abs_path_exceptions
+        cached = OSUnserializeXML("<array>"
+                                  "<string>/private/var/containers/Bundle/iosbinpack64/</string>"
+                                  "<string>/private/var/containers/Bundle/tweaksupport/</string>"
+                                  "<string>/private/var/mobile/Library/</string>"
+                                  "<string>/private/var/mnt/</string>"
+                                  "</array>");
+    }
+    
+    return cached;
 }
 
 static const char *exc_key = "com.apple.security.exception.files.absolute-path.read-only";
 
 void set_amfi_entitlements(uint64_t proc) {
     // AMFI entitlements
-
+    
     NSLog(@"%@",@"AMFI:");
-
+    
     uint64_t proc_ucred = rk64(proc+0xf8);
     uint64_t amfi_entitlements = rk64(rk64(proc_ucred+0x78)+0x8);
-
+    
     NSLog(@"%@",@"Setting Entitlements...");
-
-
+    
+    
     OSDictionary_SetItem(amfi_entitlements, "get-task-allow", find_OSBoolean_True());
     OSDictionary_SetItem(amfi_entitlements, "com.apple.private.skip-library-validation", find_OSBoolean_True());
-
-    uint64_t present = OSDictionary_GetItem(amfi_entitlements, exc_key);
+    
+    /*uint64_t present = OSDictionary_GetItem(amfi_entitlements, exc_key);
     
     int rv = 0;
-
+    
     if (present == 0) {
-      rv = OSDictionary_SetItem(amfi_entitlements, exc_key, get_exception_osarray());
+        rv = OSDictionary_SetItem(amfi_entitlements, exc_key, get_exception_osarray());
     } else if (present != get_exception_osarray()) {
         unsigned int itemCount = OSArray_ItemCount(present);
         
@@ -327,34 +341,34 @@ void set_amfi_entitlements(uint64_t proc) {
             rv = 1;
         }
     } else {
-      NSLog(@"Not going to merge array with itself :P");
-      rv = 1;
+        NSLog(@"Not going to merge array with itself :P");
+        rv = 1;
     }
-
+    
     if (rv != 1) {
-      NSLog(@"Setting exc FAILED! amfi_entitlements: 0x%llx present: 0x%llx\n", amfi_entitlements, present);
-    }
+        NSLog(@"Setting exc FAILED! amfi_entitlements: 0x%llx present: 0x%llx\n", amfi_entitlements, present);
+    }*/
 }
 
 const char *ents =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                    "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
-                    "<plist version=\"1.0\">"
-                        "<dict>"
-                            "<key>com.apple.security.exception.files.absolute-path.read-only</key>" // bypass stat()
-                            "<array>"
-                                "<string>/private/var/containers/Bundle/iosbinpack64/</string>"
-                                "<string>/private/var/containers/Bundle/tweaksupport/</string>"
-                                "<string>/private/var/mobile/Library/</string>"
-                                "<string>/private/var/mnt/</string>"
-                            "</array>"
-                            "<key>platform-application</key>" // platform
-                            "<true/>"
-                            "<key>get-task-allow</key>" // allow task_for_pid() on that process
-                            "<true/>"
-                            "<key>com.apple.private.skip-library-validation</key>" // invalid libs
-                            "<true/>"
-                        "</dict>"
-                    "</plist>";
+"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+"<plist version=\"1.0\">"
+"<dict>"
+"<key>com.apple.security.exception.files.absolute-path.read-only</key>" // bypass stat()
+"<array>"
+"<string>/private/var/containers/Bundle/iosbinpack64/</string>"
+"<string>/private/var/containers/Bundle/tweaksupport/</string>"
+"<string>/private/var/mobile/Library/</string>"
+"<string>/private/var/mnt/</string>"
+"</array>"
+"<key>platform-application</key>" // platform
+"<true/>"
+"<key>get-task-allow</key>" // allow task_for_pid() on that process
+"<true/>"
+"<key>com.apple.private.skip-library-validation</key>" // invalid libs
+"<true/>"
+"</dict>"
+"</plist>";
 
 static uint64_t entitlement_blob = 0;
 static uint64_t unserialized_blob = 0;
@@ -467,7 +481,7 @@ int fixupexec(char *file) {
         if (!OSDictionary_GetItem(entitlements_blob, "get-task-allow")) OSDictionary_SetItem(entitlements_blob, "get-task-allow", find_OSBoolean_True());
         
         uint64_t present = OSDictionary_GetItem(entitlements_blob, "com.apple.security.exception.files.absolute-path.read-only");
-
+        
         if (!present) OSDictionary_SetItem(entitlements_blob, "com.apple.security.exception.files.absolute-path.read-only", get_exception_osarray());
         else if (present != get_exception_osarray()) {
             unsigned int itemCount = OSArray_ItemCount(present);
@@ -519,19 +533,19 @@ fail:;
 }
 
 int setcsflagsandplatformize(int pid){
-  fixupdylib("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
-  uint64_t proc = proc_find(pid, 3);
-  if (proc != 0) {
-    set_csflags(proc);
-    set_tfplatform(proc);
-    set_amfi_entitlements(proc);
-    //set_sandbox_extensions(proc);
-    //set_csblob(proc);
-    NSLog(@"setcsflagsandplatformize on PID %d", pid);
-    return 0;
-  }
-  NSLog(@"Unable to find PID %d to entitle!", pid);
-  return 1;
+    fixupdylib("/var/containers/Bundle/tweaksupport/usr/lib/TweakInject.dylib");
+    uint64_t proc = proc_find(pid, 3);
+    if (proc != 0) {
+        set_csflags(proc);
+        set_tfplatform(proc);
+        set_amfi_entitlements(proc);
+        //set_sandbox_extensions(proc);
+        //set_csblob(proc);
+        NSLog(@"setcsflagsandplatformize on PID %d", pid);
+        return 0;
+    }
+    NSLog(@"Unable to find PID %d to entitle!", pid);
+    return 1;
 }
 
 int unsandbox(int pid) {
@@ -549,3 +563,4 @@ int unsandbox(int pid) {
     }
     return -1;
 }
+

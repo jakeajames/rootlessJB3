@@ -23,6 +23,7 @@ struct offsets {
     uint64_t vfs_context;
     uint64_t vnode_put;
     uint64_t kernelbase;
+    uint64_t trustcache;
 };
 
 int dumpOffsetsToFile(char *file);

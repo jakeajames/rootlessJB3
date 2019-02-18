@@ -59,7 +59,7 @@ pspawn_t old_pspawn, old_pspawnp;
 int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_file_actions_t *file_actions, posix_spawnattr_t *attrp, char const* argv[], const char* envp[], pspawn_t old) {
     DEBUGLOG("We got called (fake_posix_spawn)! %s", path);
     
-    const char *inject_me = NULL;
+    const char *inject_me = SBINJECT_PAYLOAD_DYLIB;
     
     if (path != NULL) {
         const char **blacklist = xpcproxy_blacklist;
@@ -74,19 +74,17 @@ int fake_posix_spawn_common(pid_t * pid, const char* path, const posix_spawn_fil
         }
     }
     
-    if (strcmp(path, "/usr/libexec/amfid") == 0) {
-        DEBUGLOG("Starting amfid -- special handling");
-        inject_me = AMFID_PAYLOAD_DYLIB;
-    } else {
-        inject_me = SBINJECT_PAYLOAD_DYLIB;
-    }
-    
     // XXX log different err on inject_me == NULL and nonexistent inject_me
     if (inject_me == NULL || !file_exist(inject_me)) {
         DEBUGLOG("Nothing to inject");
         return old(pid, path, file_actions, attrp, argv, envp);
     }
-
+    
+    if (strcmp(path, "/usr/libexec/amfid") == 0) {
+        DEBUGLOG("Starting amfid -- special handling");
+        inject_me = AMFID_PAYLOAD_DYLIB;
+    }
+ 
     //if (strstr(path, "/var/containers/Bundle/Application") || strstr(path, "/usr/libexec")) calljailbreakdforexec((char *)path);
     
     DEBUGLOG("Injecting %s into %s", inject_me, path);

@@ -31,20 +31,9 @@
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
 
 @property (weak, nonatomic) IBOutlet UITextView *logs;
+- (void)jelbrekDun:(mach_port_t)tfp0;
 
-- (void)checkSSHKeys:(bool)isRoot;
-
-- (void)createHostKeys;
-
-- (void)installContrib;
-
-- (void)setupContrib;
-
-- (void)uninstallContrib;
-
-- (void)jalebrekDun:(mach_port_t)tfp0port;
-
-- (void)uninstallJalebrekDun:(mach_port_t)tfp0Port;
+- (void)uninstallJelbrekDun:(mach_port_t)tfp0;
 @end
 
 @implementation ViewController
@@ -87,6 +76,10 @@ LOG("[-] Error moviing item %s to path %s (%s)", copyFrom, moveTo, [[error local
 error = NULL; \
 }
 
+int system_(char *cmd) {
+    return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
+}
+
 char* dumpFile(const char* filename) {
     char * buffer = 0;
     size_t length;
@@ -101,128 +94,29 @@ char* dumpFile(const char* filename) {
         if (buffer)
         {
             fread (buffer, 1, length, pfile);
-    }
+        }
         fclose (pfile);
-}
+    }
     return buffer;
 }
 
-- (void)checkSSHKeys:(bool)isRoot {
-    char *authkey = NULL;
-    NSString *user = [NSString stringWithFormat:@"/var/%@/.ssh/authorized_keys", isRoot ? @"root":@"mobile"];
-    NSString *dir = [NSString stringWithFormat:@"/var/containers/Bundle/contrib/%@/openssh/.ssh/authorized_keys", isRoot ? @"root":@"mobile"];
-    if([[NSFileManager defaultManager] fileExistsAtPath:user] && (authkey = dumpFile([user UTF8String]))) {
-        LOG("[+] %s authorized_keys already exists... NOT overwriting it:\n%s", isRoot ? "root":"mobile", authkey);
-    } else {
-        LOG("[+] Creating %s...", [user UTF8String]);
-        mkdir(isRoot ? "/var/root/.ssh":"/var/mobile/.ssh", 0700);
-        chown(isRoot ? "/var/root/.ssh":"/var/mobile/.ssh", isRoot ? 0:501, isRoot ? 0:501);
-        [[NSFileManager defaultManager] copyItemAtPath:dir toPath:user error:nil];
-        authkey = dumpFile([user UTF8String]);
-        if(authkey) {
-            LOG("Created authorized_keys for %s\n\n***IMPORTANT***\nUSE the following private key to login as %s on ports 22 or 2222:\n\tPROJECT/rootlessJB/bootstrap/id_rsa_rjb3\n****\n\nYes this is not secure. It is more secure than running around with your SSHD running and root password 'alpine'. Simply log in and change your /var/root/.ssh/authorized_keys and /var/mobile/.ssh/authorized_keys. /etc/ssh/motd will bug you to remind you. :)\n%s", isRoot ? "root":"mobile", isRoot ? "root":"mobile", authkey);
-        }
-    }
-    if(authkey)
-        free(authkey);
-}
-
-- (void)createHostKeys {
-    LOG("[+] Generating Host Keys...");
-    if(!fileExists("/var/etc/ssh/ssh_host_rsa_key")) launch("/var/usr/local/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_rsa_key", "-trsa", NULL, NULL, NULL, NULL );
-    if(!fileExists("/var/etc/ssh/ssh_host_dsa_key")) launch("/var/usr/local/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_dsa_key", "-tdsa", NULL, NULL, NULL, NULL );
-    if(!fileExists("/var/etc/ssh/ssh_host_ecdsa_key")) launch("/var/usr/local/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_ecdsa_key", "-tecdsa", "-b521", NULL, NULL, NULL);
-    if(!fileExists("/var/etc/ssh/ssh_host_ed25519_key")) launch("/var/usr/local/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_ed25519_key", "-ted25519", NULL, NULL, NULL, NULL);
-
-    if(fileExists("/var/etc/ssh/ssh_host_rsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_rsa_key");
-    if(fileExists("/var/etc/ssh/ssh_host_dsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_dsa_key");
-    if(fileExists("/var/etc/ssh/ssh_host_ecdsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_ecdsa_key");
-    if(fileExists("/var/etc/ssh/ssh_host_ed25519_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_ed25519_key");
-}
-
-//@TODO: push this into each individual contrib as a plugin
-- (void)installContrib {
-    NSError *error = NULL;
-
-    LOG("[*] Cleaning up old files...");
-
-    removeFile("/var/containers/Bundle/iosbinpack64/dropbear.plist");
-    removeFile("/var/containers/Bundle/iosbinpack64/makeMeAtHome.sh");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbear");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbear.orig");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbearconvert");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbearkey");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dbclient");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear.orig");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearconvert");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearkey");
-    removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearmulti");
-
-    LOG("[+] Installing contrib ...");
-    symlink("/var/containers/Bundle/contrib/openssh/LaunchDaemons/sshd.plist", "/var/containers/Bundle/iosbinpack64/LaunchDaemons/sshd.plist");
-
-    removeFile("/var/bin/sh");
-    symlink("/var/bin/bash", "/var/bin/sh");
-
-    //moar bs
-    symlink("/var/containers/Bundle/contrib/openssh/etc", "/var/etc");
-    symlink("/var/containers/Bundle/contrib/openssh/usr/bin/awk", "/var/usr/bin/awk");
-    symlink("/var/containers/Bundle/contrib/openssh/usr/bin/gawk", "/var/usr/bin/gawk");
-    symlink("/var/containers/Bundle/contrib/openssh/usr/local", "/var/usr/local");
-    symlink("/var/containers/Bundle/contrib/openssh/usr/lib", "/var/usr/lib");
-    symlink("/var/containers/Bundle/contrib/openssh/usr/libexec", "/var/usr/libexec");
-
-}
-
-- (void)setupContrib {
-    LOG("[+] Setting up SSH...");
-    [self checkSSHKeys:YES];
-    [self checkSSHKeys:NO];
-    [self createHostKeys];
-}
-
-- (void)uninstallContrib {
-    NSError *error = NULL;
-
-    removeFile("/var/etc/ssh");
-    removeFile("/var/etc");
-    removeFile("/var/usr/local/share/awk");
-    removeFile("/var/usr/local/share");
-    removeFile("/var/usr/local/bin");
-    removeFile("/var/usr/local");
-    removeFile("/var/usr/libexec/awk");
-    removeFile("/var/usr/libexec");
-    removeFile("/var/usr/lib/gawk");
-    removeFile("/var/usr/lib");
-    removeFile("/var/usr/bin");
-    removeFile("/var/usr/share");
-    removeFile("/var/usr");
-
-    removeFile("/var/log/sshd.log");
-    removeFile("/var/log/sshd_error.log");
-}
-
-int system_(char *cmd) {
-    return launch("/var/bin/bash", "-c", cmd, NULL, NULL, NULL, NULL, NULL);
-}
 struct utsname u;
 vm_size_t psize;
 int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     uint32_t flags;
     csops(getpid(), 0, &flags, 0);
-
+    
     if ((flags & 0x4000000)) { // platform
         [self.jailbreakButton setTitle:@"Jailbroken" forState:UIControlStateNormal];
         [self.jailbreakButton setEnabled:NO];
         [self.enableTweaks setEnabled:NO];
         [self.installiSuperSU setEnabled:NO];
     }
-
+    
     uname(&u);
     if (strstr(u.machine, "iPad5,")) psize = 0x1000;
     else _host_page_size(mach_host_self(), &psize);
@@ -238,24 +132,26 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         if (ret) {
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
-
+            
             if (psize == 0x1000 && maxVersion("12.1.2")) {
-
+                
                 // v3ntex is so bad we have to treat it specially for it not to freak out
                 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
                 dispatch_group_t group = dispatch_group_create();
                 dispatch_semaphore_t sm = dispatch_semaphore_create(0);
-
+                
                 dispatch_group_async(group, queue, ^{
-                    sleep(5);
                     taskforpidzero = v3ntex();
                     dispatch_semaphore_signal(sm);
                 });
-
+                
                 dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
-            } else if (maxVersion("12.1.2")) {
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
-            } else {
+            }
+            else {
                 [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
                 [sender setEnabled:false];
                 return;
@@ -270,11 +166,11 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         }
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            taskforpidzero = v3ntex();
-            [self jalebrekDun:taskforpidzero];
+                taskforpidzero = v3ntex();
+            [self jelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
-            [self jalebrekDun:taskforpidzero];
+            [self jelbrekDun:taskforpidzero];
         } else {
             [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
             [sender setEnabled:false];
@@ -286,14 +182,14 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 }
 
 
--(void) jalebrekDun:(mach_port_t) tfp0port  {
-    LOG("TPF0: %d", tfp0port);
-    if (!MACH_PORT_VALID(tfp0port)) {
-        LOG("[-] Exploit failed");
-        LOG("[i] Please try again");
-        sleep(1);
-        return;
-    }
+-(void) jelbrekDun:(mach_port_t) tfp0  {
+    LOG("TPF0: %d", tfp0);
+    if (!MACH_PORT_VALID(tfp0)) {
+            LOG("[-] Exploit failed");
+            LOG("[i] Please try again");
+            sleep(1);
+            return;
+        }
     // for messing with files
     NSError *error = NULL;
     NSArray *plists;
@@ -304,9 +200,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     
     if (!KernelBase) {
         kernel_slide_init();
-        init_with_kbase(tfp0port, 0xfffffff007004000 + kernel_slide);
+        init_with_kbase(tfp0, 0xfffffff007004000 + kernel_slide);
     }
-    else init_with_kbase(tfp0port, KernelBase);
+    else init_with_kbase(tfp0, KernelBase);
     
     LOG("[i] Kernel base: 0x%llx", KernelBase);
     
@@ -350,24 +246,11 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     
     //---- bootstrap ----//
     if (!fileExists("/var/containers/Bundle/.installed_rootlessJB3")) {
-
+        
         if (fileExists("/var/containers/Bundle/iosbinpack64")) {
-
+            
             LOG("[*] Uninstalling previous build...");
-
-            removeFile("/var/etc/ssh");
-            removeFile("/var/etc");
-            removeFile("/var/usr/local/share/awk");
-            removeFile("/var/usr/local/share");
-            removeFile("/var/usr/local/bin");
-            removeFile("/var/usr/local");
-            removeFile("/var/usr/libexec/awk");
-            removeFile("/var/usr/libexec");
-            removeFile("/var/usr/lib/gawk");
-            removeFile("/var/usr/lib");
-            removeFile("/var/usr/bin");
-            removeFile("/var/usr");
-
+            
             removeFile("/var/LIB");
             removeFile("/var/ulb");
             removeFile("/var/bin");
@@ -379,57 +262,124 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             removeFile("/var/dropbear");
             removeFile("/var/containers/Bundle/tweaksupport");
             removeFile("/var/containers/Bundle/iosbinpack64");
-            removeFile("/var/containers/Bundle/contrib");
             removeFile("/var/containers/Bundle/dylibs");
             removeFile("/var/log/testbin.log");
-
-            removeFile("/var/log/jailbreakd-stdout.log");
-            removeFile("/var/log/jailbreakd-stderr.log");
+            
+            if (fileExists("/var/log/jailbreakd-stdout.log")) removeFile("/var/log/jailbreakd-stdout.log");
+            if (fileExists("/var/log/jailbreakd-stderr.log")) removeFile("/var/log/jailbreakd-stderr.log");
         }
-
+        
         LOG("[*] Installing bootstrap...");
-
+        
         chdir("/var/containers/Bundle/");
         FILE *bootstrap = fopen((char*)in_bundle("tars/iosbinpack.tar"), "r");
         untar(bootstrap, "/var/containers/Bundle/");
         fclose(bootstrap);
-
+        
         FILE *tweaks = fopen((char*)in_bundle("tars/tweaksupport.tar"), "r");
         untar(tweaks, "/var/containers/Bundle/");
         fclose(tweaks);
-
+        
         failIf(!fileExists("/var/containers/Bundle/tweaksupport") || !fileExists("/var/containers/Bundle/iosbinpack64"), "[-] Failed to install bootstrap");
-
+        
+        LOG("[+] Creating symlinks...");
+        
         symlink("/var/containers/Bundle/tweaksupport/Library", "/var/LIB");
         symlink("/var/containers/Bundle/tweaksupport/usr/lib", "/var/ulb");
         symlink("/var/containers/Bundle/tweaksupport/Applications", "/var/Apps");
         symlink("/var/containers/Bundle/tweaksupport/bin", "/var/bin");
         symlink("/var/containers/Bundle/tweaksupport/sbin", "/var/sbin");
         symlink("/var/containers/Bundle/tweaksupport/usr/libexec", "/var/libexec");
-        mkdir("/var/usr", 0777);
-        symlink("/var/containers/Bundle/iosbinpack64/usr/bin", "/var/usr/bin");
-        symlink("/var/containers/Bundle/iosbinpack64/usr/sbin", "/var/usr/sbin");
-        symlink("/var/containers/Bundle/iosbinpack64/usr/share", "/var/usr/share");
 
+        //limneos
+        symlink("/var/containers/Bundle/iosbinpack64/etc", "/var/etc");
+        symlink("/var/containers/Bundle/tweaksupport/usr", "/var/usr");
+        symlink("/var/containers/Bundle/iosbinpack64/usr/bin/killall", "/var/bin/killall");
+
+        symlink("/var/containers/Bundle/iosbinpack64/usr/sbin", "/var/usr/sbin"); //kinda forgot an important one: chown etc.
 
         close(open("/var/containers/Bundle/.installed_rootlessJB3", O_CREAT));
-
+        
         LOG("[+] Installed bootstrap!");
     }
-
-    //---- Contrib -----//
-    bool contribExists = fileExists(in_bundle("tars/contrib.tar"));
-    if(contribExists) {
-        FILE *contrib = fopen((char*)in_bundle("tars/contrib.tar"), "r");
-        untar(contrib, "/var/containers/Bundle/");
-        fclose(contrib);
-        [self installContrib];
-    }
-
+    
     //---- for jailbreakd & amfid ----//
     failIf(dumpOffsetsToFile("/var/containers/Bundle/tweaksupport/offsets.data"), "[-] Failed to save offsets");
     
+    //---- different tools ----//
     
+    if (!fileExists("/var/bin/strings")) {
+        chdir("/");
+        FILE *essentials = fopen((char*)in_bundle("tars/bintools.tar"), "r");
+        untar(essentials, "/");
+        fclose(essentials);
+        
+        FILE *dpkg = fopen((char*)in_bundle("tars/dpkg-rootless.tar"), "r");
+        untar(dpkg, "/");
+        fclose(dpkg);
+    }
+   
+    //---- update/remove dropbear ----//
+
+    BOOL noDropbear = fileExists(in_bundle("tars/nodropbear.tar"));
+
+    if(noDropbear) {
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/bin/scp");
+        removeFile("/var/containers/Bundle/iosbinpack64/dropbear.plist");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbear");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbear.orig");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbearconvert");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/dropbearkey");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dbclient");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear.orig");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearconvert");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearkey");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbearmulti");
+
+        removeFile("/var/containers/Bundle/iosbinpack64/etc/profile");
+        removeFile("/var/containers/Bundle/iosbinpack64/etc/motd");
+
+        removeFile("/var/etc/ssh/sshd_config");
+        removeFile("/var/etc/ssh/ssh_config");
+        removeFile("/var/etc/profile");
+        removeFile("/var/usr/bin/ssh-keyscan");
+        removeFile("/var/usr/bin/sshd");
+        removeFile("/var/usr/bin/sftp");
+        removeFile("/var/usr/bin/ssh-pkcs11-helper");
+        removeFile("/var/usr/bin/ssh-agent");
+        removeFile("/var/usr/bin/ssh");
+        removeFile("/var/usr/bin/ssh-keysign");
+        removeFile("/var/usr/bin/ssh-add");
+        removeFile("/var/usr/bin/ssh-keygen");
+        removeFile("/var/usr/bin/sftp-server");
+        removeFile("/var/usr/bin/scp");
+
+        chdir("/var");
+        FILE *nodropbear = fopen(in_bundle("tars/nodropbear.tar"), "r");
+        untar(nodropbear, "/var");
+        fclose(nodropbear);
+
+        if(!fileExists("/var/etc/ssh")) mkdir("/var/etc/ssh", 0777);
+
+        if(fileExists("/var/containers/Bundle/iosbinpack64/LaunchDaemons/jailbreakd.plist")) {
+            LOG("[+] jailbreakd.plist still exists");
+        } else {
+            LOG("[-] ERROR: jailbreakd.plist not found");
+        }
+        
+    } else {
+        chdir("/var/containers/Bundle/");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear");
+        removeFile("/var/containers/Bundle/iosbinpack64/usr/bin/scp");
+
+        FILE *fixed_dropbear = fopen(in_bundle("tars/dropbear.v2018.76.tar"), "r");
+        untar(fixed_dropbear, "/var/containers/Bundle/");
+        fclose(fixed_dropbear);
+    }
+
+
     //---- update jailbreakd ----//
     
     removeFile("/var/containers/Bundle/iosbinpack64/bin/jailbreakd");
@@ -487,8 +437,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     if (launch(in_bundle("bins/tester"), NULL, NULL, NULL, NULL, NULL, NULL, NULL)) {
         failIf(trustbin("/var/containers/Bundle/iosbinpack64"), "[-] Failed to trust binaries!");
         failIf(trustbin("/var/containers/Bundle/tweaksupport"), "[-] Failed to trust binaries!");
-        failIf(trustbin("/var/containers/Bundle/contrib"), "[-] Failed to trust binaries!");
-
+        
         // test
         int ret = launch("/var/containers/Bundle/iosbinpack64/test", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
         failIf(ret, "[-] Failed to trust binaries!");
@@ -502,10 +451,67 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     
     prepare_payload(); // this will chmod 777 everything
     
-    //----- setup contrib -----//
+    //----- setup real SSH or dropbear -----//
 
-    if(contribExists) {
-        [self setupContrib];
+    if(noDropbear) {
+        LOG("[*] Setting up ssh");
+        if(!fileExists("/var/root/.ssh")) {
+            mkdir("/var/root/.ssh", 0700);
+            chown("/var/root/.ssh", 0, 0);
+        }
+        if(!fileExists("/var/root/.ssh/authorized_keys")) {
+            LOG("[+] Generating root ssh Keys...");
+            copyFile(in_bundle("bins/id_rsa_rjb3.pub"), "/var/root/.ssh/authorized_keys");
+            copyFile(in_bundle("bins/id_rsa_rjb3"), "/var/root/.ssh/id_rsa_rjb3");
+            copyFile(in_bundle("bins/id_rsa_rjb3.pub"), "/var/root/.ssh/id_rsa_rjb3.pub");
+            chown("/var/root/.ssh/authorized_keys", 0, 0);
+            chmod("/var/root/.ssh/authorized_keys", 0600);
+            LOG("[*] Created authorized_keys for root. Use this key to login (copy this to your HOME/.ssh/ folder) %s", [defaultAuthorizedKey UTF8String]);
+            LOG("[*] NOTE: this file can be found under the bins directory in the project");
+        }
+        if(!fileExists("/var/mobile/.ssh")) {
+            mkdir("/var/mobile/.ssh", 0700);
+            chown("/var/mobile/.ssh", 501, 501);
+        }
+        if(!fileExists("/var/mobile/.ssh/authorized_keys")) {
+            LOG("[+] Generating mobile ssh Keys...");
+            copyFile(in_bundle("bins/id_rsa_rjb3.pub"), "/var/mobile/.ssh/authorized_keys");
+            copyFile(in_bundle("bins/id_rsa_rjb3"), "/var/mobile/.ssh/id_rsa_rjb3");
+            copyFile(in_bundle("bins/id_rsa_rjb3.pub"), "/var/mobile/.ssh/id_rsa_rjb3.pub");
+            chown("/var/mobile/.ssh/authorized_keys", 501, 501);
+            chmod("/var/mobile/.ssh/authorized_keys", 0600);
+            LOG("[*] Created authorized_keys for mobile. Use this key to login (copy this to your HOME/.ssh/ folder) %s", [defaultAuthorizedKey UTF8String]);
+            LOG("[*] NOTE: this file can be found under the bins directory in the project");
+        }
+
+        LOG("[+] Generating Host Keys...");
+        if(!fileExists("/var/etc/ssh/ssh_host_rsa_key")) launch("/var/usr/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_rsa_key", "-trsa", NULL, NULL, NULL, NULL );
+        if(!fileExists("/var/etc/ssh/ssh_host_dsa_key")) launch("/var/usr/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_dsa_key", "-tdsa", NULL, NULL, NULL, NULL );
+        if(!fileExists("/var/etc/ssh/ssh_host_ecdsa_key")) launch("/var/usr/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_ecdsa_key", "-tecdsa", "-b521", NULL, NULL, NULL);
+        if(!fileExists("/var/etc/ssh/ssh_host_ed25519_key")) launch("/var/usr/bin/ssh-keygen", "-q", "-f/var/etc/ssh/ssh_host_ed25519_key", "-ted25519", NULL, NULL, NULL, NULL);
+
+        if(fileExists("/var/etc/ssh/ssh_host_rsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_rsa_key");
+        if(fileExists("/var/etc/ssh/ssh_host_dsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_dsa_key");
+        if(fileExists("/var/etc/ssh/ssh_host_ecdsa_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_ecdsa_key");
+        if(fileExists("/var/etc/ssh/ssh_host_ed25519_key")) LOG("[+] Host key %s", "/var/etc/ssh/ssh_host_ed25519_key");
+
+    } else {
+        LOG("[*] Setting up dropbear");
+        mkdir("/var/dropbear", 0777);
+        removeFile("/var/profile");
+        removeFile("/var/motd");
+        chmod("/var/profile", 0777);
+        chmod("/var/motd", 0777);
+
+        copyFile("/var/containers/Bundle/iosbinpack64/etc/profile", "/var/profile");
+        copyFile("/var/containers/Bundle/iosbinpack64/etc/motd", "/var/motd");
+
+        // kill it if running
+        launch("/var/containers/Bundle/iosbinpack64/usr/bin/killall", "-SEGV", "dropbear", NULL, NULL, NULL, NULL, NULL);
+        failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", NULL, NULL, NULL, NULL, NULL), "[-] Failed to launch dropbear");
+        pid_t dpd = pid_of_procName("dropbear");
+        usleep(1000);
+        if (!dpd) failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", NULL, NULL, NULL, NULL, NULL), "[-] Failed to launch dropbear");
     }
 
     //------------- launch daeamons -------------//
@@ -530,6 +536,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         chmod([file UTF8String], 0644);
         chown([file UTF8String], 0, 0);
     }
+    
     // clean up
     removeFile("/var/log/testbin.log");
     removeFile("/var/log/jailbreakd-stderr.log");
@@ -542,7 +549,19 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     
     failIf(!fileExists("/var/log/testbin.log"), "[-] Failed to load launch daemons");
     failIf(!fileExists("/var/log/jailbreakd-stdout.log"), "[-] Failed to load jailbreakd");
-    failIf(!fileExists("/var/log/sshd.log"), "[-] Failed to load sshd");
+
+    if(noDropbear) {
+        pid_t sshdPid = pid_of_procName("sshd");
+        if(!sshdPid) {
+            char* log = dumpFile("/var/log/sshd.log");
+            if(log) {
+                LOG("[-] sshd did not start. printling log: \n******************\n\n%s\n\n******************", log);
+                free(log);
+            } else {
+                LOG("[-] sshd did not start. but not log exists... wtf?");
+            }
+        }
+    }
 
     if (self.enableTweaks.isOn) {
         
@@ -661,12 +680,83 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             fixMmap("/var/LIB/MobileSubstrate/DynamicLibraries/AppSyncUnified.dylib");
             
             failIf(launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL), "[-] Failed to install iSuperSU");
+
         }
+        
+        // kill any daemon/executable being hooked by tweaks (except for the obvious, assertiond, backboardd and SpringBoard)
+
+        NSArray *tweaks = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/ulb/TweakInject" error:NULL];
+        for (NSString *afile in tweaks) {
+            if ([afile hasSuffix:@"plist"]) {
+                
+                NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"/var/ulb/TweakInject/%@",afile]];
+                NSString *dylibPath = [afile stringByReplacingOccurrencesOfString:@".plist" withString:@".dylib"];
+                fixMmap((char *)[[NSString stringWithFormat:@"/var/ulb/TweakInject/%@", dylibPath] UTF8String]);
+                NSArray *executables = [[plist objectForKey:@"Filter"] objectForKey:@"Executables"];
+
+                for (NSString *processName in executables) {
+                    if (![processName isEqual:@"SpringBoard"] && ![processName isEqual:@"backboardd"] && ![processName isEqual:@"assertiond"] && ![processName isEqual:@"launchd"]) { //really?
+                        int procpid = pid_of_procName((char *)[processName UTF8String]);
+                        if (procpid) {
+                            kill(procpid, SIGKILL);
+                        }
+                    }
+                }
+                
+                NSArray *bundles = [[plist objectForKey:@"Filter"] objectForKey:@"Bundles"];
+                for (NSString *bundleID in bundles) {
+                    if (![bundleID isEqual:@"com.apple.springboard"] && ![bundleID isEqual:@"com.apple.backboardd"] && ![bundleID isEqual:@"com.apple.assertiond"] && ![bundleID isEqual:@"com.apple.launchd"]) {
+                        NSString *processName = [bundleID stringByReplacingOccurrencesOfString:@"com.apple." withString:@""];
+                        int procpid = pid_of_procName((char *)[processName UTF8String]);
+                        if (procpid) {
+                            kill(procpid, SIGKILL);
+                        }
+                    }
+                    
+                }
+            }
+        }
+     
+        // find which applications are jailbreak applications and inject their executable
+        NSArray *applications = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/Application/" error:NULL];
+        
+        for (NSString *string in applications) {
+            NSString *fullPath = [@"/var/containers/Bundle/Application/" stringByAppendingString:string];
+            NSArray *innerContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:fullPath error:NULL];
+            for (NSString *innerFile in innerContents) {
+                if ([innerFile hasSuffix:@"app"]) {
+                    
+                    NSString *fullAppBundlePath = [fullPath stringByAppendingString:[NSString stringWithFormat:@"/%@",innerFile]];
+                    NSString *_CodeSignature = [fullPath stringByAppendingString:[NSString stringWithFormat:@"/%@/_CodeSignature",innerFile]];
+                    
+                    NSDictionary *infoPlist = [NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/Info.plist",fullAppBundlePath]];
+                    NSString *executable = [infoPlist objectForKey:@"CFBundleExecutable"];
+                    NSString *BuildMachineOSBuild = [infoPlist objectForKey:@"BuildMachineOSBuild"];
+                    BOOL hasDTCompilerRelatedKeys=NO;
+                    for (NSString *KEY in [infoPlist allKeys]) {
+                        if ([KEY rangeOfString:@"DT"].location==0) {
+                            hasDTCompilerRelatedKeys=YES;
+                            break;
+                        }
+                    }
+                    // check for keys added by native/appstore apps and exclude (theos and friends don't add BuildMachineOSBuild and DT_ on apps :-D )
+                    // Xcode-added apps set CFBundleExecutable=Executable, exclude them too
+                    
+                    if (([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/.jb",fullAppBundlePath]] || ![[NSFileManager defaultManager] fileExistsAtPath:_CodeSignature] || (executable && ![executable isEqual:@"Executable"] && !BuildMachineOSBuild & !hasDTCompilerRelatedKeys)) && fileExists([executable UTF8String])) {
+                        
+                        executable = [NSString stringWithFormat:@"%@/%@", fullAppBundlePath, executable];
+                        LOG("Injecting executable %s",[executable UTF8String]);
+                        system_((char *)[[NSString stringWithFormat:@"/var/containers/Bundle/iosbinpack64/usr/bin/inject %s", [executable UTF8String]] UTF8String]);
+                    }
+                    
+                }
+            }
+        }
+        
 
         LOG("[+] Really jailbroken!");
-        LOG("[+] Jailbreak succeeded. Enjoy");
         term_jelbrek();
-
+        
         // bye bye
         kill(bb, 9);
         //launch("/var/containers/Bundle/iosbinpack64/bin/bash", "-c", "/var/containers/Bundle/iosbinpack64/usr/bin/nohup /var/containers/Bundle/iosbinpack64/bin/bash -c \"/var/containers/Bundle/iosbinpack64/bin/launchctl unload /System/Library/LaunchDaemons/com.apple.backboardd.plist && /var/containers/Bundle/iosbinpack64/usr/bin/ldrestart; /var/containers/Bundle/iosbinpack64/bin/launchctl load /System/Library/LaunchDaemons/com.apple.backboardd.plist\" 2>&1 >/dev/null &", NULL, NULL, NULL, NULL, NULL);
@@ -690,45 +780,48 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
      launch("/var/containers/Bundle/tweaksupport/usr/bin/uicache", NULL, NULL, NULL, NULL, NULL, NULL, NULL);
      } */
     
-
+    LOG("[+] Jailbreak succeeded. Enjoy");
+    
 end:;
     
     if (sb) sandbox(getpid(), sb);
     term_jelbrek();
 }
-
 - (IBAction)uninstall:(id)sender {
     [self.unJailbreakButton setEnabled:NO];
     __block mach_port_t taskforpidzero = MACH_PORT_NULL;
     dispatch_async(dispatch_get_main_queue(), ^{
-        //---- tfp0 ----//
+    //---- tfp0 ----//
 #ifdef DEBUG
         kern_return_t ret = host_get_special_port(mach_host_self(), HOST_LOCAL_NODE, 4, &taskforpidzero);
         if (ret) {
             printf("[-] Error using hgsp! '%s'\n", mach_error_string(ret));
             printf("[*] Using exploit!\n");
-
+            
             if (psize == 0x1000 && maxVersion("12.1.2")) {
-
+                
                 // v3ntex is so bad we have to treat it specially for it not to freak out
                 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
                 dispatch_group_t group = dispatch_group_create();
                 dispatch_semaphore_t sm = dispatch_semaphore_create(0);
-
+                
                 dispatch_group_async(group, queue, ^{
-                    sleep(5);
                     taskforpidzero = v3ntex();
                     dispatch_semaphore_signal(sm);
                 });
-
+                
                 dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
-            } else if (maxVersion("12.1.2")) {
+            }
+            
+            else if (maxVersion("12.1.2")) {
                 taskforpidzero = voucher_swap();
-            } else {
+            }
+            else {
                 [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
                 [sender setEnabled:false];
                 return;
             }
+            
             if (!MACH_PORT_VALID(taskforpidzero)) {
                 LOG("[-] Exploit failed");
                 LOG("[i] Please try again");
@@ -739,14 +832,13 @@ end:;
         }
 #else
         if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
             // v3ntex is so bad we have to treat it specially for it not to freak out
-            taskforpidzero = v3ntex();
-            LOG("TPF0 - 1: %d", taskforpidzero);
-            [self uninstallJalebrekDun:taskforpidzero];
+                taskforpidzero = v3ntex();
+            [self uninstallJelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
-            LOG("TPF0 - 1: %d", taskforpidzero);
-            [self uninstallJalebrekDun:taskforpidzero];
+            [self uninstallJelbrekDun:taskforpidzero];
         } else {
             [sender setTitle:@"Not supported!" forState:UIControlStateNormal];
             [sender setEnabled:false];
@@ -757,50 +849,49 @@ end:;
 }
 
 
--(void) uninstallJalebrekDun:(mach_port_t) tfp0Port {
-    LOG("TPF0 - 2: %d", tfp0Port);
-    if (!MACH_PORT_VALID(tfp0Port)) {
-        LOG("[-] Exploit failed");
-        LOG("[i] Please try again");
-        sleep(1);
-        return;
-    }
+-(void) uninstallJelbrekDun:(mach_port_t) tfp0 {
+    if (!MACH_PORT_VALID(tfp0)) {
+            LOG("[-] Exploit failed");
+            LOG("[i] Please try again");
+            sleep(1);
+            return;
+        }
     uint64_t sb = 0;
     NSError *error = NULL;
 
     LOG("[*] Starting fun");
-
+    
     if (!KernelBase) {
         kernel_slide_init();
-        init_with_kbase(tfp0Port, 0xfffffff007004000 + kernel_slide);
+        init_with_kbase(tfp0, 0xfffffff007004000 + kernel_slide);
     }
-    else init_with_kbase(tfp0Port, KernelBase);
-
+    else init_with_kbase(tfp0, KernelBase);
+    
     LOG("[i] Kernel base: 0x%llx", KernelBase);
-
+    
     //---- basics ----//
     rootify(getpid()); // give us root
     LOG("[i] uid: %d\n", getuid());
     failIf(getuid(), "[-] Failed to get root");
-
+    
     sb = unsandbox(getpid()); // escape sandbox
     FILE *f = fopen("/var/mobile/.roottest", "w");
     failIf(!f, "[-] Failed to escape sandbox!");
-
+    
     LOG("[+] Escaped sandbox!\n\tWrote file %p", f);
     fclose(f);
     removeFile("/var/mobile/.roottest");
-
+    
     setcsflags(getpid()); // set some csflags
     platformize(getpid()); // set TF_PLATFORM
-
+    
 #ifdef DEBUG
     setHSP4();
     PatchHostPriv(mach_host_self());
 #endif
-
+    
     LOG("[*] Uninstalling...");
-
+    
     launch("/var/containers/Bundle/iosbinpack64/bin/launchctl", "unload", "/var/containers/Bundle/iosbinpack64/LaunchDaemons", NULL, NULL, NULL, NULL, NULL);
 
     pid_t sshd = pid_of_procName("sshd");
@@ -810,40 +901,33 @@ end:;
     }
 
     failIf(!fileExists("/var/containers/Bundle/.installed_rootlessJB3"), "[-] rootlessJB was never installed before! (this version of it)");
-
+    
     removeFile("/var/LIB");
     removeFile("/var/ulb");
     removeFile("/var/bin");
     removeFile("/var/sbin");
     removeFile("/var/libexec");
     removeFile("/var/containers/Bundle/tweaksupport/Applications");
+    removeFile("/var/Apps");
     removeFile("/var/profile");
     removeFile("/var/motd");
     removeFile("/var/dropbear");
     removeFile("/var/containers/Bundle/tweaksupport");
     removeFile("/var/containers/Bundle/iosbinpack64");
-    removeFile("/var/bashrc");
     removeFile("/var/log/testbin.log");
     removeFile("/var/log/jailbreakd-stdout.log");
     removeFile("/var/log/jailbreakd-stderr.log");
     removeFile("/var/log/pspawn_payload_xpcproxy.log");
-
-    if(fileExists("/var/containers/Bundle/contrib")) {
-        LOG("[+] Uninstalling contrib");
-        [self uninstallContrib];
-        removeFile("/var/containers/Bundle/contrib");
-    }
-
-    removeFile("/var/Apps");
     removeFile("/var/containers/Bundle/.installed_rootlessJB3");
-    LOG("[+] Uninstall complete!");
-
-    sleep(3);
+    removeFile("/var/lib");
+    removeFile("/var/etc");
+    removeFile("/var/usr");
+    
 end:;
     reboot(0);
-    //Just reboot. It's more stable.
-    if (sb) sandbox(getpid(), sb);
-    term_jelbrek();
+// ... whats the point? Need to reboot clean anyway.
+//    if (sb) sandbox(getpid(), sb);
+//    term_jelbrek();
 }
 
 - (void)didReceiveMemoryWarning {

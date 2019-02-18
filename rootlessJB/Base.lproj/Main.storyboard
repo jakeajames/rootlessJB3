@@ -42,8 +42,8 @@
                                     </button>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m4q-xC-ltu">
                                         <rect key="frame" x="206" y="0.0" width="51" height="31"/>
-                                        <color key="tintColor" red="0.99993377923965454" green="1" blue="0.99988192319869995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <color key="onTintColor" red="0.93306642770000003" green="0.29955577849999998" blue="0.31590431930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="onTintColor" red="0.93469542264938354" green="0.32922995090484619" blue="0.31967747211456299" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="thumbTintColor" red="0.99993377923965454" green="1" blue="0.99988192319869995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </switch>
                                     <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aGY-r8-Bqe" customClass="RoundVisualEffectView" customModule="rootlessJB" customModuleProvider="target">
@@ -78,6 +78,7 @@
                                     </visualEffectView>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CyY-xx-Ekw">
                                         <rect key="frame" x="206" y="39" width="51" height="31"/>
+                                        <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="onTintColor" red="1" green="0.0" blue="0.15686274510000001" alpha="0.38" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </switch>
@@ -172,7 +173,7 @@ Powered by #jelbrekLib</string>
                         <outlet property="installiSuperSU" destination="m4q-xC-ltu" id="rEg-dK-EzQ"/>
                         <outlet property="jailbreakButton" destination="mzN-Zk-jNi" id="6yj-Gj-ILg"/>
                         <outlet property="logs" destination="LXD-zS-5F0" id="jr1-5V-XGS"/>
-                        <outlet property="unJailbreakButton" destination="z61-dM-Hjj" id="U33-mg-nqm"/>
+                        <outlet property="unJailbreakButton" destination="z61-dM-Hjj" id="x2d-0W-g7S"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Af-LH-dUy" userLabel="First Responder" sceneMemberID="firstResponder"/>
