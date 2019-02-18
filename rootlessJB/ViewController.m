@@ -606,9 +606,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                     // check for keys added by native/appstore apps and exclude (theos and friends don't add BuildMachineOSBuild and DT_ on apps :-D )
                     // Xcode-added apps set CFBundleExecutable=Executable, exclude them too
                     
+                    executable = [NSString stringWithFormat:@"%@/%@", fullAppBundlePath, executable];
+                    
                     if (([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/.jb",fullAppBundlePath]] || ![[NSFileManager defaultManager] fileExistsAtPath:_CodeSignature] || (executable && ![executable isEqual:@"Executable"] && !BuildMachineOSBuild & !hasDTCompilerRelatedKeys)) && fileExists([executable UTF8String])) {
-                        
-                        executable = [NSString stringWithFormat:@"%@/%@", fullAppBundlePath, executable];
                         LOG("Injecting executable %s",[executable UTF8String]);
                         system_((char *)[[NSString stringWithFormat:@"/var/containers/Bundle/iosbinpack64/usr/bin/inject %s", [executable UTF8String]] UTF8String]);
                     }
