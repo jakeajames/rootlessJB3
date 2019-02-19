@@ -172,7 +172,7 @@ Powered by #jelbrekLib</string>
                         <outlet property="enableTweaks" destination="CyY-xx-Ekw" id="GPj-CK-WZk"/>
                         <outlet property="installiSuperSU" destination="m4q-xC-ltu" id="rEg-dK-EzQ"/>
                         <outlet property="jailbreakButton" destination="mzN-Zk-jNi" id="6yj-Gj-ILg"/>
-                        <outlet property="logs" destination="LXD-zS-5F0" id="jr1-5V-XGS"/>
+                        <outlet property="logs" destination="LXD-zS-5F0" id="dTb-NP-bxM"/>
                         <outlet property="unJailbreakButton" destination="z61-dM-Hjj" id="x2d-0W-g7S"/>
                     </connections>
                 </viewController>

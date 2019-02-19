@@ -59,6 +59,11 @@ static const NSString *defaultAuthorizedKey = @"-----BEGIN OPENSSH PRIVATE KEY--
                                     "-----END OPENSSH PRIVATE KEY-----";
 
 @interface ViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextView *logs;
+
++ (ViewController *)sharedController;
+
+- (void)appendTextToOutput:(NSString *)text;
 
 
 @end

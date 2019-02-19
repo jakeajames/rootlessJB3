@@ -11,6 +11,7 @@
 #import "exploit/voucher_swap/voucher_swap.h"
 #import "libjb.h"
 #import "payload.h"
+#import "util.h"
 #import "offsetsDump.h"
 #import "exploit/voucher_swap/kernel_slide.h"
 #import "insert_dylib.h"
@@ -30,29 +31,107 @@
 @property (weak, nonatomic) IBOutlet UIButton *unJailbreakButton;
 @property (weak, nonatomic) IBOutlet UISwitch *installiSuperSU;
 
-@property (weak, nonatomic) IBOutlet UITextView *logs;
+- (void)updateOutputViewFromQueue:(NSNumber *)fromQueue;
+
+- (void)updateOutputView;
+
 - (void)jelbrekDun:(mach_port_t)tfp0;
 
 - (void)uninstallJelbrekDun:(mach_port_t)tfp0;
 @end
 
 @implementation ViewController
+static NSMutableString *output = nil;
+static ViewController *sharedController = nil;
 
--(void)log:(NSString*)log {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.logs.text = [NSString stringWithFormat:@"%@%@", self.logs.text, log];
-        NSRange lastLine = NSMakeRange(self.logs.text.length - 1, 1);
-        [self.logs scrollRangeToVisible:lastLine];
++ (ViewController *)sharedController {
+//    static dispatch_once_t once;
+//    dispatch_once(&once, ^{
+//        NSLog(@"Init ViewController sharedInstance");
+//        sharedController = [ViewController new];
+//    });
+    return sharedController;
+}
+
+- (id)init {
+    @synchronized(sharedController) {
+        if (sharedController == nil) {
+            sharedController = (ViewController *) [super init];
+        }
+    }
+    self = sharedController;
+    return self;
+}
+
+
+-(void)updateOutputViewFromQueue:(NSNumber*)fromQueue {
+    static BOOL updateQueued = NO;
+    static struct timeval last = {0,0};
+    static dispatch_queue_t updateQueue;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        updateQueue = dispatch_queue_create("updateView", NULL);
+    });
+
+    dispatch_async(updateQueue, ^{
+        struct timeval now;
+
+        if (fromQueue.boolValue) {
+            updateQueued = NO;
+        }
+
+        if (updateQueued) {
+            return;
+        }
+
+        if (gettimeofday(&now, NULL)) {
+            LOG("gettimeofday failed");
+            return;
+        }
+
+        __darwin_time_t elapsed = (now.tv_sec - last.tv_sec) * 1000000 + now.tv_usec - last.tv_usec;
+        // 30 FPS
+        if (elapsed > 1000000/30) {
+            updateQueued = NO;
+            gettimeofday(&last, NULL);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.logs.text = output;
+                [self.logs scrollRangeToVisible:NSMakeRange(self.logs.text.length, 0)];
+            });
+        } else {
+            NSTimeInterval waitTime = ((1000000/30) - elapsed) / 1000000.0;
+            updateQueued = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self performSelector:@selector(updateOutputViewFromQueue:) withObject:@YES afterDelay:waitTime];
+            });
+        }
     });
 }
 
-#define LOG(what, ...) do { \
-char* str = malloc(2048); \
-sprintf(str, what"\n", ##__VA_ARGS__); \
-[self log:@(str)]; \
-printf("%s%s", "\t", str); \
-free(str); \
-} while (0)
+-(void)updateOutputView {
+    [self updateOutputViewFromQueue:@NO];
+}
+
+-(void)appendTextToOutput:(NSString *)text {
+    if (self.logs == nil) {
+        return;
+    }
+    static NSRegularExpression *remove = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        remove = [NSRegularExpression regularExpressionWithPattern:@"^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}\\.\\d+[-\\d\\s]+\\S+\\[\\d+:\\d+\\]\\s+"
+                                                           options:NSRegularExpressionAnchorsMatchLines error:nil];
+        output = [NSMutableString new];
+    });
+
+    text = [remove stringByReplacingMatchesInString:text options:0 range:NSMakeRange(0, text.length) withTemplate:@""];
+
+    @synchronized (output) {
+        [output appendString:text];
+    }
+    [self updateOutputView];
+}
 
 #define in_bundle(obj) strdup([[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@obj] UTF8String])
 
@@ -125,10 +204,17 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
         [self.enableTweaks setEnabled:NO];
         [self.installiSuperSU setEnabled:NO];
     }
+
+    sharedController = self;
+
+    LOG("rootlessJB Version: %@", appVersion());
     
     uname(&u);
     if (strstr(u.machine, "iPad5,")) psize = 0x1000;
     else _host_page_size(mach_host_self(), &psize);
+    LOG("%s with page size: 0x%llx", u.machine, psize);
+    LOG("Logging code shamelessly lifted from @sbingner and the rest of the unc0ver team. Thank you <3");
+    LOG("While uncommon, your device may reboot. If it does, simply run rootlessJB again and try %s/%s again.", [[self.jailbreakButton titleForState:UIControlStateNormal] UTF8String],[[self.unJailbreakButton titleForState:UIControlStateNormal] UTF8String] );
 }
 
 - (IBAction)jailbreak:(id)sender {
@@ -176,7 +262,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
 #else
         mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            taskforpidzero = v3ntex(self->_logs);
+            taskforpidzero = v3ntex();
             [self jelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();
@@ -824,7 +910,7 @@ end:;
 #else
         mach_port_t taskforpidzero;
         if (psize == 0x1000 && maxVersion("12.1.2")) {
-            taskforpidzero = v3ntex(self->_logs);
+            taskforpidzero = v3ntex();
             [self uninstallJelbrekDun:taskforpidzero];
         } else if (maxVersion("12.1.2")) {
             taskforpidzero = voucher_swap();

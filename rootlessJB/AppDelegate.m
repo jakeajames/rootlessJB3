@@ -6,7 +6,10 @@
 //  Copyright © 2018 Jake James. All rights reserved.
 //
 
+#include <sys/time.h>
 #import "AppDelegate.h"
+#import "util.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
 
@@ -14,6 +17,60 @@
 
 @implementation AppDelegate
 
+-(AppDelegate*)init {
+    self = [super init];
+    enableLogging();
+    _combinedPipe = [NSPipe pipe];
+    _orig_stdout = dup(STDOUT_FILENO);
+    _orig_stderr = dup(STDERR_FILENO);
+    dup2(_combinedPipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO);
+    dup2(_combinedPipe.fileHandleForWriting.fileDescriptor, STDERR_FILENO);
+    [self performSelectorInBackground:@selector(handlePipe) withObject:nil];
+    return self;
+}
+
+-(NSString*)readDataFromFD:(int)infd toFD:(int)outfd {
+    char s[0x10000];
+
+    ssize_t nread = read(infd, s, sizeof(s));
+    if (nread <= 0)
+        return nil;
+
+    write(outfd, s, nread);
+    if (logfd > 0) {
+        if (write(logfd, s, nread) != nread) {
+            write(_orig_stderr, "error writing to logfile\n", 26);
+        }
+    }
+    return [[NSString alloc] initWithBytes:s length:nread encoding:NSUTF8StringEncoding];
+}
+
+- (void)handlePipe {
+    fd_set fds;
+    NSMutableString *outline = [NSMutableString new];
+
+    int input_fd = _combinedPipe.fileHandleForReading.fileDescriptor;
+    int rv;
+
+    do {
+        FD_ZERO(&fds);
+        FD_SET(input_fd, &fds);
+        rv = select(FD_SETSIZE, &fds, NULL, NULL, NULL);
+        if (FD_ISSET(input_fd, &fds)) {
+            NSString *read = [self readDataFromFD:input_fd toFD:_orig_stdout];
+            if (read == nil)
+                continue;
+            [outline appendString:read];
+            NSRange lastNewline = [read rangeOfString:@"\n" options:NSBackwardsSearch];
+            if (lastNewline.location != NSNotFound) {
+                lastNewline.location = outline.length - (read.length - lastNewline.location);
+                NSRange wanted = {0, lastNewline.location + 1};
+                [ViewController.sharedController appendTextToOutput:[outline substringWithRange:wanted]];
+                [outline deleteCharactersInRange:wanted];
+            }
+        }
+    } while (rv > 0);
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
