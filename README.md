@@ -1,3 +1,19 @@
+# Information about this particular fork
+
+- I've removed Dropbear... Sorry, I prefer OpenSSH.
+- OpenSSH v7.9p1 is the version that has been compiled with customizations to support a rootless JB.
+  - Primarily paths have been conditionally prepended with /var where necessary
+  - Some defaults for binaries were moved to `/var/usr/bin` instead of places like `/usr/libexec` and `/usr/local/bin` and `/usr/bin`
+- sftp/scp/ssh/sshd/ssh-keygen etc et al work as they should.
+- The default sshd_config is located at `/var/etc/ssh/sshd_config` and has been pre-baked with _NO_ password authentication to protect those rootless folks unable to change the default user/root password from 'alpine'.
+  - Instead of password auth, pubkey auth is used.
+  - The private key is located at `rootlessJB/bootstrap/bins/id_rsa_rjb3` next to the public key.
+  - If your device already has a `/var/root/.ssh/authorized_keys` file, it will not be overwritten.
+  - If your device already has a `/var/mobile/.ssh/authorized_keys` file, it will not be overwritten.
+  - Otherwise `rootlessJB/bootstrap/bins/id_rsa_rjb3.pub` will be added to a new `<user>/.ssh/authorized_keys` file for you.
+  - Make sure that you `ssh -i LOCATION_OF/rootlessJB/bootstrap/bins/id_rsa_rjb3 root@YOUR_DEVICE_IP` or simply add it to your `~/.ssh` and modifiy your `~/.ssh/config` accordingly.
+- The UI logging has also been fixed/upgraded/copied shamelessly from unc0ver/Undecimus. Thank you @sbingner and @Pwn20wnd and unc0ver team
+
 # Description
 
 Blah blah, read this: [How to make a jailbreak without a filesystem remount as r/w](https://github.com/jakeajames/rootlessJB/blob/master/writeup.pdf)
