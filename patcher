@@ -8,12 +8,16 @@ export LC_ALL=C
 debug=false
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <deb> <output folder>"
+  echo "Usage: $0 <deb> <output folder> [output deb]"
+  echo 'Set "output deb" to "-" in order to create a deb at the same place as the output folder.'
   exit 127
 fi
 
-dpkg-deb -R $1 $2 || exit $?
-mkdir $2 2> /dev/null
+dpkg-deb -R "$1" "$2" || exit $?
+[ ! -d "$2" ] && {
+  echo "[-] Could not find the extracted directory"
+  exit 2
+}
 
 iOS12_usrlib=(
   "FDRSealingMap.plist"
@@ -176,3 +180,17 @@ do
 done
 
 NOT_TESTED
+
+if [ ! -z "$3" ]; then
+  type -p dpkg-deb 2&> /dev/null || {
+    echo "[-] Not creating a patched deb. Install DPKG from Homebrew and try again."
+	exit 1
+  }
+  echo "[+] Creating a patched deb..."
+  file="$3"
+  [ "$3" == "-" ] && file="$2.deb"
+  dpkg-deb -Znone -b "$2" "${file}"
+  exit $?
+fi
+
+exit 0
