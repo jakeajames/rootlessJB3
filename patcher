@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export LANG=C
 export LC_CTYPE=C
@@ -6,6 +6,10 @@ export LC_ALL=C
 
 # This variable is used as a command. Set it to either true or false. It's case-sensitive.
 debug=false
+
+if ${debug}; then
+  set -x
+fi
 
 iOS12_usrlib=(
   "libDHCPServer.dylib" "libMatch.dylib" "libSystem.B_asan.dylib"
@@ -47,36 +51,70 @@ dylib_folders=(
   "/usr/lib"
 )
 
-patch_file() {
-  [ -z "$1" ] && return
-  [ ! -f "$1" ] && return
-  
-  # When link identity editor fails, it usually means the file is not a valid binary.
-  ldid -S "$1" 2> /dev/null || return
+sed_stdout() {
+  printf "$2" | sed -e "$1"
+}
 
-  echo "Patching \"$file\""
-  sed -i "" 's/\/Library\//\/var\/LIB\//g' "$1" 2> /dev/null
-  sed -i "" 's/\/System\/var\/LIB\//\/System\/Library\//g' "$1" 2> /dev/null
-  sed -i "" 's/%@\/var\/LIB\//%@\/Library\//g' "$1" 2> /dev/null
-  sed -i "" 's/mobile\/var\/LIB\//mobile\/Library\//g' "$1" 2> /dev/null
+sed_file() {
+  sed -i "" "$1" "$2" 2> /dev/null
+}
+
+patch_strings() {
+  [ $# -lt 2 ] && return 1
+  sed=""
+  result="$2"
+  if [ "$1" == "-r" ]; then
+    sed="sed_stdout"
+  elif [ "$1" == "-f" ]; then
+    sed="sed_file"
+  else return 1; fi
+  result=$(${sed} 's/\/Library\//\/var\/LIB\//g' "${result}")
+  result=$(${sed} 's/\/System\/var\/LIB\//\/System\/Library\//g' "${result}")
+  result=$(${sed} 's/%@\/var\/LIB\//%@\/Library\//g' "${result}")
+  result=$(${sed} 's/mobile\/var\/LIB\//mobile\/Library\//g' "${result}")
 
   # The trick:
   # 1. Replace every "/usr/lib" with "/var/lib"
   # 2. Iterate over iOS12_usrlib and revert the system libraries
   # This way, we only need to hardcode the system libraries which will never change. We won't need to hardcode the libraries that are for jailbroken devices.
-  sed -i "" 's/\/usr\/lib\//\/var\/ulb\//g' "$1" 2> /dev/null
+  result=$(${sed} 's/\/usr\/lib\//\/var\/ulb\//g' "${result}")
   if [ $? -eq 0 ]; then
     for usr_lib_system_file in "${iOS12_usrlib[@]}"; do
       escaped_dot='\.'
       escaped_file="${usr_lib_system_file//./${escaped_dot}}"
       expression='s/\/var\/ulb\/'"${escaped_file}"'/\/usr\/lib\/'"${escaped_file}"'/g'
-      ${debug} && echo ${expression}
-	    sed -i "" "${expression}" "$1" 2> /dev/null
-	  done
+      result=$(${sed} "${expression}" "${result}")
+    done
   fi
+  [ "$1" == "-r" ] && printf "${result}"
+  return 0;
+}
 
-  # Sign the binary again, just in case
-  ldid -S "$1"
+patch_file() {
+  [ ! -z "$1" ] || [ -e "$1" ] || return
+  file="$1"
+  if [ -h "${file}" ]; then
+    link="$(readlink -n "${file}")"
+    [ -z "${link}" ] && return 1
+    echo "[*] Patching symbolic link: \"${file}\""
+    echo "[i] Old target: ${link}"
+    link="$(patch_strings -r ${link})"
+    echo "[i] New target: ${link}"
+    rm "${file}"
+    ln -s "${link}" "${file}"
+  elif [ -x "${file}" ]; then
+    # When link identity editor fails, it usually means the file is not a valid binary.
+    ldid -S "${file}" 2> /dev/null || return 1
+    echo "[*] Patching executable: \"${file}\""
+    patch_strings -f "${file}" || {
+      echo "[-] Failed to patch executable"
+      return 1
+    }
+    # Sign the binary again, just in case
+    ldid -S "${file}"
+  elif ${debug}; then
+    echo "[D] Nothing to patch."
+  fi
 }
 
 #### Main script ####
@@ -90,24 +128,23 @@ EOF
   exit 127
 fi
 
+if [ "$1" == "--patch" ]; then
+  for (( i=2; i<=$#; i++ )); do
+    file="${@:$i:1}"
+    ${debug} && echo "${file}"
+    [ ! -z "${file}" ] && [ ! -d "${file}" ] && patch_file "${file}" 
+  done
+  exit 0
+fi
+
+echo "[*] Extracting deb"
 dpkg-deb -R "$1" "$2" || exit $?
 [ ! -d "$2" ] && {
   echo "[-] Could not find the extracted directory"
   exit 2
 }
 
-for folder in "${dylib_folders[@]}"; do
-  [ ! -d "$2${folder}" ] && continue
-  echo "[+] Patching files inside \"$2${folder}\"..."
-  for file in "$2${folder}/"*.dylib; do
-    patch_file "${file}"
-  done
-done
-
-echo "[+] Patching files inside \"$2/Library/PreferenceBundles\"..."
-for file in "$2/Library/PreferenceBundles/"*/*; do
-  patch_file "${file}"
-done
+find "$2" -exec "$0" "--patch" "{}" \;
 
 <<'NOT_TESTED'
 
