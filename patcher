@@ -167,7 +167,7 @@ if [ ! -z "$3" ]; then
     echo "[-] Not creating a patched deb. Install DPKG from Homebrew and try again."
 	exit 1
   }
-  echo "[+] Creating a patched deb..."
+  echo "[*] Creating a patched deb..."
   file="$3"
   [ "$3" == "-" ] && file="$2.deb"
   dpkg-deb -Znone -b "$2" "${file}"
