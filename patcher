@@ -7,112 +7,39 @@ export LC_ALL=C
 # This variable is used as a command. Set it to either true or false. It's case-sensitive.
 debug=false
 
-if [ $# -lt 2 ]; then
-  echo "Usage: $0 <deb> <output folder> [output deb]"
-  echo 'Set "output deb" to "-" in order to create a deb at the same place as the output folder.'
-  exit 127
-fi
-
-dpkg-deb -R "$1" "$2" || exit $?
-[ ! -d "$2" ] && {
-  echo "[-] Could not find the extracted directory"
-  exit 2
-}
-
 iOS12_usrlib=(
-  "FDRSealingMap.plist"
-  "bbmasks"
-  "dyld"
+  "libDHCPServer.dylib" "libMatch.dylib" "libSystem.B_asan.dylib"
+  "libSystem.dylib" "libSystem_asan.dylib" "libarchive.dylib"
+  "libbsm.dylib" "libbz2.1.0.5.dylib"
+  "libbz2.dylib" "libc++.dylib" "libc.dylib"
+  "libcharset.dylib" "libcurses.dylib" "libdbm.dylib"
+  "libdl.dylib" "libeasyperf.dylib" "libedit.2.dylib"
+  "libedit.3.0.dylib" "libedit.dylib" "libexslt.dylib"
+  "libextension.dylib" "libform.dylib" "libiconv.2.4.0.dylib"
+  "libiconv.dylib" "libicucore.dylib" "libinfo.dylib"
+  "libipsec.dylib" "liblzma.dylib" "libm.dylib"
+  "libmecab.dylib" "libncurses.5.dylib" "libncurses.dylib"
+  "libobjc-trampolines.dylib" "libobjc.dylib" "libpcap.dylib"
+  "libpmsample.dylib" "libpoll.dylib" "libproc.dylib"
+  "libpthread.dylib" "libresolv.dylib" "librpcsvc.dylib"
+  "libsandbox.dylib" "libsqlite3.0.dylib" "libstdc++.6.0.9.dylib"
+  "libstdc++.dylib" "libtidy.dylib" "libutil1.0.dylib"
+  "libxml2.dylib" "libxslt.dylib" "libz.1.1.3.dylib"
+  "libz.1.2.11.dylib" "libz.1.2.5.dylib" "libz.1.2.8.dylib"
+  "libz.dylib" "log" "system"
+  "updaters" "xpc" "libz.1.dylib"
+  "libxslt.1.dylib" "libxml2.2.dylib" "libutil.dylib"
+  "libtidy.A.dylib" "libstdc++.6.dylib" "libsqlite3.dylib"
+  "libsandbox.1.dylib" "libresolv.9.dylib" "libpcap.A.dylib"
+  "libobjc.A.dylib" "libncurses.5.4.dylib" "libmecab_em.dylib"
+  "liblzma.5.dylib" "libipsec.A.dylib" "libicucore.A.dylib"
+  "libiconv.2.dylib" "libform.5.4.dylib" "libexslt.0.dylib"
+  "libedit.3.dylib" "libperfcheck.dylib" "libcharset.1.0.0.dylib"
+  "libcharset.1.dylib" "libc++.1.dylib" "libbz2.1.0.dylib"
+  "libbsm.0.dylib" "libarchive.2.dylib" "libSystem.B.dylib"
+  "libMatch.1.dylib" "libDHCPServer.A.dylib" "libCRFSuite.dylib"
+  "FDRSealingMap.plist" "bbmasks" "dyld"
   "libCRFSuite0.12.dylib"
-  "libDHCPServer.dylib"
-  "libMatch.dylib"
-  "libSystem.B_asan.dylib"
-  "libSystem.dylib"
-  "libSystem_asan.dylib"
-  "libarchive.dylib"
-  "libbsm.dylib"
-  "libbz2.1.0.5.dylib"
-  "libbz2.dylib"
-  "libc++.dylib"
-  "libc.dylib"
-  "libcharset.dylib"
-  "libcurses.dylib"
-  "libdbm.dylib"
-  "libdl.dylib"
-  "libeasyperf.dylib"
-  "libedit.2.dylib"
-  "libedit.3.0.dylib"
-  "libedit.dylib"
-  "libexslt.dylib"
-  "libextension.dylib"
-  "libform.dylib"
-  "libiconv.2.4.0.dylib"
-  "libiconv.dylib"
-  "libicucore.dylib"
-  "libinfo.dylib"
-  "libipsec.dylib"
-  "liblzma.dylib"
-  "libm.dylib"
-  "libmecab.dylib"
-  "libncurses.5.dylib"
-  "libncurses.dylib"
-  "libobjc-trampolines.dylib"
-  "libobjc.dylib"
-  "libpcap.dylib"
-  "libpmsample.dylib"
-  "libpoll.dylib"
-  "libproc.dylib"
-  "libpthread.dylib"
-  "libresolv.dylib"
-  "librpcsvc.dylib"
-  "libsandbox.dylib"
-  "libsqlite3.0.dylib"
-  "libstdc++.6.0.9.dylib"
-  "libstdc++.dylib"
-  "libtidy.dylib"
-  "libutil1.0.dylib"
-  "libxml2.dylib"
-  "libxslt.dylib"
-  "libz.1.1.3.dylib"
-  "libz.1.2.11.dylib"
-  "libz.1.2.5.dylib"
-  "libz.1.2.8.dylib"
-  "libz.dylib"
-  "log"
-  "system"
-  "updaters"
-  "xpc"
-  "libz.1.dylib"
-  "libxslt.1.dylib"
-  "libxml2.2.dylib"
-  "libutil.dylib"
-  "libtidy.A.dylib"
-  "libstdc++.6.dylib"
-  "libsqlite3.dylib"
-  "libsandbox.1.dylib"
-  "libresolv.9.dylib"
-  "libpcap.A.dylib"
-  "libobjc.A.dylib"
-  "libncurses.5.4.dylib"
-  "libmecab_em.dylib"
-  "liblzma.5.dylib"
-  "libipsec.A.dylib"
-  "libicucore.A.dylib"
-  "libiconv.2.dylib"
-  "libform.5.4.dylib"
-  "libexslt.0.dylib"
-  "libedit.3.dylib"
-  "libperfcheck.dylib"
-  "libcharset.1.0.0.dylib"
-  "libcharset.1.dylib"
-  "libc++.1.dylib"
-  "libbz2.1.0.dylib"
-  "libbsm.0.dylib"
-  "libarchive.2.dylib"
-  "libSystem.B.dylib"
-  "libMatch.1.dylib"
-  "libDHCPServer.A.dylib"
-  "libCRFSuite.dylib"
 )
 
 dylib_folders=(
@@ -150,6 +77,23 @@ patch_file() {
 
   # Sign the binary again, just in case
   ldid -S "$1"
+}
+
+#### Main script ####
+
+if [ $# -lt 2 ]; then
+  cat <<'EOF'
+Patch a deb: patcher <deb> <output folder> [output deb]
+Patch files: patcher --patch <files>
+Set "output deb" to "-" in order to create a deb at the same place as the output folder.
+EOF
+  exit 127
+fi
+
+dpkg-deb -R "$1" "$2" || exit $?
+[ ! -d "$2" ] && {
+  echo "[-] Could not find the extracted directory"
+  exit 2
 }
 
 for folder in "${dylib_folders[@]}"; do
