@@ -43,12 +43,16 @@ fflush(log_file); \
 #define SBINJECT_PAYLOAD_DYLIB "/var/ulb/TweakInject.dylib"
 
 const char* xpcproxy_blacklist[] = {
- "debugserver",            // Xcode debugging
- "com.apple.diagnosticd",  // syslog
- "MTLCompilerService",     // ?_?
- "OTAPKIAssetTool",        // h_h
- "cfprefsd",               // o_o
- "jailbreakd",             // don't inject into jbd since we'd have to call to it
+ "lskdmsed",                  // Netflix!
+ "trustd",                    // Crash!
+ "seputil",                   // Crash!
+ "TVRemoteConnectionService", // Crash!
+ "debugserver",               // Xcode debugging
+ "com.apple.diagnosticd",     // syslog
+ "MTLCompilerService",        // ?_?
+ "OTAPKIAssetTool",           // h_h
+ "cfprefsd",                  // o_o
+ "jailbreakd",                // don't inject into jbd since we'd have to call to it
  NULL
  };
 
