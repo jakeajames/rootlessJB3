@@ -208,17 +208,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     //---- remount -----//
     // this is against the point of this jb but if you can why not do it
     
-    if (maxVersion("11.4.1")) {
+    if (maxVersion("12.1.2")) {
         if (remountRootFS()) LOG("[-] Failed to remount rootfs, no big deal");
     }
-    
-    //---- nvram ----//
-    // people say that this ain't stable
-    // and that ya should lock it later
-    // but, I haven't experienced issues
-    // nor so rootlessJB people
-    
-    UnlockNVRAM(); // use nvram command for nonce setting!
     
     //---- bootstrap ----//
     if (!fileExists("/var/containers/Bundle/.installed_rootlessJB3")) {
@@ -398,10 +390,10 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
     
     // kill it if running
     launch("/var/containers/Bundle/iosbinpack64/usr/bin/killall", "-SEGV", "dropbear", NULL, NULL, NULL, NULL, NULL);
-    failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", NULL, NULL, NULL, NULL, NULL), "[-] Failed to launch dropbear");
+    failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", "-p", "22", "-p", "2222", NULL), "[-] Failed to launch dropbear");
     pid_t dpd = pid_of_procName("dropbear");
     usleep(1000);
-    if (!dpd) failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", NULL, NULL, NULL, NULL, NULL), "[-] Failed to launch dropbear");
+    if (!dpd) failIf(launchAsPlatform("/var/containers/Bundle/iosbinpack64/usr/local/bin/dropbear", "-R", "-E", "-p", "22", "-p", "2222", NULL), "[-] Failed to launch dropbear");
     
     //------------- launch daeamons -------------//
     //-- you can drop any daemon plist in iosbinpack64/LaunchDaemons and it will be loaded automatically --//
@@ -509,7 +501,7 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
             removeFile("/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
             copyFile(in_bundle("apps/iSuperSU.app"), "/var/containers/Bundle/tweaksupport/Applications/iSuperSU.app");
             
-            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU && /var/containers/Bundle/tweaksupport/usr/bin/inject /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
+            failIf(system_("/var/containers/Bundle/tweaksupport/usr/local/bin/jtool --sign --inplace --ent /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/ent.xml /var/containers/Bundle/tweaksupport/Applications/iSuperSU.app/iSuperSU"), "[-] Failed to sign iSuperSU");
             
             
             // just in case
@@ -554,6 +546,9 @@ int csops(pid_t pid, unsigned int  ops, void * useraddr, size_t usersize);
                 }
             }
         }
+        
+        // make sure iSuperSU work fine
+        launch("/var/containers/Bundle/iosbinpack64/bin/bash", "-c", "/var/containers/Bundle/iosbinpack64/bin/rm -rf /private/var/containers/Bundle/Application/*/iSuperSU.app/_CodeSignature", NULL, NULL, NULL, NULL, NULL);
      
         // find which applications are jailbreak applications and inject their executable
         NSArray *applications = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/Application/" error:NULL];
