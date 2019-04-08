@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tokenAuthRequest>
+    <accessKeyId></accessKeyId>
+    <privateAccessKey></privateAccessKey>
+    <refreshToken></refreshToken>
+</tokenAuthRequest>

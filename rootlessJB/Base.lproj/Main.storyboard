@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pUb-Na-Ia2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="pUb-Na-Ia2">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="-34" width="320" height="636"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Created by @Jakeashacks" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JxL-Ff-gnc">
-                                <rect key="frame" x="268" y="-53" width="234" height="23"/>
+                                <rect key="frame" x="268" y="-53" width="233.5" height="23"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -84,13 +83,13 @@
                                         <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </switch>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iSuperSU" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vHx-zU-BT3">
-                                        <rect key="frame" x="8" y="3" width="89" height="25"/>
+                                        <rect key="frame" x="8" y="3" width="89" height="25.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="21"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tweaks" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6oQ-AU-pkf">
-                                        <rect key="frame" x="8" y="41" width="71" height="26"/>
+                                        <rect key="frame" x="8" y="42" width="71" height="25.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="21"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -116,19 +115,19 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="rootlessJB" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xeb-ve-NfA">
-                                <rect key="frame" x="94.5" y="20" width="132" height="30"/>
+                                <rect key="frame" x="94" y="20" width="132" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="25"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS 12.0 - 12.1.2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="73G-96-tii">
-                                <rect key="frame" x="105.5" y="58" width="110" height="18"/>
+                                <rect key="frame" x="105.5" y="58" width="109.5" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a6d-jW-eU0">
-                                <rect key="frame" x="42.5" y="84" width="234" height="94"/>
+                                <rect key="frame" x="43" y="84" width="234" height="94"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="94" id="LbH-IQ-rkS"/>
                                 </constraints>
@@ -139,15 +138,33 @@ Powered by #jelbrekLib</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="LXD-zS-5F0">
-                                <rect key="frame" x="16" y="380" width="286.5" height="168"/>
+                                <rect key="frame" x="16" y="380" width="288" height="168"/>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="textColor" red="0.99993377923965454" green="1" blue="0.99988192319869995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cDy-P6-MjV">
+                                <rect key="frame" x="110" y="157" width="100.5" height="31"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filza" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eGk-SG-KXd">
+                                        <rect key="frame" x="0.0" y="0.0" width="43.5" height="31"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="21"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="toT-Cr-WnK">
+                                        <rect key="frame" x="51.5" y="0.0" width="51" height="31"/>
+                                        <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="onTintColor" red="0.93469542260000005" green="0.32922995090000001" blue="0.31967747210000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="thumbTintColor" red="0.99993377920000004" green="1" blue="0.99988192320000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </switch>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="0.048408988807794019" green="0.05053167753612068" blue="0.079363457433917928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="SBZ-sd-ZeB" firstAttribute="top" secondItem="cDy-P6-MjV" secondAttribute="bottom" constant="8" id="6Ao-NL-4Ro"/>
                             <constraint firstItem="SBZ-sd-ZeB" firstAttribute="centerY" secondItem="3Yn-CP-TUK" secondAttribute="centerY" id="6zT-VN-ZNv"/>
                             <constraint firstItem="LXD-zS-5F0" firstAttribute="centerX" secondItem="SBZ-sd-ZeB" secondAttribute="centerX" id="80p-LU-f7K"/>
                             <constraint firstItem="JxL-Ff-gnc" firstAttribute="leading" secondItem="3Yn-CP-TUK" secondAttribute="leading" constant="268" id="AFI-2h-Zk4"/>
@@ -165,12 +182,14 @@ Powered by #jelbrekLib</string>
                             <constraint firstItem="LXD-zS-5F0" firstAttribute="top" secondItem="SBZ-sd-ZeB" secondAttribute="bottom" constant="8" symbolic="YES" id="hZv-G9-ORK"/>
                             <constraint firstAttribute="bottom" secondItem="LXD-zS-5F0" secondAttribute="bottom" constant="20" symbolic="YES" id="qzD-Nb-34C"/>
                             <constraint firstItem="a6d-jW-eU0" firstAttribute="centerX" secondItem="SBZ-sd-ZeB" secondAttribute="centerX" id="sOV-np-6QB"/>
+                            <constraint firstItem="cDy-P6-MjV" firstAttribute="centerX" secondItem="3Yn-CP-TUK" secondAttribute="centerX" id="tNd-1U-2pi"/>
                             <constraint firstItem="SBZ-sd-ZeB" firstAttribute="centerX" secondItem="3Yn-CP-TUK" secondAttribute="centerX" id="w4C-hx-jvM"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="ZnH-x8-6FE"/>
                     </view>
                     <connections>
                         <outlet property="enableTweaks" destination="CyY-xx-Ekw" id="GPj-CK-WZk"/>
+                        <outlet property="installFilza" destination="toT-Cr-WnK" id="yef-wy-42w"/>
                         <outlet property="installiSuperSU" destination="m4q-xC-ltu" id="rEg-dK-EzQ"/>
                         <outlet property="jailbreakButton" destination="mzN-Zk-jNi" id="6yj-Gj-ILg"/>
                         <outlet property="logs" destination="LXD-zS-5F0" id="jr1-5V-XGS"/>
@@ -178,10 +197,10 @@ Powered by #jelbrekLib</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Af-LH-dUy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-730.39999999999998" y="110.83743842364532"/>
+            <point key="canvasLocation" x="-731.25" y="109.85915492957747"/>
         </scene>
     </scenes>
     <resources>
-        <image name="axi-vilcinschi-1269615-unsplash 11-12-29-872" width="2381" height="1587"/>
+        <image name="axi-vilcinschi-1269615-unsplash 11-12-29-872" width="4763" height="3175"/>
     </resources>
 </document>
