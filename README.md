@@ -1,16 +1,15 @@
 # Description
 
-Blah blah, read this: [How to make a jailbreak without a filesystem remount as r/w](https://github.com/jakeajames/rootlessJB/blob/master/writeup.pdf)
+- Read this: [How to make a jailbreak without a filesystem remount as r/w](https://github.com/jakeajames/rootlessJB/blob/master/writeup.pdf)
 
 - Powered by jelbrekLib
 
 
 ## Support
 
-- All A9-A11 devices
-- All A7-A8 devices
+- All A7-A11 devices
 
-## To be supported (sorted by priority)
+## To be supported
 
 - A12 devices
 
@@ -50,6 +49,8 @@ All executables must have at least these two entitlements:
 patcher usage:
 ./patcher /path/to/deb /path/to/output_folder
 
-Thanks to: Ian Beer, Brandon Azad, Jonathan Levin, Electra Team, IBSparkes, Sam Bingner, Sammy Guichelaar.
+Example: ./patcher ~/Downloads/tweakyouwanttopatch.deb ~/Desktop/PatchedTweaks/tweakyouwanttopatch
+
+Thanks to: Ian Beer, Brandon Azad, Jonathan Levin, Electra Team, IBSparkes, Sam Bingner, Sammy Guichelaar, mac-user669.
 
 
