@@ -49,7 +49,7 @@ All executables must have at least these two entitlements:
 patcher usage:
 ./patcher /path/to/deb /path/to/output_folder
 
-# Example: ./patcher ~/Downloads/tweakyouwanttopatch.deb ~/Desktop/PatchedTweaks/tweakyouwanttopatch
+Example: ./patcher ~/Downloads/tweakyouwanttopatch.deb ~/Desktop/PatchedTweaks/tweakyouwanttopatch
 
 Thanks to: Ian Beer, Brandon Azad, Jonathan Levin, Electra Team, IBSparkes, Sam Bingner, Sammy Guichelaar, mac-user669.
 
